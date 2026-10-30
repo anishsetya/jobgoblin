@@ -1,0 +1,33 @@
+# What you are looking for. Copy to profile/targets.yaml.
+
+regions:                     # in priority order; weights scale the fit score
+  - {code: US, weight: 1.0}
+  - {code: REMOTE, weight: 0.9}
+
+tracks:                      # role families, each with the resume headline to use
+  backend:
+    headline: "Software Engineer: Backend & Distributed Systems"
+  ai:
+    headline: "Software Engineer: Applied AI & LLM Systems"
+  # platform:
+  #   headline: "Software Engineer: Platform & Developer Infrastructure"
+
+seniority:
+  max_years_required: 4      # postings requiring more than this are hard skips
+  stretch_from_years: 3      # 3+ years is a stretch, not a skip
+
+excluded_roles:              # never surfaced, even when the title hides it
+  - Sales Engineer
+
+region_rules: []             # e.g. "fde: US only"
+
+hard_skips:                  # score 0, never tailored
+  - active security clearance required
+  - posting closed
+  - not a software role
+
+flags:                       # shown next to the job; you decide
+  - class-year window
+  - relocation or onsite
+  - duplicate posting
+  - school or GPA screen

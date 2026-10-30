@@ -1,0 +1,14 @@
+# Personal rules enforced in code. Copy to profile/rules.yaml.
+
+# Words that must never appear in a resume, cover letter, form answer or outreach draft.
+# scripts/check_resume.py fails the render if any appears in the PDF.
+banned_terms: []
+  # - "Old Team Name"
+
+# Optional notes on how to describe parts of your history (read by writing agents).
+framing_notes: []
+  # - "Describe the 2024 contract as consulting, not employment."
+
+# Optional line added to the resume headline for jobs in a region.
+headline_by_region: {}
+  # US: "US Citizen (no sponsorship required)"

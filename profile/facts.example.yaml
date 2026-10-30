@@ -1,0 +1,46 @@
+# Facts used to fill application forms. Copy to profile/facts.yaml and fill it in.
+# TODO values are never guessed: the submitter stops and asks you instead.
+
+identity:
+  full_name: TODO
+  preferred_name: TODO
+  email: TODO
+  phone: TODO               # the number for your home region
+  phone_other_region: none  # optional second number, used for jobs in another region
+  linkedin: ""
+  github: ""
+  portfolio: ""
+  current_location: TODO
+
+work_authorization:          # one entry per region you apply in
+  US:
+    authorized: TODO         # true / false
+    requires_sponsorship: TODO
+    willing_to_relocate: TODO
+  # IN:
+  #   authorized: true
+  #   requires_sponsorship: false
+  #   willing_to_relocate: TODO
+
+employment:
+  current_employer: ""
+  current_title: ""
+  start_date: ""             # YYYY-MM
+  notice_period: TODO
+  earliest_start_date: TODO
+  years_experience: TODO
+
+compensation:                # answered only when a form requires it, as a range
+  expected_base: TODO        # e.g. "USD 120,000-140,000"
+
+education:
+  school: TODO
+  degree: TODO
+  graduation: TODO           # YYYY-MM
+  gpa: ""                    # leave blank unless forms require it
+
+eeo:                         # defaults to declining; change only if you want to
+  gender: Decline to self-identify
+  race_ethnicity: Decline to self-identify
+  veteran_status: Decline to self-identify
+  disability: Decline to self-identify

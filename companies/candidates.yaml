@@ -1,0 +1,136 @@
+# Seed list for companies/targets.yaml. Run tools/jobs-mcp/validate_targets.py to probe each slug
+# against Greenhouse / Ashby / Lever and write the confirmed boards to targets.yaml.
+# tier: 1 = dream (AI-native / dev-infra, strong fit), 2 = strong, 3 = broad net
+# focus: US | IN | both
+companies:
+  # --- AI labs & AI-native ---
+  - {name: Anthropic, slugs: [anthropic], tier: 1, focus: US}
+  - {name: OpenAI, slugs: [openai], tier: 1, focus: US}
+  - {name: Perplexity, slugs: [perplexity, perplexity-ai, perplexityai], tier: 1, focus: US}
+  - {name: Cursor (Anysphere), slugs: [cursor, anysphere], tier: 1, focus: US}
+  - {name: Cohere, slugs: [cohere], tier: 1, focus: both}
+  - {name: Mistral AI, slugs: [mistral, mistralai], tier: 2, focus: US}
+  - {name: ElevenLabs, slugs: [elevenlabs], tier: 2, focus: both}
+  - {name: Harvey, slugs: [harvey], tier: 1, focus: US}
+  - {name: Sierra, slugs: [sierra], tier: 1, focus: US}
+  - {name: Decagon, slugs: [decagon], tier: 1, focus: US}
+  - {name: Glean, slugs: [gleanwork, glean], tier: 1, focus: both}
+  - {name: Hebbia, slugs: [hebbia], tier: 2, focus: US}
+  - {name: Scale AI, slugs: [scaleai], tier: 2, focus: US}
+  - {name: Together AI, slugs: [togetherai, together-ai], tier: 1, focus: US}
+  - {name: Fireworks AI, slugs: [fireworksai, fireworks-ai], tier: 1, focus: US}
+  - {name: Baseten, slugs: [baseten], tier: 1, focus: US}
+  - {name: Modal, slugs: [modal], tier: 1, focus: US}
+  - {name: Replicate, slugs: [replicate], tier: 2, focus: US}
+  - {name: Anyscale, slugs: [anyscale], tier: 2, focus: US}
+  - {name: LangChain, slugs: [langchain], tier: 1, focus: US}
+  - {name: LlamaIndex, slugs: [llamaindex], tier: 2, focus: US}
+  - {name: Pinecone, slugs: [pinecone], tier: 2, focus: US}
+  - {name: Weaviate, slugs: [weaviate], tier: 2, focus: both}
+  - {name: Qdrant, slugs: [qdrant], tier: 2, focus: both}
+  - {name: Hugging Face, slugs: [huggingface], tier: 2, focus: both}
+  - {name: Runway, slugs: [runwayml, runway], tier: 2, focus: US}
+  - {name: Character.AI, slugs: [character, characterai], tier: 2, focus: US}
+  - {name: Writer, slugs: [writer], tier: 2, focus: US}
+  - {name: Mercor, slugs: [mercor], tier: 2, focus: US}
+  - {name: Cognition, slugs: [cognition], tier: 1, focus: US}
+  - {name: Replit, slugs: [replit], tier: 1, focus: US}
+  - {name: Browserbase, slugs: [browserbase], tier: 2, focus: US}
+  - {name: E2B, slugs: [e2b], tier: 2, focus: US}
+  - {name: Braintrust, slugs: [braintrust], tier: 1, focus: US}
+  - {name: Arize AI, slugs: [arizeai, arize], tier: 2, focus: US}
+  - {name: Weights & Biases, slugs: [wandb], tier: 2, focus: US}
+  - {name: Clay, slugs: [claylabs, clay], tier: 2, focus: US}
+  - {name: Abridge, slugs: [abridge], tier: 2, focus: US}
+  - {name: Ambience Healthcare, slugs: [ambiencehealthcare, ambience], tier: 3, focus: US}
+  - {name: Notion, slugs: [notion], tier: 1, focus: both}
+  - {name: Linear, slugs: [linear], tier: 1, focus: US}
+  - {name: Ramp, slugs: [ramp], tier: 1, focus: US}
+  # --- Dev tools / infra / platform ---
+  - {name: Databricks, slugs: [databricks], tier: 1, focus: both}
+  - {name: Vercel, slugs: [vercel], tier: 1, focus: US}
+  - {name: Supabase, slugs: [supabase], tier: 1, focus: both}
+  - {name: PostHog, slugs: [posthog], tier: 2, focus: both}
+  - {name: Temporal, slugs: [temporal, temporaltechnologies], tier: 1, focus: US}
+  - {name: Grafana Labs, slugs: [grafanalabs], tier: 2, focus: both}
+  - {name: Cockroach Labs, slugs: [cockroachlabs], tier: 2, focus: US}
+  - {name: PlanetScale, slugs: [planetscale], tier: 2, focus: US}
+  - {name: Neon, slugs: [neon, neondatabase], tier: 2, focus: US}
+  - {name: Render, slugs: [render], tier: 2, focus: US}
+  - {name: Railway, slugs: [railway], tier: 2, focus: US}
+  - {name: Fly.io, slugs: [flyio], tier: 2, focus: US}
+  - {name: Netlify, slugs: [netlify], tier: 3, focus: US}
+  - {name: Postman, slugs: [postman], tier: 2, focus: both}
+  - {name: GitLab, slugs: [gitlab], tier: 2, focus: both}
+  - {name: Cloudflare, slugs: [cloudflare], tier: 1, focus: both}
+  - {name: Datadog, slugs: [datadog], tier: 1, focus: US}
+  - {name: Elastic, slugs: [elastic], tier: 2, focus: both}
+  - {name: MongoDB, slugs: [mongodb], tier: 2, focus: both}
+  - {name: Confluent, slugs: [confluent], tier: 2, focus: both}
+  - {name: Redpanda, slugs: [redpandadata, redpanda], tier: 2, focus: US}
+  - {name: ClickHouse, slugs: [clickhouse], tier: 2, focus: both}
+  - {name: Fivetran, slugs: [fivetran], tier: 3, focus: both}
+  - {name: dbt Labs, slugs: [dbtlabsinc, dbtlabs], tier: 3, focus: US}
+  - {name: Sentry, slugs: [sentry], tier: 2, focus: US}
+  - {name: LaunchDarkly, slugs: [launchdarkly], tier: 2, focus: US}
+  - {name: CircleCI, slugs: [circleci], tier: 2, focus: US}
+  - {name: Buildkite, slugs: [buildkite], tier: 2, focus: US}
+  - {name: Pulumi, slugs: [pulumi], tier: 2, focus: US}
+  - {name: Tailscale, slugs: [tailscale], tier: 2, focus: US}
+  - {name: Chainguard, slugs: [chainguard], tier: 2, focus: US}
+  - {name: Snyk, slugs: [snyk], tier: 3, focus: both}
+  - {name: Okta, slugs: [okta], tier: 3, focus: both}
+  - {name: Twilio, slugs: [twilio], tier: 3, focus: both}
+  - {name: Retool, slugs: [retool], tier: 2, focus: US}
+  - {name: Airtable, slugs: [airtable], tier: 2, focus: US}
+  - {name: Figma, slugs: [figma], tier: 1, focus: US}
+  - {name: Canva, slugs: [canva], tier: 2, focus: both}
+  - {name: Asana, slugs: [asana], tier: 3, focus: US}
+  - {name: Dropbox, slugs: [dropbox], tier: 3, focus: US}
+  - {name: Discord, slugs: [discord], tier: 2, focus: US}
+  - {name: Reddit, slugs: [reddit], tier: 2, focus: US}
+  - {name: Pinterest, slugs: [pinterest], tier: 3, focus: US}
+  - {name: Stripe, slugs: [stripe], tier: 1, focus: both}
+  - {name: Plaid, slugs: [plaid], tier: 2, focus: US}
+  - {name: Brex, slugs: [brex], tier: 2, focus: US}
+  - {name: Mercury, slugs: [mercury], tier: 2, focus: US}
+  - {name: Robinhood, slugs: [robinhood], tier: 2, focus: US}
+  - {name: Coinbase, slugs: [coinbase], tier: 2, focus: both}
+  - {name: Airbnb, slugs: [airbnb], tier: 2, focus: both}
+  - {name: Instacart, slugs: [instacart], tier: 3, focus: US}
+  - {name: Lyft, slugs: [lyft], tier: 3, focus: US}
+  - {name: Samsara, slugs: [samsara], tier: 3, focus: both}
+  - {name: Gusto, slugs: [gusto], tier: 3, focus: US}
+  - {name: Rippling, slugs: [rippling], tier: 2, focus: both}
+  - {name: Deel, slugs: [deel], tier: 3, focus: both}
+  - {name: Vanta, slugs: [vanta], tier: 2, focus: US}
+  - {name: Palantir, slugs: [palantir], tier: 1, focus: US}
+  - {name: Anduril, slugs: [anduril, andurilindustries], tier: 2, focus: US}
+  - {name: Applied Intuition, slugs: [appliedintuition], tier: 2, focus: US}
+  - {name: Zoox, slugs: [zoox], tier: 3, focus: US}
+  - {name: Waymo, slugs: [waymo], tier: 2, focus: US}
+  - {name: Nuro, slugs: [nuro], tier: 3, focus: US}
+  - {name: Duolingo, slugs: [duolingo], tier: 2, focus: US}
+  - {name: Grammarly, slugs: [grammarly], tier: 2, focus: US}
+  # --- India product companies & India offices ---
+  - {name: Razorpay, slugs: [razorpaysoftwareprivatelimited, razorpay], tier: 2, focus: IN}
+  - {name: PhonePe, slugs: [phonepe], tier: 2, focus: IN}
+  - {name: Groww, slugs: [groww, billionbrains], tier: 2, focus: IN}
+  - {name: CRED, slugs: [cred, dreamplug], tier: 2, focus: IN}
+  - {name: Zepto, slugs: [zepto, zeptonow], tier: 3, focus: IN}
+  - {name: Meesho, slugs: [meesho], tier: 3, focus: IN}
+  - {name: Swiggy, slugs: [swiggy], tier: 3, focus: IN}
+  - {name: Sarvam AI, slugs: [sarvam, sarvamai], tier: 1, focus: IN}
+  - {name: Krutrim, slugs: [krutrim], tier: 3, focus: IN}
+  - {name: Atlan, slugs: [atlan], tier: 2, focus: IN}
+  - {name: Hasura, slugs: [hasura], tier: 2, focus: both}
+  - {name: BrowserStack, slugs: [browserstack], tier: 3, focus: IN}
+  - {name: Freshworks, slugs: [freshworks], tier: 3, focus: IN}
+  - {name: Chargebee, slugs: [chargebee], tier: 3, focus: IN}
+  - {name: Druva, slugs: [druva], tier: 3, focus: IN}
+  - {name: Rubrik, slugs: [rubrik], tier: 2, focus: both}
+  - {name: Nutanix, slugs: [nutanix], tier: 3, focus: both}
+  - {name: Uber, slugs: [uber], tier: 2, focus: both}
+  - {name: Zeta, slugs: [zeta, zetasuite], tier: 3, focus: IN}
+  - {name: Juspay, slugs: [juspay], tier: 3, focus: IN}
+  - {name: InMobi, slugs: [inmobi], tier: 3, focus: IN}

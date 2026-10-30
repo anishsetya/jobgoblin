@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+rendercv_output/
+**/out/*.typ
+**/out/*.png
+
+# Your personal data never leaves your machine.
+config.yaml
+profile/*
+!profile/*.example.yaml
+resume/master.yaml
+resume/out/
+applications/
+outreach/
+state/
+*.pdf

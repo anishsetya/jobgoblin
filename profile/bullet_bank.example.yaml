@@ -1,0 +1,37 @@
+# BULLET BANK: the only source of truth for resume content.
+# Copy to profile/bullet_bank.yaml. Tailoring may select, reorder or rephrase these bullets.
+# It may NOT invent facts, metrics or skills. New facts are added here first, after you confirm them.
+#
+# Fields:
+#   id        stable key, referenced from fit.json and resume variants
+#   short     a few words, shown in the tracker
+#   section   experience:<company> | project:<name>
+#   tracks    which of your tracks (profile/targets.yaml) this bullet supports
+#   keywords  job-description keywords this bullet truthfully covers
+#   variants  truthful phrasings; the first one is what master.yaml uses
+#   verified  true once you have confirmed the wording and numbers
+
+bullets:
+  - id: acme-latency
+    short: Cut API latency 40%
+    section: experience:acme
+    tracks: [backend]
+    keywords: [Python, PostgreSQL, caching, APIs, performance]
+    variants:
+      - Cut p95 latency of the orders API **40%** by adding a Redis read-through cache and rewriting two N+1 PostgreSQL queries.
+      - Reduced orders API p95 latency **40%** with caching and query fixes.
+    verified: false
+
+  - id: side-project-agent
+    short: Open-source LLM agent
+    section: project:example-agent
+    tracks: [ai]
+    keywords: [LLM, agents, TypeScript]
+    variants:
+      - Built an open-source LLM agent in TypeScript that summarizes pull requests; **500 GitHub stars**.
+    verified: false
+
+skills_confirmed:            # skills you have used, even without a bullet yet
+  - Python
+  - TypeScript
+  - Docker

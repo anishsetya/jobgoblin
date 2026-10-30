@@ -1,0 +1,33 @@
+# Runtime config for Jobgoblin skills. Copy to config.yaml.
+tracker:
+  sheet_id: TODO              # your Google Sheet "Job Tracker" id
+  tabs: [Applications, Companies, Contacts, Skills Gap, Daily Log, Outreach]
+daily:
+  # Cost funnel (see MODELS.md): each stage is capped so spend stays flat however many jobs come in.
+  max_screen: 80              # postings sent to the cheap screener per run
+  screen_threshold: 45        # screener score needed for the deep fit analysis
+  max_deep_fit: 35            # postings given the full fit analysis per run
+  max_tailored: 25            # resumes tailored per day
+  min_fit: 60                 # fit score to tailor (75+ apply, 60-74 stretch)
+  long_shot_fit: 50           # 50-59: listed as Long shot, tailored only on request
+  sources: [ats, hn, yc, remoteok, wwr]
+limits:
+  reapply_days: 90
+  max_open_per_company: 3
+follow_up_days: 7
+drive:                        # optional: tailored PDFs copied here; Google Drive for desktop uploads them
+  local_dir: ""
+  folder_title: resumes
+  folder_id: ""
+sheet_resume_link_column: AA
+outreach:
+  max_new_per_day: 10
+  follow_up_business_days: 5
+  max_touches: 2              # first email + one follow-up, then stop
+  recontact_days: 120
+  min_fit: 65
+  resume_link: ""
+  attach_pdf: true
+browser_boards:               # browsed in your own Chrome via /browse-boards (login + human pace; never scheduled)
+  - {name: Wellfound, url: "https://wellfound.com/jobs", region: US}
+  - {name: YC Work at a Startup, url: "https://www.workatastartup.com/companies", region: US}

@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/rendercv/rendercv/refs/tags/v2.8/schema.json
+# MASTER resume: the canonical superset. Copy to resume/master.yaml.
+# Every bullet here must also exist in profile/bullet_bank.yaml. Never add a fact that isn't in the bank.
+# Render: scripts/render.ps1 resume/master.yaml -OutDir resume/out -Png
+cv:
+  name: Your Name
+  headline: Software Engineer
+  location: City, Country
+  email: you@example.com
+  phone: TODO
+  social_networks:
+    - network: LinkedIn
+      username: your-handle
+  sections:
+    Experience:
+      - company: Acme
+        position: Software Engineer
+        start_date: 2024-07
+        end_date: present
+        location: City, Country
+        highlights:
+          - Cut p95 latency of the orders API **40%** by adding a Redis read-through cache and rewriting two N+1 PostgreSQL queries.
+    Projects:
+      - name: Example Agent
+        highlights:
+          - Built an open-source LLM agent in TypeScript that summarizes pull requests; **500 GitHub stars**.
+    Education:
+      - institution: Your University
+        area: Computer Science
+        degree: BS
+        start_date: 2020-08
+        end_date: 2024-05
+    Skills:
+      - label: Languages
+        details: Python, TypeScript
