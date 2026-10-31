@@ -7,6 +7,9 @@
         ".": "./src/index.ts"
     },
     "scripts": {
+        "dev": "tsx src/main.ts",
+        "build": "tsup",
+        "start": "node dist/server.mjs",
         "typecheck": "tsc -p tsconfig.json"
     },
     "dependencies": {
@@ -17,7 +20,10 @@
         "@jobgoblin/sources": "workspace:*",
         "@jobgoblin/storage": "workspace:*",
         "@modelcontextprotocol/sdk": "^1.32.2",
+        "@myriaddreamin/typst-ts-node-compiler": "^0.7.0",
+        "exceljs": "^4.4.0",
         "hono": "^4.13.14",
+        "pdfjs-dist": "^6.4.299",
         "pino": "^10.4.0",
         "zod": "^4.6.7"
     },

@@ -57,6 +57,8 @@ module.exports = {
     // are parsed with swc instead. It sees the same import statements.
     parser: "swc",
     doNotFollow: { path: "node_modules" },
+    // Built bundles contain every package at once, so they would trip the rules that guard the sources.
+    exclude: { path: "/dist/" },
     tsPreCompilationDeps: true,
     combinedDependencies: true,
     enhancedResolveOptions: { exportsFields: ["exports"], conditionNames: ["import", "require", "node", "default"] },
