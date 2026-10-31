@@ -1,0 +1,23 @@
+[
+  {
+    "id": "greenhouse:acmecloud",
+    "name": "Acme Cloud",
+    "ats": "greenhouse",
+    "slug": "acmecloud",
+    "status": "Watching"
+  },
+  {
+    "id": "lever:brightpath",
+    "name": "Brightpath",
+    "ats": "lever",
+    "slug": "brightpath",
+    "status": "Watching"
+  },
+  {
+    "id": "ashby:copperleaf",
+    "name": "Copperleaf AI",
+    "ats": "ashby",
+    "slug": "copperleaf",
+    "status": "Watching"
+  }
+]

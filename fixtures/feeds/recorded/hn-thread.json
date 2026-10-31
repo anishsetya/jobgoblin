@@ -1,0 +1,77 @@
+{
+  "author": "whoishiring",
+  "children": [
+    {
+      "author": "hn-user-1",
+      "children": [
+        {
+          "author": "hn-user-4",
+          "children": [],
+          "created_at": "2026-10-02T00:13:01.000Z",
+          "created_at_i": 1790899981,
+          "id": 49923584,
+          "options": [],
+          "parent_id": 49922584,
+          "points": null,
+          "story_id": 49922569,
+          "text": "Is this role open to new grads?",
+          "title": null,
+          "type": "comment",
+          "url": null
+        }
+      ],
+      "created_at": "2026-10-01T15:02:37.000Z",
+      "created_at_i": 1790866957,
+      "id": 49922584,
+      "options": [],
+      "parent_id": 49922569,
+      "points": null,
+      "story_id": 49922569,
+      "text": "PrairieLearn (Remote US) — Full-Stack Software Engineer — TypeScript &#x2F; Postgres &#x2F; React &#x2F; AI<p>PrairieLearn (<a href=\"https:&#x2F;&#x2F;www.prairielearn.com\" rel=\"nofollow\">https:&#x2F;&#x2F;www.prairielearn.com</a>) is an open-source assessment platform used by universities across the US (Berkeley, Princeton, Michigan, Illinois, and others). We power mastery-based learning and large-scale exams.<p>We’re a small, profitable, early-stage company (bootstrapped, no VC) that is growing quickly. Our users love us and we have very high retention and rapid spread through word of mouth. As an early-stage hire, you’ll work across the stack and enjoy meaningful ownership from day one.",
+      "title": null,
+      "type": "comment",
+      "url": null
+    },
+    {
+      "author": "hn-user-2",
+      "children": [],
+      "created_at": "2026-10-01T15:02:51.000Z",
+      "created_at_i": 1790866971,
+      "id": 49922593,
+      "options": [],
+      "parent_id": 49922569,
+      "points": null,
+      "story_id": 49922569,
+      "text": "Shepherd (Series B) | ONSITE | San Francisco, CA &amp; New York City, NY<p>At Shepherd, we&#x27;re pursuing the most ambitious technical vision in commercial insurance: fully autonomous underwriting. Shepherd is an AI-native commercial insurance platform transforming how high-hazard industries get covered.<p>The infrastructure behind the AI boom (data centers, semiconductor fabs, renewable energy assets) has to be built and insured, but traditional carriers weren&#x27;t built for this speed. We built Shepherd to solve that.",
+      "title": null,
+      "type": "comment",
+      "url": null
+    },
+    {
+      "author": "hn-user-3",
+      "children": [],
+      "created_at": "2026-10-01T15:03:36.000Z",
+      "created_at_i": 1790867016,
+      "id": 49922609,
+      "options": [],
+      "parent_id": 49922569,
+      "points": null,
+      "story_id": 49922569,
+      "text": "Sidekick Labs | Senior SWE, R&amp;D Engineer, Intelligence Engineer | REMOTE (US Timezones) | Full-time | $170k to $230k Base + Equity + Health<p>Sidekick builds AI security software for enterprises. Our sensors observe AI behavior and use in situ. From those observations, our reasoning pipeline produces an application inventory and a risk picture, allowing us to provide real-time intervention and coaching right when it matters.<p><i>Compensation:</i> base salary scaled to experience, meaningful early-stage equity, and 100% covered health insurance for you and your immediate family",
+      "title": null,
+      "type": "comment",
+      "url": null
+    }
+  ],
+  "created_at": "2026-10-01T15:02:07.000Z",
+  "created_at_i": 1790866927,
+  "id": 49922569,
+  "options": [],
+  "parent_id": null,
+  "points": 277,
+  "story_id": 49922569,
+  "text": "Please state the location and include REMOTE for remote work, REMOTE (US)\nor similar if the country is restricted, and ONSITE when remote work is <i>not</i> an option.<p>Please only post if you personally are part of the hiring company—no\nrecruiting firms or job boards. One post per company. If it isn&#x27;t a household name,\nexplain what your company does.<p>Please only post if you are actively f",
+  "title": "Ask HN: Who is hiring? (October 2026)",
+  "type": "story",
+  "url": null
+}

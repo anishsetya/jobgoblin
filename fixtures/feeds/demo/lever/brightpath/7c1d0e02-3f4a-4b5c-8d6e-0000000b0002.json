@@ -1,0 +1,35 @@
+{
+  "additionalPlain": "Brightpath is an equal opportunity employer. Salary range $130,000 to $165,000 plus equity.",
+  "additional": "<div>Brightpath is an equal opportunity employer. Salary range $130,000 to $165,000 plus equity.</div>",
+  "categories": {
+    "commitment": "Full-time",
+    "location": "New York, NY",
+    "team": "Platform",
+    "allLocations": [
+      "New York, NY"
+    ]
+  },
+  "createdAt": 1792677600000,
+  "descriptionPlain": "Brightpath helps families plan and pay for college. Our product is used by more than two million students, and the Platform team makes sure it is fast, safe and always on. You will join a team of six engineers in our New York office (three days a week in person).",
+  "description": "<p>Brightpath helps families plan and pay for college. Our product is used by more than two million students, and the Platform team makes sure it is fast, safe and always on. You will join a team of six engineers in our New York office (three days a week in person).</p>",
+  "id": "7c1d0e02-3f4a-4b5c-8d6e-0000000b0002",
+  "lists": [
+    {
+      "text": "What you will do",
+      "content": "\n<li>Run and improve our Kubernetes clusters on AWS</li>\n<li>Write Terraform modules so every service gets the same safe defaults</li>\n<li>Build deployment tooling and CI/CD pipelines in GitHub Actions, in Go and Python</li>\n<li>Set up monitoring and alerting with Prometheus and Grafana</li>\n<li>Take part in the on-call rotation and lead blameless incident reviews</li>\n"
+    },
+    {
+      "text": "What you bring",
+      "content": "\n<li>3+ years of experience in platform, DevOps or backend engineering</li>\n<li>Production experience with Kubernetes and AWS</li>\n<li>Comfort writing Go or Python for tools and services</li>\n<li>Experience with Terraform or another infrastructure-as-code tool</li>\n<li>A habit of writing down what you learn</li>\n"
+    }
+  ],
+  "text": "Platform Engineer",
+  "country": "US",
+  "workplaceType": "hybrid",
+  "opening": "<p>Brightpath helps families plan and pay for college. Our product is used by more than two million students, and the Platform team makes sure it is fast, safe and always on. You will join a team of six engineers in our New York office (three days a week in person).</p>",
+  "openingPlain": "Brightpath helps families plan and pay for college. Our product is used by more than two million students, and the Platform team makes sure it is fast, safe and always on. You will join a team of six engineers in our New York office (three days a week in person).",
+  "descriptionBody": "",
+  "descriptionBodyPlain": "",
+  "hostedUrl": "https://jobs.lever.co/brightpath/7c1d0e02-3f4a-4b5c-8d6e-0000000b0002",
+  "applyUrl": "https://jobs.lever.co/brightpath/7c1d0e02-3f4a-4b5c-8d6e-0000000b0002/apply"
+}
