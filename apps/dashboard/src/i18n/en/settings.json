@@ -1,0 +1,58 @@
+{
+  "title": "Settings",
+  "claude": {
+    "title": "Claude connection",
+    "description": "Jobgoblin uses your own Claude plan for the thinking."
+  },
+  "folder": {
+    "title": "Your folder",
+    "description": "Where your resumes, application folders and spreadsheets are kept.",
+    "open": "Open folder",
+    "notOpened": "The folder could not be opened from here. You can find it at {{path}}",
+    "backupsFound": "Backups found in this folder",
+    "dataFolder": "Jobgoblin keeps its own working files in {{path}}."
+  },
+  "limits": {
+    "title": "Limits",
+    "description": "These keep your search focused and within your Claude plan.",
+    "concurrency": "Runs at the same time",
+    "concurrencyHint": "Two finish sooner but use your plan faster.",
+    "one": "One at a time",
+    "two": "Two at a time",
+    "maxOpen": "Open applications per company",
+    "maxOpenHint": "Jobgoblin will not prepare more than this for one company.",
+    "reapply": "Days before applying to the same job again",
+    "reapplyHint": "Use 0 for no waiting period.",
+    "followUp": "Days until a follow-up is due",
+    "followUpHint": "Counted from the day you apply.",
+    "numberError": "Enter whole numbers. The first and last must be at least 1.",
+    "saved": "Saved"
+  },
+  "tracker": {
+    "title": "Tracker",
+    "description": "Jobgoblin keeps a spreadsheet of every application in your folder. It opens in Excel and in Google Sheets.",
+    "status": {
+      "ok": "Up to date",
+      "locked": "Waiting",
+      "off": "Not set up"
+    },
+    "explain": {
+      "ok": "The spreadsheet files match your pipeline.",
+      "locked": "The file is open in another program. Close it and Jobgoblin will update it.",
+      "off": "Choose a folder first."
+    },
+    "open": "Open tracker",
+    "exportCsv": "Download CSV",
+    "exportExcel": "Download Excel file",
+    "notOpened": "The tracker could not be opened from here. You can find it at {{path}}"
+  },
+  "backups": {
+    "title": "Backups",
+    "description": "Jobgoblin backs up your information after changes and every day.",
+    "backUpNow": "Back up now",
+    "backingUp": "Backing up...",
+    "never": "No backup has been made yet.",
+    "last": "Last backup: {{when}}",
+    "none": "There are no backups yet."
+  }
+}

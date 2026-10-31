@@ -70,7 +70,7 @@ Jobgoblin's code is meant to be read by someone learning how the system works. W
 
 - One component per file, named like the file. Screens in `src/screens/`, reusable parts in `src/components/`.
 - Data fetching lives in hooks in `src/api/` (`useToday()`, `useApproveApplication()`); components do not call `fetch`.
-- Every string comes from `src/i18n/en.json` through `t("…")`. Plain, calm, second person, no exclamation marks, buttons are verbs.
+- Every string comes from the English catalog in `src/i18n/en/` (one JSON file per area) through `t("…")`. Plain, calm, second person, no exclamation marks, buttons are verbs.
 - Every interactive element has an accessible name. Use semantic HTML first (`button`, `nav`, `main`, `h1`).
 
 ## Dependencies

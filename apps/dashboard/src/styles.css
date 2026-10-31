@@ -1,0 +1,155 @@
+/*
+  The look of the dashboard: neutral grays, ONE accent (a calm teal-blue), amber only for flags and
+  risks, green only for success, hairline borders, no shadows. Dark mode follows the system.
+  Spec: PRD "Visual style". Every text/background pair below is at least 4.5:1 (WCAG 2.1 AA), checked
+  for both themes; the notes show the pairs that matter most.
+*/
+@import "tailwindcss";
+
+/* Colors are plain CSS variables that change with the system theme. Tailwind's classes
+   (bg-surface, text-muted, border-line, ...) read them through the @theme block further down. */
+:root {
+  color-scheme: light dark;
+
+  --page: #f6f7f8;
+  --surface: #ffffff;
+  --surface-muted: #eff1f3;
+  --line: #d5d9de; /* hairline borders */
+  --text: #1b1e23; /* on --surface 16.7:1 */
+  --text-muted: #525a66; /* on --surface 7:1, on --page 6.5:1 */
+
+  --accent: #1b6a87; /* white on it 6:1 */
+  --accent-hover: #155670;
+  --accent-contrast: #ffffff;
+  --accent-text: #1b6a87; /* links and small accent text on --surface 6:1 */
+  --accent-soft: #e2f0f5; /* highlight behind reworded resume lines; --text on it 14:1 */
+
+  --flag-text: #85500a; /* amber, only for flags and risks; on --flag-soft 5.9:1 */
+  --flag-soft: #fcf0d4;
+  --flag-line: #e3c680;
+
+  --success-text: #1d6a39; /* green, only for success; on --success-soft 5.7:1 */
+  --success-soft: #e0f2e6;
+
+  --danger-text: #a02828; /* on --surface 7:1 */
+  --danger-soft: #fbe9e9;
+
+  --focus: #1b6a87;
+  --overlay: rgb(15 17 20 / 0.45);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #0f1114;
+    --surface: #171a1f;
+    --surface-muted: #1f232a;
+    --line: #2d333c;
+    --text: #eceef1; /* on --surface 15:1 */
+    --text-muted: #a4abb6; /* on --surface 7.5:1 */
+
+    --accent: #1f6f8b; /* white on it 5.7:1; never used as text on dark, see --accent-text */
+    --accent-hover: #195d75;
+    --accent-contrast: #ffffff;
+    --accent-text: #7cc3de; /* on --surface 8.9:1 */
+    --accent-soft: #18323d; /* --text on it 11.5:1 */
+
+    --flag-text: #f1c673; /* on --flag-soft 9.5:1 */
+    --flag-soft: #2d2410;
+    --flag-line: #5c4a1f;
+
+    --success-text: #7fd89c; /* on --success-soft 9:1 */
+    --success-soft: #12291b;
+
+    --danger-text: #f19b9b; /* on --surface 8:1 */
+    --danger-soft: #2e1717;
+
+    --focus: #7cc3de;
+    --overlay: rgb(0 0 0 / 0.6);
+  }
+}
+
+@theme inline {
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-line: var(--line);
+  --color-text: var(--text);
+  --color-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-contrast: var(--accent-contrast);
+  --color-accent-text: var(--accent-text);
+  --color-accent-soft: var(--accent-soft);
+  --color-flag: var(--flag-text);
+  --color-flag-soft: var(--flag-soft);
+  --color-flag-line: var(--flag-line);
+  --color-success: var(--success-text);
+  --color-success-soft: var(--success-soft);
+  --color-danger: var(--danger-text);
+  --color-danger-soft: var(--danger-soft);
+  --color-overlay: var(--overlay);
+  --font-sans: ui-sans-serif, system-ui, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", "SF Mono", Consolas, monospace;
+}
+
+@layer base {
+  html {
+    background: var(--page);
+    color: var(--text);
+    font-family: var(--font-sans);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* One clear focus ring for everything the keyboard can reach. */
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  /* The main area is focused by code after navigation; it needs no ring of its own. */
+  [tabindex="-1"]:focus-visible {
+    outline: none;
+  }
+
+  /* Tailwind resets borders to currentColor; hairlines use the line color unless a class says otherwise. */
+  *,
+  ::before,
+  ::after {
+    border-color: var(--line);
+  }
+
+  ::selection {
+    background: var(--accent-soft);
+    color: var(--text);
+  }
+}
+
+/* The moving stripe on a progress bar whose total is not known yet. */
+@keyframes progress-slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+
+.progress-indeterminate {
+  animation: progress-slide 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

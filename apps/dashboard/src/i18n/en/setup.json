@@ -1,0 +1,74 @@
+{
+  "progress": "Step {{current}} of {{total}}",
+  "progressLabel": "Setup progress",
+  "navLabel": "Setup steps",
+  "saveAndContinue": "Save and continue",
+  "welcome": {
+    "title": "Welcome to Jobgoblin",
+    "description": "A calm helper for your job search. You decide everything; it does the legwork.",
+    "promise": "Jobgoblin finds jobs, checks how well each one fits you, and prepares a truthful resume for the best ones. Nothing is sent to a company unless you approve it.",
+    "whatHappens": "What we will do now",
+    "steps": {
+      "connect": "Connect your Claude account",
+      "folder": "Choose a folder for your files",
+      "resume": "Add your resume",
+      "story": "Check what we found in it",
+      "answers": "Fill in the answers forms ask for",
+      "targets": "Say what kind of job you want"
+    },
+    "time": "This usually takes about fifteen minutes.",
+    "start": "Get started"
+  },
+  "connect": {
+    "title": "Connect Claude",
+    "description": "Jobgoblin does its thinking with your own Claude plan, so there is no extra subscription."
+  },
+  "folder": {
+    "title": "Choose your folder",
+    "description": "Your resumes, application folders and spreadsheets are kept here, on your computer. A folder in Google Drive or OneDrive also gives you an online copy.",
+    "backupsTitle": "We found backups in this folder",
+    "backupsDescription": "Restore one to carry on where you left off, or continue below to start fresh."
+  },
+  "resume": {
+    "title": "Add your resume",
+    "description": "Choose your resume as a PDF or Word file. Claude reads it and drafts the story of your work for you to check.",
+    "resumeLabel": "Your resume",
+    "resumeHint": "A PDF or Word file, up to 10 MB.",
+    "linkedinLabel": "Your LinkedIn profile (optional)",
+    "linkedinHint": "On LinkedIn, choose Save to PDF on your profile and add the file here for more detail.",
+    "privacy": "Your name, email, phone number and address are taken out of the text before Claude reads it. Claude never sees them.",
+    "read": "Read my resume",
+    "uploading": "Sending...",
+    "tooBig": "{{name}} is larger than {{size}}. Choose a smaller file.",
+    "done": "Your resume has been read. Next, check what we found."
+  },
+  "story": {
+    "title": "Your story",
+    "description": "This is what Claude found in your resume. Keep what is true, fix what is off, and drop what does not belong. Only what you confirm is ever used in a resume.",
+    "counts": "{{confirmed}} confirmed, {{waiting}} waiting for you.",
+    "allDone": "All done. You confirmed {{count}} items.",
+    "empty": {
+      "title": "We did not find anything yet",
+      "description": "Go back and add a resume, or add details by hand later in Profile."
+    }
+  },
+  "answers": {
+    "title": "Form answers",
+    "description": "Application forms ask the same things again and again. Fill them in once here. Answers Claude suggested from your resume are filled in already, so check each one."
+  },
+  "targets": {
+    "title": "Your targets",
+    "description": "Tell Jobgoblin what you are looking for, and what to leave out. You can change this any time."
+  },
+  "finish": {
+    "title": "You are ready",
+    "description": "One last click, and Jobgoblin is yours.",
+    "confirmed_one": "1 item in your story is confirmed.",
+    "confirmed_other": "{{count}} items in your story are confirmed.",
+    "missing_one": "1 answer is still missing. You can add it later in Profile.",
+    "missing_other": "{{count}} answers are still missing. You can add them later in Profile.",
+    "noneMissing": "Every form answer is filled in.",
+    "next": "Next you will see Today. Choose Find jobs there to look for your first roles.",
+    "action": "Finish setup"
+  }
+}

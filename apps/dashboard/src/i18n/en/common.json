@@ -1,0 +1,275 @@
+{
+  "appName": "Jobgoblin",
+  "skipToContent": "Skip to the main content",
+  "loading": "Loading...",
+  "nav": {
+    "label": "Main",
+    "today": "Today",
+    "pipeline": "Pipeline",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "actions": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "back": "Back",
+    "continue": "Continue",
+    "tryAgain": "Try again",
+    "dismiss": "Dismiss",
+    "edit": "Edit",
+    "confirm": "Confirm",
+    "drop": "Drop",
+    "openPosting": "Open posting",
+    "notNow": "Not now"
+  },
+  "errors": {
+    "network": {
+      "message": "Jobgoblin could not be reached.",
+      "action": "Check that Jobgoblin is still open on your computer, then try again."
+    },
+    "unexpected-response": {
+      "message": "Jobgoblin sent back something this screen could not read.",
+      "action": "Try again. If it keeps happening, restart Jobgoblin."
+    },
+    "unknown": {
+      "message": "Something went wrong.",
+      "action": "Try again in a moment."
+    },
+    "generic": {
+      "message": "Something went wrong on this screen.",
+      "action": "Try again. Your information is safe."
+    }
+  },
+  "routeError": {
+    "title": "This screen could not open"
+  },
+  "notFound": {
+    "title": "We could not find that page",
+    "description": "The address may be old or mistyped.",
+    "action": "Go to Today"
+  },
+  "status": {
+    "Found": "Found",
+    "Scored": "Scored",
+    "Skipped (low fit)": "Skipped (low fit)",
+    "Long shot": "Long shot",
+    "Tailored": "Tailored",
+    "Awaiting approval": "Awaiting approval",
+    "Skipped": "Skipped",
+    "Approved": "Approved",
+    "Filling": "Filling",
+    "Needs your input": "Needs your input",
+    "Applied": "Applied",
+    "OA": "Online assessment",
+    "Phone screen": "Phone screen",
+    "Onsite": "Interview round",
+    "Offer": "Offer",
+    "Rejected": "Rejected",
+    "Ghosted": "No reply",
+    "Withdrawn": "Withdrawn",
+    "Accepted": "Accepted",
+    "Declined": "Declined"
+  },
+  "band": {
+    "apply": "Strong match",
+    "stretch": "Stretch",
+    "long-shot": "Long shot",
+    "skip": "Low fit"
+  },
+  "region": {
+    "US": "United States",
+    "IN": "India",
+    "REMOTE": "Remote",
+    "OTHER": "Somewhere else"
+  },
+  "actor": {
+    "person": "You",
+    "run": "Claude",
+    "server": "Jobgoblin",
+    "extension": "Autofill"
+  },
+  "run": {
+    "kind": {
+      "setup": "Reading your resume",
+      "hunt": "Finding jobs",
+      "paste": "Reading a job you added",
+      "tailor": "Tailoring resumes",
+      "answers": "Writing answers",
+      "ask": "Answering your question"
+    },
+    "status": {
+      "queued": "Waiting for its turn",
+      "running": "Working",
+      "waiting": "Waiting for your answer",
+      "done": "Finished",
+      "failed": "Stopped before finishing",
+      "blocked": "Needs your attention",
+      "interrupted": "Interrupted",
+      "cancelled": "Cancelled"
+    },
+    "starting": "Getting started",
+    "progress": "{{done}} of {{total}} done",
+    "cancelLabel": "Cancel: {{title}}",
+    "retryLabel": "Try again: {{title}}",
+    "dismissLabel": "Dismiss: {{title}}"
+  },
+  "copy": {
+    "copy": "Copy",
+    "copied": "Copied",
+    "failed": "Could not copy. Select the text and copy it yourself.",
+    "copyLabel": "Copy {{label}}"
+  },
+  "question": {
+    "send": "Send answer"
+  },
+  "fit": {
+    "title": "Fit",
+    "notScored": "This job has not been scored yet.",
+    "scoreLabel": "Fit score {{score}} out of 100",
+    "hardSkip": "Skipped because: {{reason}}",
+    "flags": "Things to check",
+    "gaps": "Not shown in your story",
+    "matched": "From your story"
+  },
+  "diff": {
+    "title": "Changes from your main resume",
+    "description": "How this resume differs from the one you confirmed in setup.",
+    "none": "This is your main resume.",
+    "same": "Nothing changed.",
+    "added": "Lines added",
+    "removed": "Lines left out",
+    "reordered": "The order of some lines changed.",
+    "reworded": "Lines reworded",
+    "before": "Before:",
+    "after": "Now:",
+    "unknownLine": "A line from your story"
+  },
+  "dataSheet": {
+    "caption": "Every value that will be sent with this application",
+    "field": "Field",
+    "value": "Value",
+    "missing": "Missing"
+  },
+  "jobText": {
+    "label": "Job description"
+  },
+  "resumePreview": {
+    "label": "Resume preview",
+    "legend": "Lines that were reworded for this job.",
+    "legendSample": "Reworded line",
+    "rewordedPrefix": "Reworded:",
+    "experience": "Experience",
+    "projects": "Projects",
+    "skills": "Skills",
+    "education": "Education"
+  },
+  "usageNotice": {
+    "title": "Before your first run",
+    "plan": "Jobgoblin does its thinking with your own Claude plan. There is nothing extra to pay, and nothing is sent to Jobgoblin's own servers.",
+    "limits": "Runs share the same limits as your chats with Claude. Finding jobs and tailoring many resumes at once can use a good part of a day's allowance on a smaller plan.",
+    "tip": "If you reach your limit, Jobgoblin pauses and tells you. Nothing is lost, and you can carry on when the limit resets.",
+    "continue": "I understand, continue"
+  },
+  "claude": {
+    "state": {
+      "connected": "Connected",
+      "not-installed": "Not installed",
+      "update-needed": "Needs an update",
+      "signed-out": "Not signed in"
+    },
+    "explain": {
+      "connected": "Claude is ready. Jobgoblin will use your Claude plan for the thinking.",
+      "not-installed": "Jobgoblin needs Claude Code on this computer. One button installs it for you.",
+      "update-needed": "Your copy of Claude Code is too old for Jobgoblin. One button updates it.",
+      "signed-out": "Sign in with your Claude account. A page from Anthropic opens, and you sign in there. Jobgoblin never sees your password."
+    },
+    "version": "Version {{version}}",
+    "plan": "Plan: {{plan}}",
+    "install": "Install Claude Code",
+    "update": "Update Claude Code",
+    "installing": "Installing...",
+    "signIn": "Sign in with Claude",
+    "signingIn": "Opening the sign-in page...",
+    "checkAgain": "Check again",
+    "finishSignIn": "Finish signing in on the page that opened. This screen updates by itself.",
+    "showCommand": "See exactly what this does",
+    "commandNote": "Jobgoblin will run this on your computer:"
+  },
+  "folder": {
+    "current": "Your files are kept in",
+    "choose": "Choose a folder",
+    "change": "Choose another folder",
+    "pathLabel": "Folder",
+    "pathHint": "The full path of a folder on your computer. It is created if it does not exist.",
+    "use": "Use this folder"
+  },
+  "backups": {
+    "restoreLabel": "Restore the backup from {{when}}",
+    "restore": "Restore",
+    "restoring": "Restoring...",
+    "confirmTitle": "Restore this backup?",
+    "confirmDescription": "Jobgoblin will go back to how things were on {{when}}. Your current information is saved as a backup first, so you can come back to it."
+  },
+  "story": {
+    "kind": {
+      "experience": "Job",
+      "project": "Project",
+      "education": "Education",
+      "achievement": "Achievement",
+      "skill": "Skill",
+      "headline": "Headline"
+    },
+    "status": {
+      "pending": "To confirm",
+      "confirmed": "Confirmed",
+      "rejected": "Dropped"
+    },
+    "tools": "Tools: {{tools}}",
+    "confirmLabel": "Confirm: {{name}}",
+    "editLabel": "Edit: {{name}}",
+    "dropLabel": "Drop: {{name}}",
+    "confirmAll_one": "Confirm this item",
+    "confirmAll_other": "Confirm all {{count}} items",
+    "textLabel": {
+      "experience": "Summary",
+      "project": "Summary",
+      "education": "Summary",
+      "achievement": "What you did",
+      "skill": "Skill",
+      "headline": "Headline"
+    },
+    "form": {
+      "title": "Title",
+      "organization": "Company or school",
+      "location": "Place",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "tools": "Tools you used",
+      "numbers": "Numbers (for example 40%, $2M)",
+      "hint": {
+        "startDate": "Write it as year and month, like 2024-06, or just the year.",
+        "endDate": "Write it as year and month, like 2024-06, or write Present.",
+        "list": "Separate items with commas."
+      }
+    },
+    "sections": {
+      "experience": "Jobs",
+      "projects": "Projects",
+      "headline": "Headline",
+      "skills": "Skills",
+      "education": "Education",
+      "other": "Other items"
+    },
+    "add": {
+      "open": "Add to your story",
+      "title": "Add to your story",
+      "description": "Add something that is true and that you want resumes to be able to use.",
+      "kind": "What are you adding?",
+      "parent": "Which job or project is it from?",
+      "chooseParent": "Choose one",
+      "save": "Add"
+    }
+  }
+}

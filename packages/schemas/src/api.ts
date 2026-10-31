@@ -10,7 +10,7 @@ import { Job, Region } from "./job";
 import { ApplicationResume, ResumeDiff, ResumeHeader, ResumeVersion, Sha256Hex } from "./resume";
 import { Question, Run } from "./run";
 import { Actor, ApplicationStatus } from "./status";
-import { StoryItem } from "./story";
+import { StoryItem, StoryItemData, StoryItemKind } from "./story";
 import { Answer, ProofType, Submission } from "./submission";
 
 // Every failed request returns this and nothing else, never a stack trace. `message` says what
@@ -37,6 +37,8 @@ export type NeedsYouKind = z.infer<typeof NeedsYouKind>;
 
 export const NeedsYouItem = z.object({
   kind: NeedsYouKind,
+  // The id of the thing that needs the person: the question's id for "question", the run's id for
+  // "run-attention", and the application's id for every other kind.
   id: z.string(),
   applicationId: z.string().nullable(),
   runId: z.string().nullable(),
@@ -264,3 +266,33 @@ export const ChooseFolderResponse = z.object({
   backupsFound: z.array(Backup),
 });
 export type ChooseFolderResponse = z.infer<typeof ChooseFolderResponse>;
+
+// POST /api/story: the person adds an item by hand. It starts pending, like everything else in Your story.
+export const AddStoryItemRequest = z.object({
+  kind: StoryItemKind,
+  parentId: z.string().nullable(),
+  data: StoryItemData,
+  keywords: z.array(z.string()).default([]),
+});
+export type AddStoryItemRequest = z.infer<typeof AddStoryItemRequest>;
+
+// PUT /api/story/:id: an edit returns the item to pending until the person confirms it again.
+export const EditStoryItemRequest = z.object({
+  data: StoryItemData,
+  keywords: z.array(z.string()).default([]),
+});
+export type EditStoryItemRequest = z.infer<typeof EditStoryItemRequest>;
+
+// POST /api/import-resume. runId is the setup run started after a resume upload; null after a LinkedIn
+// upload alone, which waits for the resume.
+export const ImportResumeResponse = z.object({
+  runId: z.string().nullable(),
+});
+export type ImportResumeResponse = z.infer<typeof ImportResumeResponse>;
+
+// POST /api/open. opened is false outside the desktop app; the dashboard then shows the path instead.
+export const OpenPathResponse = z.object({
+  opened: z.boolean(),
+  path: z.string(),
+});
+export type OpenPathResponse = z.infer<typeof OpenPathResponse>;
