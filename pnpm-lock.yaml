@@ -111,9 +111,19 @@ importers:
 
   fixtures/fake-claude:
     dependencies:
+      '@jobgoblin/schemas':
+        specifier: workspace:*
+        version: link:../../packages/schemas
       '@modelcontextprotocol/sdk':
         specifier: ^1.32.2
         version: 1.32.2(zod@4.6.7)
+      zod:
+        specifier: ^4.6.7
+        version: 4.6.7
+    devDependencies:
+      tsup:
+        specifier: ^9.0.0
+        version: 9.0.0(jiti@2.7.0)(postcss@8.5.32)(tsx@4.23.15)(typescript@7.0.2)
 
   packages/core:
     dependencies:
