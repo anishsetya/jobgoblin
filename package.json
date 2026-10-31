@@ -19,6 +19,7 @@
     "lint:deps": "depcruise --config .dependency-cruiser.cjs apps packages"
   },
   "devDependencies": {
+    "@swc/core": "^1.16.21",
     "@types/node": "^26.6.6",
     "dependency-cruiser": "^18.7.0",
     "fast-check": "^4.10.2",

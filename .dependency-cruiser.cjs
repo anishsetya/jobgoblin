@@ -1,5 +1,8 @@
 // Dependency rules from the tech spec ("Repository and packages") and docs/poc/ARCHITECTURE.md section 3.
 // `pnpm lint:deps` fails when a package reaches past its boundary.
+// The rules guard shipped code, so test files (which use Vitest, temp folders and processes) are left out.
+const TEST_FILES = "\\.test\\.ts$|/test/";
+
 /** @type {import('dependency-cruiser').IConfiguration} */
 module.exports = {
   forbidden: [
@@ -7,7 +10,7 @@ module.exports = {
       name: "core-is-pure",
       comment: "core holds the rules; it may use only schemas and node:crypto, so it stays testable without files or network.",
       severity: "error",
-      from: { path: "^packages/core/src" },
+      from: { path: "^packages/core/src", pathNot: TEST_FILES },
       to: {
         dependencyTypesNot: ["type-only"],
         pathNot: ["^packages/core/src", "^packages/schemas/src", "^node:crypto$", "^crypto$", "node_modules/zod"],
@@ -17,14 +20,14 @@ module.exports = {
       name: "only-storage-touches-the-database",
       comment: "One writer path: only packages/storage opens the SQLite database.",
       severity: "error",
-      from: { pathNot: "^packages/storage/src" },
+      from: { pathNot: ["^packages/storage/src", TEST_FILES] },
       to: { path: "^node:sqlite$|^sqlite$" },
     },
     {
       name: "only-the-runner-starts-processes",
       comment: "One place to audit what runs on the person's machine.",
       severity: "error",
-      from: { pathNot: ["^packages/server/src/runner", "^apps/desktop/src", "^fixtures/", "^e2e/"] },
+      from: { pathNot: ["^packages/server/src/runner", "^apps/desktop/src", "^fixtures/", "^e2e/", TEST_FILES] },
       to: { path: "^node:child_process$|^child_process$" },
     },
     {
@@ -50,6 +53,9 @@ module.exports = {
     },
   ],
   options: {
+    // TypeScript 7 (the native compiler) has no JavaScript API for dependency-cruiser to call, so source files
+    // are parsed with swc instead. It sees the same import statements.
+    parser: "swc",
     doNotFollow: { path: "node_modules" },
     tsPreCompilationDeps: true,
     combinedDependencies: true,
