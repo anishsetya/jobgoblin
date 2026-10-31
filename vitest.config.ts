@@ -4,7 +4,13 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    include: ["packages/*/src/**/*.test.ts", "packages/*/test/**/*.test.ts", "fixtures/fake-claude/**/*.test.ts"],
+    include: [
+      "packages/*/src/**/*.test.ts",
+      "packages/*/test/**/*.test.ts",
+      "apps/desktop/src/**/*.test.ts",
+      "fixtures/fake-claude/src/**/*.test.ts",
+      "fixtures/fake-claude/test/**/*.test.ts",
+    ],
     testTimeout: 20_000,
   },
 });
