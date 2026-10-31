@@ -1,0 +1,374 @@
+{
+  "profile": {
+    "contact": {
+      "fullName": "Alex Rivera",
+      "email": "alex.rivera@example.com",
+      "phone": "+1 555 0100",
+      "location": "Austin, TX",
+      "github": "github.com/alexrivera-example"
+    },
+    "workAuthorization": {
+      "regions": {
+        "US": {
+          "authorized": true,
+          "requiresSponsorship": false,
+          "willingToRelocate": true
+        }
+      }
+    },
+    "employment": {
+      "currentEmployer": "Northwind Logistics",
+      "currentTitle": "Software Engineer",
+      "noticePeriod": "2 weeks",
+      "earliestStartDate": "2026-12-01",
+      "yearsExperience": "2"
+    },
+    "compensation": {
+      "expectedBase": "TODO"
+    },
+    "eeo": {
+      "gender": "Decline to self-identify",
+      "raceEthnicity": "Decline to self-identify",
+      "veteranStatus": "Decline to self-identify",
+      "disability": "Decline to self-identify"
+    },
+    "targets": {
+      "roles": ["Backend Engineer", "Platform Engineer", "Software Engineer"],
+      "regions": ["US", "REMOTE"],
+      "tracks": ["backend", "platform"],
+      "maxYearsRequired": 4,
+      "rolesToAvoid": ["QA", "SDET", "Test Engineer", "Quality Engineer"],
+      "hardSkips": ["An active security clearance is required"],
+      "flags": ["Relocation required", "Graduation-year window"]
+    },
+    "rules": {
+      "bannedTerms": ["rockstar", "ninja"]
+    }
+  },
+  "storyItems": [
+    {
+      "id": "headline-backend",
+      "kind": "headline",
+      "parentId": null,
+      "status": "confirmed",
+      "data": {
+        "text": "Backend engineer who builds reliable APIs and the platforms they run on",
+        "tools": [],
+        "numbers": []
+      },
+      "keywords": ["backend", "platform"],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "exp-northwind",
+      "kind": "experience",
+      "parentId": null,
+      "status": "confirmed",
+      "data": {
+        "text": "Software Engineer at Northwind Logistics",
+        "title": "Software Engineer",
+        "organization": "Northwind Logistics",
+        "location": "Austin, TX",
+        "startDate": "2024-06",
+        "endDate": "Present",
+        "tools": [],
+        "numbers": []
+      },
+      "keywords": [],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "ach-northwind-tracking-api",
+      "kind": "achievement",
+      "parentId": "exp-northwind",
+      "status": "confirmed",
+      "data": {
+        "text": "Built a shipment-tracking API in Python and PostgreSQL that serves 2M requests a day",
+        "tools": ["Python", "PostgreSQL"],
+        "numbers": ["2M"]
+      },
+      "keywords": ["api", "python", "postgresql"],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "ach-northwind-latency",
+      "kind": "achievement",
+      "parentId": "exp-northwind",
+      "status": "confirmed",
+      "data": {
+        "text": "Cut p95 latency of the orders service 40% by adding a Redis read-through cache",
+        "tools": ["Redis"],
+        "numbers": ["40%", "p95"]
+      },
+      "keywords": ["latency", "cache", "redis"],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "ach-northwind-kubernetes",
+      "kind": "achievement",
+      "parentId": "exp-northwind",
+      "status": "confirmed",
+      "data": {
+        "text": "Led the migration of 12 services from VMs to Kubernetes on AWS with zero downtime",
+        "tools": ["Kubernetes", "AWS"],
+        "numbers": ["12"]
+      },
+      "keywords": ["migration", "kubernetes", "aws"],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "ach-northwind-oncall",
+      "kind": "achievement",
+      "parentId": "exp-northwind",
+      "status": "confirmed",
+      "data": {
+        "text": "Contributed to the on-call rotation and wrote 15 runbooks for incident response",
+        "tools": [],
+        "numbers": ["15"]
+      },
+      "keywords": ["on-call", "runbooks", "incident response"],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "exp-contoso",
+      "kind": "experience",
+      "parentId": null,
+      "status": "confirmed",
+      "data": {
+        "text": "Software Engineering Intern at Contoso Health",
+        "title": "Software Engineering Intern",
+        "organization": "Contoso Health",
+        "location": "Remote",
+        "startDate": "2023-05",
+        "endDate": "2023-08",
+        "tools": [],
+        "numbers": []
+      },
+      "keywords": [],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "ach-contoso-sync",
+      "kind": "achievement",
+      "parentId": "exp-contoso",
+      "status": "confirmed",
+      "data": {
+        "text": "Designed a TypeScript service that syncs patient appointment data between two systems",
+        "tools": ["TypeScript"],
+        "numbers": []
+      },
+      "keywords": ["typescript", "integration"],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "ach-contoso-tests",
+      "kind": "achievement",
+      "parentId": "exp-contoso",
+      "status": "confirmed",
+      "data": {
+        "text": "Wrote integration tests that raised coverage of the scheduling module from 55% to 85%",
+        "tools": [],
+        "numbers": ["55%", "85%"]
+      },
+      "keywords": ["testing", "coverage"],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "proj-ledgerline",
+      "kind": "project",
+      "parentId": null,
+      "status": "confirmed",
+      "data": {
+        "text": "Ledgerline, open-source double-entry ledger in Go",
+        "title": "Ledgerline",
+        "tools": ["Go"],
+        "numbers": []
+      },
+      "keywords": ["open source", "go", "ledger"],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "ach-ledgerline-stars",
+      "kind": "achievement",
+      "parentId": "proj-ledgerline",
+      "status": "confirmed",
+      "data": {
+        "text": "Built an open-source double-entry ledger library in Go with 300 GitHub stars",
+        "tools": ["Go"],
+        "numbers": ["300"]
+      },
+      "keywords": ["open source", "go"],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "edu-state-university",
+      "kind": "education",
+      "parentId": null,
+      "status": "confirmed",
+      "data": {
+        "text": "B.S. Computer Science, State University",
+        "title": "B.S. Computer Science",
+        "organization": "State University",
+        "location": "Austin, TX",
+        "startDate": "2020-08",
+        "endDate": "2024-05",
+        "tools": [],
+        "numbers": []
+      },
+      "keywords": [],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "skill-python",
+      "kind": "skill",
+      "parentId": null,
+      "status": "confirmed",
+      "data": {
+        "text": "Python",
+        "tools": [],
+        "numbers": []
+      },
+      "keywords": [],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "skill-typescript",
+      "kind": "skill",
+      "parentId": null,
+      "status": "confirmed",
+      "data": {
+        "text": "TypeScript",
+        "tools": [],
+        "numbers": []
+      },
+      "keywords": [],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "skill-go",
+      "kind": "skill",
+      "parentId": null,
+      "status": "confirmed",
+      "data": {
+        "text": "Go",
+        "tools": [],
+        "numbers": []
+      },
+      "keywords": [],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "skill-postgresql",
+      "kind": "skill",
+      "parentId": null,
+      "status": "confirmed",
+      "data": {
+        "text": "PostgreSQL",
+        "tools": [],
+        "numbers": []
+      },
+      "keywords": [],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "skill-redis",
+      "kind": "skill",
+      "parentId": null,
+      "status": "confirmed",
+      "data": {
+        "text": "Redis",
+        "tools": [],
+        "numbers": []
+      },
+      "keywords": [],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "skill-docker",
+      "kind": "skill",
+      "parentId": null,
+      "status": "confirmed",
+      "data": {
+        "text": "Docker",
+        "tools": [],
+        "numbers": []
+      },
+      "keywords": [],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "skill-kubernetes",
+      "kind": "skill",
+      "parentId": null,
+      "status": "confirmed",
+      "data": {
+        "text": "Kubernetes",
+        "tools": [],
+        "numbers": []
+      },
+      "keywords": [],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "skill-aws",
+      "kind": "skill",
+      "parentId": null,
+      "status": "confirmed",
+      "data": {
+        "text": "AWS",
+        "tools": [],
+        "numbers": []
+      },
+      "keywords": [],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "skill-react",
+      "kind": "skill",
+      "parentId": null,
+      "status": "confirmed",
+      "data": {
+        "text": "React",
+        "tools": [],
+        "numbers": []
+      },
+      "keywords": [],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    },
+    {
+      "id": "skill-terraform",
+      "kind": "skill",
+      "parentId": null,
+      "status": "confirmed",
+      "data": {
+        "text": "Terraform",
+        "tools": [],
+        "numbers": []
+      },
+      "keywords": [],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    }
+  ]
+}
