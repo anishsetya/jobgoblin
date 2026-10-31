@@ -1,0 +1,29 @@
+{
+  "name": "jobgoblin",
+  "private": true,
+  "description": "Free, open-source job-application copilot that runs on the Claude plan you already pay for",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "packageManager": "pnpm@10.34.9",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @jobgoblin/dashboard build && pnpm --filter @jobgoblin/server dev",
+    "dev:dashboard": "pnpm --filter @jobgoblin/dashboard dev",
+    "dev:desktop": "pnpm --filter @jobgoblin/dashboard build && pnpm --filter @jobgoblin/server build && pnpm --filter @jobgoblin/desktop start",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "vitest run",
+    "test:e2e": "pnpm --filter @jobgoblin/e2e test",
+    "lint:deps": "depcruise --config .dependency-cruiser.cjs apps packages"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "dependency-cruiser": "^18.7.0",
+    "fast-check": "^4.10.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  }
+}

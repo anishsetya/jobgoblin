@@ -1,0 +1,11 @@
+packages:
+  - apps/*
+  - packages/*
+  - fixtures/fake-claude
+  - e2e
+
+# pnpm 10 skips install scripts unless a package is listed here.
+# Electron's script downloads the Electron binary; esbuild's fetches its native binary.
+onlyBuiltDependencies:
+  - electron
+  - esbuild
