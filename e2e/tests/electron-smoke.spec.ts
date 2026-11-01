@@ -7,6 +7,7 @@ import os from "node:os";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { _electron as electron, expect, test, type ElectronApplication, type Page } from "@playwright/test";
+import { RESUME_PDF } from "../support/seed";
 import { DEMO_FEEDS_DIR, FAKE_CLAUDE_CLI, REPO_ROOT } from "../support/server";
 
 const DESKTOP_DIR = path.join(REPO_ROOT, "apps", "desktop");
@@ -116,6 +117,40 @@ test.describe("As a desktop user, Jobgoblin behaves like an app", () => {
       expect(exitCode).toBe(0);
       expect(fs.existsSync(serverJson)).toBe(false);
       app = undefined;
+    });
+  });
+
+  // Regression for docs/poc/RCA-2026-11-01-pdf-upload.md: inside Electron the server runs in a utility process,
+  // where pdf.js once refused to open every PDF and the wizard blamed the person's file. Every other test runs
+  // the server in plain Node, so only this one can catch that class of bug.
+  test("my resume PDF is read on the wizard's resume step inside the desktop app", async () => {
+    app = await electron.launch({ executablePath: electronBinary(), args: [DESKTOP_DIR], env: desktopEnvironment(appDataDir) });
+    const dashboard = await app.firstWindow();
+    const serverOrigin = await waitForDashboard(dashboard);
+
+    await test.step("a folder is chosen (the computer's folder chooser cannot be clicked by a test)", async () => {
+      // Outside the app data folder: the server refuses a person's folder inside its own working files.
+      const personFolder = fs.mkdtempSync(path.join(os.tmpdir(), "jobgoblin-e2e-folder-"));
+      const status = await dashboard.evaluate(async (folder) => {
+        const response = await fetch("/api/settings/folder", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${window.jobgoblin?.sessionToken ?? ""}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ path: folder }),
+        });
+        return `${response.status} ${await response.text()}`;
+      }, personFolder);
+      expect(status).toMatch(/^200 /);
+    });
+
+    await test.step("I upload my PDF and Claude reads it, with no 'damaged or protected' error", async () => {
+      await dashboard.goto(`${serverOrigin}/setup/4`);
+      await expect(dashboard.getByRole("heading", { level: 1, name: "Add your resume" })).toBeVisible();
+      await dashboard.getByLabel("Your resume", { exact: true }).setInputFiles(RESUME_PDF);
+      await dashboard.getByRole("button", { name: "Read my resume" }).click();
+      await dashboard.getByRole("dialog", { name: "Before your first run" }).getByRole("button", { name: "I understand, continue" }).click();
+
+      await expect(dashboard.getByText("Your resume has been read. Next, check what we found.")).toBeVisible({ timeout: 60_000 });
+      await expect(dashboard.getByText(/could not read/)).toHaveCount(0);
     });
   });
 });
