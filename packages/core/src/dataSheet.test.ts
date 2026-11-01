@@ -133,17 +133,40 @@ describe("work authorization by region", () => {
     expect(sheet.region).toBe("IN");
   });
 
-  it("falls back to the US answers for a region with none", () => {
-    const sheet = alexsSheet("REMOTE");
+  it("never borrows another region's answers: a region with none stays TODO", () => {
+    const sheet = alexsSheet("IN");
 
-    expect(fieldNamed(sheet, "workAuthorized").value).toBe("Yes");
-    expect(sheet.region).toBe("REMOTE");
+    expect(fieldNamed(sheet, "workAuthorized")).toMatchObject({ value: "TODO", missing: true });
+    expect(fieldNamed(sheet, "requiresSponsorship")).toMatchObject({ value: "TODO", missing: true });
+    expect(sheet.region).toBe("IN");
   });
 
   it("shows TODO when the person has no answers for the region or the US", () => {
     const sheet = alexsSheet("US", Profile.parse({}));
 
     expect(fieldNamed(sheet, "workAuthorized")).toMatchObject({ value: "TODO", missing: true });
+  });
+});
+
+describe("expected pay by region", () => {
+  const withPay = Profile.parse({
+    ...alexRiveraProfile(),
+    compensation: { byRegion: { US: "$120,000", IN: "INR 24 lakh" } },
+  });
+
+  it("reads the pay of the job's own region", () => {
+    expect(fieldNamed(alexsSheet("US", withPay), "expectedBase").value).toBe("$120,000");
+    expect(fieldNamed(alexsSheet("IN", withPay), "expectedBase").value).toBe("INR 24 lakh");
+  });
+
+  it("leaves a region with no pay as TODO instead of using another region's", () => {
+    expect(fieldNamed(alexsSheet("REMOTE", withPay), "expectedBase")).toMatchObject({ value: "TODO", missing: true });
+  });
+
+  it("uses the older single answer for a region with none of its own", () => {
+    const single = Profile.parse({ ...alexRiveraProfile(), compensation: { expectedBase: "$100,000" } });
+
+    expect(fieldNamed(alexsSheet("US", single), "expectedBase").value).toBe("$100,000");
   });
 });
 

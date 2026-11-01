@@ -2,12 +2,21 @@
 // the same dashboard, never lets a web page take over its window, and closes without leaving anything behind."
 // This is the only test that runs inside Electron (Playwright's _electron). It launches apps/desktop exactly as
 // `pnpm dev:desktop` would, with a temporary app data folder, the demo board and the fake claude.
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { _electron as electron, expect, test, type ElectronApplication, type Page } from "@playwright/test";
-import { RESUME_PDF } from "../support/seed";
+import { findJobsAndWaitForReview } from "../support/flows";
+import {
+  PASSWORD_PROTECTED_PDF,
+  RESUME_PDF,
+  approveThroughApi,
+  findApplicationId,
+  seedAlexRivera,
+  type SeedTarget,
+} from "../support/seed";
 import { DEMO_FEEDS_DIR, FAKE_CLAUDE_CLI, REPO_ROOT } from "../support/server";
 
 const DESKTOP_DIR = path.join(REPO_ROOT, "apps", "desktop");
@@ -142,18 +151,106 @@ test.describe("As a desktop user, Jobgoblin behaves like an app", () => {
       expect(status).toMatch(/^200 /);
     });
 
-    await test.step("I upload my PDF and Claude reads it, with no 'damaged or protected' error", async () => {
+    await test.step("a password-protected PDF is called what it is: pdf.js's error name survives the desktop app", async () => {
       await dashboard.goto(`${serverOrigin}/setup/4`);
       await expect(dashboard.getByRole("heading", { level: 1, name: "Add your resume" })).toBeVisible();
-      await dashboard.getByLabel("Your resume", { exact: true }).setInputFiles(RESUME_PDF);
+      await dashboard.getByLabel("Your resume", { exact: true }).setInputFiles(PASSWORD_PROTECTED_PDF);
       await dashboard.getByRole("button", { name: "Read my resume" }).click();
       await dashboard.getByRole("dialog", { name: "Before your first run" }).getByRole("button", { name: "I understand, continue" }).click();
+
+      const problem = dashboard.getByRole("alert");
+      await expect(problem).toContainText("This PDF is protected with a password.");
+      await expect(problem).toContainText("Open it, save a copy without a password, and choose that copy.");
+      await expect(problem).not.toContainText("our side"); // not the "problem on our side" message pdf.js once caused
+    });
+
+    await test.step("I choose my own PDF instead, the message goes away, and Claude reads it", async () => {
+      await dashboard.getByLabel("Your resume", { exact: true }).setInputFiles(RESUME_PDF);
+      await expect(dashboard.getByRole("alert")).toHaveCount(0);
+      await dashboard.getByRole("button", { name: "Read my resume" }).click();
 
       await expect(dashboard.getByText("Your resume has been read. Next, check what we found.")).toBeVisible({ timeout: 60_000 });
       await expect(dashboard.getByText(/could not read/)).toHaveCount(0);
     });
   });
+
+  // Follow-up 2 of the same RCA: pdf.js was not the only library that can behave differently in Electron's
+  // utility process. Each feature that uses one gets one pass here: Typst (render), pdf.js (read back),
+  // the workbook writer (xlsx) and SQLite (backup).
+  test("every feature that uses a library works inside the desktop app: render, read back, export, back up", async () => {
+    test.setTimeout(240_000);
+    app = await electron.launch({ executablePath: electronBinary(), args: [DESKTOP_DIR], env: desktopEnvironment(appDataDir) });
+    const dashboard = await app.firstWindow();
+    const serverOrigin = await waitForDashboard(dashboard);
+    // Outside the app data folder: the server refuses a person's folder inside its own working files.
+    const personFolder = fs.mkdtempSync(path.join(os.tmpdir(), "jobgoblin-e2e-folder-"));
+    const inTheApp = apiInsideTheApp(dashboard, personFolder);
+
+    await test.step("setup is finished with Alex Rivera's saved profile, through the app's own API", async () => {
+      await seedAlexRivera(inTheApp, { usageNoticeSeen: true });
+      await dashboard.goto(`${serverOrigin}/today`);
+      await expect(dashboard.getByRole("button", { name: "Find jobs" })).toBeEnabled();
+    });
+
+    await test.step("Find jobs tailors resumes: Typst draws each PDF and pdf.js reads it back to check it", async () => {
+      await findJobsAndWaitForReview(dashboard);
+    });
+
+    const acmeId = await findApplicationId(inTheApp, "Acme Cloud", "Backend Engineer");
+
+    await test.step("approving writes the final PDF into my folder, exactly as approved", async () => {
+      await approveThroughApi(inTheApp, acmeId);
+
+      const detail = await inTheApp.api<{ application: { folder: string | null }; approval: { pdfSha256: string } | null }>(`/api/apps/${acmeId}`);
+      const resumePdf = path.join(personFolder, ...(detail.application.folder ?? "").split("/"), "Alex Rivera - Resume.pdf");
+      const approvedBytes = fs.readFileSync(resumePdf);
+      expect(approvedBytes.subarray(0, 5).toString()).toBe("%PDF-");
+      expect(createHash("sha256").update(approvedBytes).digest("hex")).toBe(detail.approval?.pdfSha256);
+    });
+
+    await test.step("the tracker downloads as a real Excel workbook", async () => {
+      const workbook = await dashboard.evaluate(async () => {
+        const response = await fetch("/api/export/xlsx", { headers: { Authorization: `Bearer ${window.jobgoblin?.sessionToken ?? ""}` } });
+        const bytes = new Uint8Array(await response.arrayBuffer());
+        return { status: response.status, firstTwoLetters: String.fromCharCode(bytes[0] ?? 0, bytes[1] ?? 0), size: bytes.length };
+      });
+      expect(workbook.status).toBe(200);
+      expect(workbook.firstTwoLetters).toBe("PK"); // an .xlsx is a zip file
+      expect(workbook.size).toBeGreaterThan(1000);
+    });
+
+    await test.step("Back up now makes a backup and lists it", async () => {
+      await dashboard.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Settings" }).click();
+      const backups = dashboard.getByRole("region", { name: "Backups" });
+      await backups.getByRole("button", { name: "Back up now" }).click();
+
+      await expect(backups).toContainText(/Last backup: .+/);
+      await expect(backups.getByRole("button", { name: /^Restore the backup from / }).first()).toBeVisible();
+    });
+  });
 });
+
+// Calls the server's API from inside the desktop window, the way the dashboard itself does, so the seed helpers
+// in support/seed.ts can set the person up without a server address or token of their own.
+function apiInsideTheApp(dashboard: Page, personFolder: string): SeedTarget {
+  return {
+    personFolder,
+    api: async <T>(route: string, init: { method?: string; body?: unknown } = {}): Promise<T> => {
+      const method = init.method ?? (init.body === undefined ? "GET" : "POST");
+      const answer = await dashboard.evaluate(
+        async ({ route, method, body }) => {
+          const headers: Record<string, string> = { Authorization: `Bearer ${window.jobgoblin?.sessionToken ?? ""}` };
+          if (body !== undefined) headers["Content-Type"] = "application/json";
+          const response = await fetch(route, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
+          return { ok: response.ok, text: await response.text() };
+        },
+        { route, method, body: init.body },
+      );
+      if (!answer.ok) throw new Error(`${method} ${route} failed: ${answer.text}`);
+      return (answer.text === "" ? undefined : JSON.parse(answer.text)) as T;
+    },
+  };
+}
 
 // The Electron program that apps/desktop depends on (pnpm links it into apps/desktop/node_modules).
 function electronBinary(): string {

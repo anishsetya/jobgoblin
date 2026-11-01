@@ -3,7 +3,7 @@
 // Ported from the prototype's classify_region, classify_title and SENIOR_YEARS (tools/jobs-mcp), but driven
 // by the person's targets instead of hard-coded tracks.
 // Spec: "Job discovery" (code filter first, dedupe). ARCHITECTURE.md section 6.
-import type { Region, TargetsSection } from "@jobgoblin/schemas";
+import type { Profile, Region, TargetsSection } from "@jobgoblin/schemas";
 import { containsWholeWord, escapeRegExp } from "./textHelpers";
 import { sha256Hex } from "./versionId";
 
@@ -135,12 +135,31 @@ export function yearsRequired(title: string, text: string): number | null {
 // ---------------------------------------------------------------------------------------------
 
 export type PostingToFilter = { title: string; location: string; text: string };
-export type CodeFilterTargets = Pick<TargetsSection, "rolesToAvoid" | "maxYearsRequired" | "regions">;
+export type CodeFilterTargets = Pick<TargetsSection, "rolesToAvoid" | "maxYearsRequired" | "regions" | "cities">;
 export type CodeFilterResult = { passes: true } | { passes: false; reason: string };
 
-// Drops a posting before any run reads it, for one of three reasons from the person's targets:
-// the title names a role to avoid, it asks for more years than the person's limit, or it is in a region
-// outside their targets. Every other worry (class year, relocation, a school screen) is a flag for the run.
+// The person is never asked for a limit on years. A job asking for one or two more than they have is still
+// worth a try (the run flags it), so the limit is their experience plus this much.
+export const YEARS_ALLOWED_OVER_EXPERIENCE = 2;
+
+// "3", "3 years" and "5+" all give the first whole number. Anything else ("TODO", "a few") gives null.
+export function parseYearsExperience(text: string): number | null {
+  const match = /\d+/.exec(text);
+  return match === null ? null : Number(match[0]);
+}
+
+// The code filter's targets for this profile. The limit on years follows the person's years of experience
+// (Form answers); the stored default is used only while that answer is still missing.
+export function codeFilterTargetsFor(profile: Pick<Profile, "targets" | "employment">): TargetsSection {
+  const experience = parseYearsExperience(profile.employment.yearsExperience);
+  if (experience === null) return profile.targets;
+  return { ...profile.targets, maxYearsRequired: experience + YEARS_ALLOWED_OVER_EXPERIENCE };
+}
+
+// Drops a posting before any run reads it, for one of four reasons from the person's targets:
+// the title names a role to avoid, it asks for more years than the person's limit, it is in a region
+// outside their targets, or it is on-site in a city they did not choose. Every other worry (class year,
+// relocation, a school screen) is a flag for the run.
 export function codeFilter(posting: PostingToFilter, targets: CodeFilterTargets): CodeFilterResult {
   const avoided = targets.rolesToAvoid.find((role) => containsWholeWord(posting.title, role, true));
   if (avoided !== undefined) {
@@ -162,7 +181,22 @@ export function codeFilter(posting: PostingToFilter, targets: CodeFilterTargets)
     };
   }
 
+  if (isOutsideTargetCities(posting.location, targets.cities)) {
+    return {
+      passes: false,
+      reason: `The location "${posting.location}" is not in a city you chose (${targets.cities.join(", ")}).`,
+    };
+  }
+
   return { passes: true };
+}
+
+// No cities listed means anywhere in the target regions. A job that can be done remotely always counts,
+// because it does not ask the person to move. A location that mentions a chosen city as a whole word counts.
+function isOutsideTargetCities(location: string, cities: readonly string[]): boolean {
+  if (cities.length === 0) return false;
+  if (classifyRegion(location) === "REMOTE" || /remote/i.test(location)) return false;
+  return !cities.some((city) => containsWholeWord(location, city));
 }
 
 // No regions listed means the person has no region preference.

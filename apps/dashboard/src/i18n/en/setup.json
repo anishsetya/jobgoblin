@@ -35,12 +35,18 @@
     "resumeLabel": "Your resume",
     "resumeHint": "A PDF or Word file, up to 10 MB.",
     "linkedinLabel": "Your LinkedIn profile (optional)",
-    "linkedinHint": "On LinkedIn, choose Save to PDF on your profile and add the file here for more detail.",
+    "linkedinHint": "On LinkedIn, choose Save to PDF on your profile and add the file here for more detail. Add it before you read your resume.",
     "privacy": "Your name, email, phone number and address are taken out of the text before Claude reads it. Claude never sees them.",
     "read": "Read my resume",
     "uploading": "Sending...",
+    "reading": "Reading...",
     "tooBig": "{{name}} is larger than {{size}}. Choose a smaller file.",
-    "done": "Your resume has been read. Next, check what we found."
+    "done": "Your resume has been read. Next, check what we found.",
+    "continueHint": {
+      "addResume": "Add your resume and read it to continue.",
+      "readFirst": "Choose Read my resume to continue.",
+      "reading": "Continue opens when your resume has been read."
+    }
   },
   "story": {
     "title": "Your story",

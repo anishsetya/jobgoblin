@@ -9,11 +9,11 @@ import type {
   MarkSeenOutput,
   SearchJobsOutput,
 } from "@jobgoblin/schemas";
-import { classifyRegion, codeFilter, dedupeKey } from "@jobgoblin/core";
+import { classifyRegion, codeFilter, codeFilterTargetsFor, dedupeKey } from "@jobgoblin/core";
 import {
   countUnseenJobs,
   getJob,
-  getProfileSection,
+  getProfile,
   insertJobIfNew,
   listJobsByDedupeKey,
   listUnseenJobs,
@@ -76,7 +76,7 @@ export function addJobFromRun(ctx: ServerContext, input: AddJobInput): Outcome<A
 
   const verdict = codeFilter(
     { title: input.title, location: input.location, text: input.text },
-    getProfileSection(ctx.db, "targets"),
+    codeFilterTargetsFor(getProfile(ctx.db)),
   );
   const now = ctx.now().toISOString();
   const job: Job = {

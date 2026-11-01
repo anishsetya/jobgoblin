@@ -24,6 +24,7 @@ export type BuildDataSheetInput = {
 type FieldSource = {
   profile: Profile;
   authorization: RegionAuthorization | undefined;
+  expectedBase: string; // the pay for the job's region
   firstName: string;
   lastName: string;
   resumeFileName: string;
@@ -59,7 +60,7 @@ const FIELD_SPECS: readonly FieldSpec[] = [
   { key: "yearsExperience", label: "Years of experience", personal: false, required: false, read: (s) => s.profile.employment.yearsExperience },
   { key: "currentEmployer", label: "Current employer", personal: false, required: false, read: (s) => s.profile.employment.currentEmployer ?? "" },
   { key: "currentTitle", label: "Current job title", personal: false, required: false, read: (s) => s.profile.employment.currentTitle ?? "" },
-  { key: "expectedBase", label: "Expected base salary", personal: true, required: false, read: (s) => s.profile.compensation.expectedBase },
+  { key: "expectedBase", label: "Expected base salary", personal: true, required: false, read: (s) => s.expectedBase },
   { key: "gender", label: "Gender", personal: true, required: false, read: (s) => s.profile.eeo.gender },
   { key: "raceEthnicity", label: "Race or ethnicity", personal: true, required: false, read: (s) => s.profile.eeo.raceEthnicity },
   { key: "veteranStatus", label: "Veteran status", personal: true, required: false, read: (s) => s.profile.eeo.veteranStatus },
@@ -68,17 +69,24 @@ const FIELD_SPECS: readonly FieldSpec[] = [
   { key: "resumeVersion", label: "Resume version", personal: false, required: false, read: (s) => s.resumeShortId },
 ];
 
-// The profile has no answers for a region the person never set up, so the US answers are used instead.
-const FALLBACK_REGION = "US";
+// Pay for the job's region. The older single answer is used only when the region has none of its own; a
+// region the person never set up stays TODO rather than borrowing another place's answer.
+function expectedBaseFor(profile: Profile, region: Region): string {
+  const regionPay = profile.compensation.byRegion[region];
+  if (regionPay !== undefined && regionPay.trim() !== "") return regionPay;
+  return profile.compensation.expectedBase;
+}
 
 export function buildDataSheet(input: BuildDataSheetInput): DataSheet {
   const { profile } = input;
   const { firstName, lastName } = splitName(profile.contact.fullName);
-  const regions = profile.workAuthorization.regions;
 
+  // Work authorization is never carried from one region to another: saying "authorized" for a country the
+  // person was never asked about could put a false answer on a form.
   const source: FieldSource = {
     profile,
-    authorization: regions[input.region] ?? regions[FALLBACK_REGION],
+    authorization: profile.workAuthorization.regions[input.region],
+    expectedBase: expectedBaseFor(profile, input.region),
     firstName,
     lastName,
     resumeFileName: resumeFileNameFor(profile.contact.fullName),
