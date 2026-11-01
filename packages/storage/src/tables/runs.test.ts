@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { aRun, anApplicationInDatabase, openTestDatabase, removeTempDirs } from "../testSupport";
-import { insertQuestion, answerQuestion } from "./questions";
+import { insertQuestion, saveQuestionAnswer } from "./questions";
 import {
   addRunTask,
   countRunTasksByState,
@@ -152,7 +152,7 @@ describe("run tasks", () => {
     });
 
     const whileQuestionIsOpen = getNextPendingRunTask(db, "run-1");
-    answerQuestion(db, { id: "question-1", answer: "Austin", answeredAt: "2026-10-31T15:00:00.000Z" });
+    saveQuestionAnswer(db, { id: "question-1", answer: "Austin", answeredAt: "2026-10-31T15:00:00.000Z" });
     const afterAnswer = getNextPendingRunTask(db, "run-1");
 
     expect(whileQuestionIsOpen?.applicationId).toBe("app-2");

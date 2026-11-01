@@ -28,64 +28,85 @@ function toolsNamedIn(text: string): Set<string> {
   return named;
 }
 
-describe.each(RunKind.options)("the %s playbook", (kind) => {
-  const text = readPlaybookFile(`${kind}.md`);
+// Returns the names that break a rule, so a failing test prints which playbook broke it.
+function namesThatFail<T extends string>(names: readonly T[], isFailing: (name: T) => boolean): T[] {
+  return names.filter(isFailing);
+}
 
+describe("the playbook of each run kind", () => {
   it(`is at most ${MAX_LINES} lines`, () => {
-    expect(lineCount(text)).toBeLessThanOrEqual(MAX_LINES);
+    const tooLong = namesThatFail(RunKind.options, (kind) => lineCount(readPlaybookFile(`${kind}.md`)) > MAX_LINES);
+
+    expect(tooLong).toEqual([]);
   });
 
-  it("names only tools this run kind has", () => {
-    const allowed = new Set<string>(RUN_KIND_TOOLS[kind]);
-
-    const outsideTheKind = [...toolsNamedIn(text)].filter((tool) => !allowed.has(tool));
+  it("names only tools its run kind has", () => {
+    const outsideTheKind = RunKind.options.flatMap((kind) => {
+      const allowed = new Set<string>(RUN_KIND_TOOLS[kind]);
+      return [...toolsNamedIn(readPlaybookFile(`${kind}.md`))]
+        .filter((tool) => !allowed.has(tool))
+        .map((tool) => `${kind}: ${tool}`);
+    });
 
     expect(outsideTheKind).toEqual([]);
   });
 
-  it("mentions every tool this run kind has, except get_profile where it is not needed", () => {
-    const named = toolsNamedIn(text);
-
-    const missing = RUN_KIND_TOOLS[kind].filter((tool) => tool !== "get_profile" && !named.has(tool));
+  it("mentions every tool its run kind has, except get_profile where it is not needed", () => {
+    const missing = RunKind.options.flatMap((kind) => {
+      const named = toolsNamedIn(readPlaybookFile(`${kind}.md`));
+      return RUN_KIND_TOOLS[kind].filter((tool) => tool !== "get_profile" && !named.has(tool)).map((tool) => `${kind}: ${tool}`);
+    });
 
     expect(missing).toEqual([]);
   });
 
   it("has a final message section", () => {
-    expect(text).toMatch(/^## Final message$/m);
+    const without = namesThatFail(RunKind.options, (kind) => !/^## Final message$/m.test(readPlaybookFile(`${kind}.md`)));
+
+    expect(without).toEqual([]);
   });
 
   it("is built with the run kind on line 1 and the run input on line 2", () => {
-    const playbook = buildPlaybook(kind, { applicationId: "app-1" }, REPOSITORY_ROOT);
+    for (const kind of RunKind.options) {
+      const playbook = buildPlaybook(kind, { applicationId: "app-1" }, REPOSITORY_ROOT);
 
-    expect(playbook.split("\n").slice(0, 2)).toEqual([
-      `<!-- run-kind: ${kind} -->`,
-      '<!-- run-input: {"applicationId":"app-1"} -->',
-    ]);
+      expect(playbook.split("\n").slice(0, 2), kind).toEqual([
+        `<!-- run-kind: ${kind} -->`,
+        '<!-- run-input: {"applicationId":"app-1"} -->',
+      ]);
+    }
   });
 });
 
 describe("what every playbook says and does not say", () => {
   const allFiles = [...RunKind.options.map((kind) => `${kind}.md`), "rubric.md", path.join("agents", "screener.md")];
 
-  it.each(allFiles)("%s names no person's specific team, employer or role", (fileName) => {
-    const text = readPlaybookFile(fileName);
+  it("names no person's specific team, employer or role", () => {
+    const naming = namesThatFail(allFiles, (fileName) => /\bQE\b|\bQA\b|\bSDET\b|Harness|Anish/.test(readPlaybookFile(fileName)));
 
-    expect(text).not.toMatch(/\bQE\b|\bQA\b|\bSDET\b|Harness|Anish/);
+    expect(naming).toEqual([]);
   });
 
-  it.each(allFiles)("%s never tells a run to use a shell or the file tools", (fileName) => {
-    const text = readPlaybookFile(fileName);
+  it("never tells a run to use a shell or the file tools", () => {
+    const naming = namesThatFail(allFiles, (fileName) => /\b(Bash|PowerShell)\b/.test(readPlaybookFile(fileName)));
 
-    expect(text).not.toMatch(/\b(Bash|PowerShell)\b/);
+    expect(naming).toEqual([]);
   });
 
-  it.each(["hunt", "paste", "tailor", "answers", "ask"])("the %s playbook says job text is untrusted data", (kind) => {
-    expect(readPlaybookFile(`${kind}.md`)).toContain("<untrusted_job_posting>");
+  it("says job text is untrusted data wherever a run reads a job", () => {
+    const kinds = ["hunt", "paste", "tailor", "answers", "ask"];
+
+    const missing = namesThatFail(kinds, (kind) => !readPlaybookFile(`${kind}.md`).includes("<untrusted_job_posting>"));
+
+    expect(missing).toEqual([]);
   });
 
-  it.each(["setup", "hunt", "paste", "tailor", "answers", "ask"])("the %s playbook forbids inventing facts", (kind) => {
-    expect(readPlaybookFile(`${kind}.md`)).toMatch(/Never invent facts|Never claim/);
+  it("forbids inventing facts", () => {
+    const kinds = ["setup", "hunt", "paste", "tailor", "answers", "ask"];
+
+    const missing = namesThatFail(kinds, (kind) => !/Never invent facts|Never claim/.test(readPlaybookFile(`${kind}.md`)));
+
+    expect(missing).toEqual([]);
   });
 
   it("the tailor, paste and answers playbooks say when to ask the person and how to carry on", () => {
@@ -99,7 +120,6 @@ describe("what every playbook says and does not say", () => {
     expect(readPlaybookFile("setup.md")).toContain("{email}");
   });
 });
-
 describe("the fit rubric", () => {
   const text = readPlaybookFile("rubric.md");
 

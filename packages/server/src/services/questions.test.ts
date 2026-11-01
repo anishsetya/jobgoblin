@@ -3,7 +3,8 @@ import { getApplication, getRun, listOpenQuestions, listRunTasks, listRunsByStat
 import { getApplicationDetail } from "./applicationDetail";
 import { askPerson, answerQuestion } from "./questions";
 import { addPastedJob } from "./jobs";
-import { queueRun, startHunt } from "./runs";
+import { startHunt } from "./runLifecycle";
+import { queueRun } from "./runs";
 import { getToday } from "./today";
 import { aScoredApplication, closeTestContexts, createTestContext } from "./testSupport";
 import type { ServerContext } from "../context";

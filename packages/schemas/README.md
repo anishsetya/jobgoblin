@@ -8,7 +8,7 @@ This package has no logic. It holds shapes, a few constants (status lists, tool 
 
 1. `src/status.ts`: the 20 application statuses. Every other file refers to them.
 2. `src/resume.ts`: a resume is data, and every part of it names the Your story item it came from.
-3. `src/mcp.ts`: the 21 tools a Claude Code run can call, what each takes and returns, and which run kinds may call which.
+3. `src/mcp/toolNames.ts`: the 21 tools a Claude Code run can call and which run kinds may call which. Then one area file, such as `src/mcp/jobs.ts`, to see what a tool takes and returns.
 
 ## File map
 
@@ -23,12 +23,14 @@ Each file starts with a comment saying what it covers. The numbers are sections 
 | `fit.ts` | `Band`, `FitInput`, `Fit` | 5.5 |
 | `resume.ts` | `ResumeBody`, `ResumeHeader`, `ResumeCheckError`, `ResumeVersion`, `ApplicationResume`, `ResumeDiff`, hash and version id formats | 5.6 |
 | `application.ts` | `Application`, `SubmitMode` | 5.7 |
-| `datasheet.ts` | `DataSheetKey`, `DataSheetField`, `DataSheet`, `Approval` | 5.7 |
+| `dataSheet.ts` | `DataSheetKey`, `DataSheetField`, `DataSheet`, `Approval` | 5.7 |
 | `submission.ts` | `Submission`, `ProofType`, `Answer` | 5.7 |
 | `run.ts` | `Run`, `RunInput`, `RunTask`, `Question`, `StartRunRequest`, `RUN_KIND_SETTINGS` | 5.8, 10 |
 | `api.ts` | `ApiError`, `TodayResponse`, `PipelineRow`, `ApplicationDetail`, `ApplicationActions`, the person's requests, `Settings`, `SettingsResponse`, `HistoryEvent` | 5.9 |
 | `events.ts` | `ServerEvent` | 5.10 |
-| `mcp.ts` | `MCP_TOOL_NAMES`, an `...Input` and `...Output` schema per tool, `RUN_KIND_TOOLS`, `ToolError`, `ToolReply` | 5.11, 9 |
+| `mcp.ts` | Re-exports everything in `mcp/` (no logic) | 5.11, 9 |
+| `mcp/toolNames.ts`, `mcp/toolReply.ts` | `MCP_TOOL_NAMES`, `RUN_KIND_TOOLS`; `ToolError`, `ToolReply` | 5.11, 9 |
+| `mcp/profile.ts`, `jobs.ts`, `fit.ts`, `tailor.ts`, `answers.ts`, `ask.ts`, `status.ts`, `tasks.ts` | an `...Input` and `...Output` schema per tool, grouped like `packages/server/src/mcp/tools/*Tools.ts` | 9 |
 | `index.ts` | Re-exports everything. Import from `@jobgoblin/schemas`, never from a file inside `src/`. | |
 
 ## How to add a schema
@@ -47,7 +49,7 @@ Each file starts with a comment saying what it covers. The numbers are sections 
 
 3. Add a one-line comment for any field whose meaning is not obvious from its name, and say why when a rule is there for safety or truthfulness.
 4. If it is new, check that `index.ts` already re-exports its file. It does for every file listed above.
-5. If it is a new MCP tool, add the name to `MCP_TOOL_NAMES`, a `...Input` and a `...Output` schema named after the tool (`get_job` has `GetJobInput` and `GetJobOutput`), and the run kinds that may call it to `RUN_KIND_TOOLS`. The tests tell you if you forget any of these.
+5. If it is a new MCP tool, add the name to `MCP_TOOL_NAMES` (`mcp/toolNames.ts`), a `...Input` and a `...Output` schema named after the tool in the area file (`get_job` has `GetJobInput` and `GetJobOutput` in `mcp/jobs.ts`), and the run kinds that may call it to `RUN_KIND_TOOLS`. The tests tell you if you forget any of these.
 6. If you change a status, `ApplicationStatus` also drives the database `CHECK` constraint, so the change needs a migration.
 
 ## Conventions
@@ -67,7 +69,7 @@ Each file starts with a comment saying what it covers. The numbers are sections 
 Places where ARCHITECTURE.md (v2) was ambiguous or silent, and what this package does.
 
 1. **Timestamps and days.** UTC-only `z.iso.datetime()` for moments, `z.iso.date()` for days (see Conventions). `Application.appliedAt` is a moment; `Application.followUpOn` and the follow-up date in `StatusChangeRequest` are days.
-2. **Section 5.7 is split across three files** as its heading says: `application.ts` has `SubmitMode` and `Application`; `datasheet.ts` has `DataSheetKey`, `DataSheetField`, `DataSheet` and `Approval`; `submission.ts` has `ProofType`, `Submission` and `Answer`.
+2. **Section 5.7 is split across three files** as its heading says: `application.ts` has `SubmitMode` and `Application`; `dataSheet.ts` has `DataSheetKey`, `DataSheetField`, `DataSheet` and `Approval`; `submission.ts` has `ProofType`, `Submission` and `Answer`.
 3. **Profile values are strings.** Every form-answer value, including `yearsExperience`, is text, because it is typed into a form as text. A value the person still has to fill in is `"TODO"`, which is why fields default to it. Yes/no values in `workAuthorization` are `boolean | "TODO"`.
 4. **A run can save only three profile sections:** `employment`, `workAuthorization` and `targets` (`RunWritableSection`). Never the personal ones, and never `rules`, whose banned terms are the person's own guard. `data` is a plain object in the input; the tool checks it against `Profile.shape[section]`.
 5. **`ProposedStoryItem` has no `parentId`.** A run can only nest under an item it proposes in the same call (`parentTempId`). It is lenient about `keywords` and `parentTempId` (both default to empty), because a model writes it.
@@ -80,5 +82,5 @@ Places where ARCHITECTURE.md (v2) was ambiguous or silent, and what this package
 12. **`PipelineQuery` is kept** although v2 section 5.9 no longer lists it. It is the parsed filter, not a query string: the route turns `?status=Applied&overdueOnly=1` into this shape.
 13. **`STATUS_GROUPS` has six columns:** To review, Ready to apply, Applied, Interviewing, Offer, Closed. "Closed" is exactly `TERMINAL_STATUSES`. `Accepted` and `Declined` close the application, so they sit there and not under Offer. `CAP_STATUSES` is a separate list (Tailored through Offer), not "everything not closed".
 14. **`UploadKind`** (`resume` or `linkedin`) is added to `story.ts`: two tools and the import route share it, and section 5 gives it no home.
-15. **`mcp.ts` is about 400 lines,** longer than the 250-line guide. It stays one file because the spec lists one `mcp.ts`, and because the tools are easier to check against the spec's table when each tool's input and output sit side by side in table order.
+15. **The MCP schemas are split by area** into `src/mcp/<area>.ts`, the same areas as the server's `mcp/tools/*Tools.ts`, with each tool's input and output side by side. `mcp.ts` only re-exports, so imports from `@jobgoblin/schemas` did not change.
 16. **Imports inside `src/` have no file extension** (`./status`), which the repo's `moduleResolution: Bundler` setting resolves for Vite, Vitest, tsx and tsup.

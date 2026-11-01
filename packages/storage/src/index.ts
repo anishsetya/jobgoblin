@@ -110,7 +110,7 @@ export {
   type RunTaskUpdate,
 } from "./tables/runs";
 export {
-  answerQuestion,
+  saveQuestionAnswer,
   getQuestion,
   hasOpenQuestion,
   insertQuestion,
@@ -130,12 +130,7 @@ export {
   type TrackerExporter,
   type TrackerExporterOptions,
 } from "./tracker";
-export {
-  createBackups,
-  chooseBackupsToKeep,
-  type BackupReason,
-  type Backups,
-  type BackupsOptions,
-} from "./backups";
+export { createBackups, type BackupReason, type Backups, type BackupsOptions } from "./backups";
+export { chooseBackupsToKeep } from "./backupFiles";
 export { verifyApprovedFiles, type VerifyApprovedFilesReport } from "./verifyApprovedFiles";
 export { realScheduler, type ReportError, type ScheduledTimer, type Scheduler } from "./scheduler";

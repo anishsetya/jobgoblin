@@ -31,7 +31,7 @@ Jobgoblin's code is meant to be read by someone learning how the system works. W
   export function approveApplication(input: ApproveInput): Approval {
     const application = loadApplicationOrFail(input.applicationId);
     const dataSheet = rebuildDataSheet(application);
-    refuseIfDataSheetChanged(dataSheet, input.datasheetHash);
+    refuseIfDataSheetChanged(dataSheet, input.dataSheetHash);
     const pdf = renderFinalPdf(application);
     return saveApprovalInOneTransaction(application, dataSheet, pdf);
   }

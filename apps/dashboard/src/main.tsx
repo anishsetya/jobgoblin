@@ -1,4 +1,4 @@
-// The dashboard's entry point: sets up translation, takes the session key out of the address bar, builds the
+// The dashboard's entry point: sets up translation, takes the session token out of the address bar, builds the
 // router, and renders the app. The order matters, and is explained on the lines below.
 import { QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode } from "react";
@@ -10,7 +10,7 @@ import { App } from "./App";
 import { createAppRouter } from "./router";
 import "./styles.css";
 
-// 1. Read the session key now, before the router exists. Reading it removes "#token=..." from the address
+// 1. Read the session token now, before the router exists. Reading it removes "#token=..." from the address
 //    bar, so the router never sees it and it is never left in the history.
 readSessionToken();
 

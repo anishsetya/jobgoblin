@@ -14,7 +14,7 @@ Everything that turns a button press into one sealed Claude Code run, and everyt
 | 6 | Start the process | [processes.ts](processes.ts) `spawnRun` | No shell; working directory is the run directory; playbook on stdin; stdout delivered line by line. |
 | 7 | Read the stream | [streamJson.ts](streamJson.ts) | `parseStreamLine` for every line; `checkInitEvent` on the `init` line stops a run that is not sealed. |
 | 8 | Classify the end | [outcome.ts](outcome.ts) | `classifyRunEnd` turns the facts into a status and a plain message. |
-| 9 | Cancel or time out | [processes.ts](processes.ts) `killProcessTree` | `taskkill /T` then `/F` after 5 seconds (Windows), `SIGTERM` then `SIGKILL` elsewhere. |
+| 9 | Cancel or time out | [stopRun.ts](stopRun.ts) `stopProcessPolitelyThenForce` (which calls `killProcessTree` in [processes.ts](processes.ts)) | `taskkill /T` then `/F` after 5 seconds (Windows), `SIGTERM` then `SIGKILL` elsewhere. The 5-second wait is in `stopRun.ts`. |
 | 10 | Recover at start | [recovery.ts](recovery.ts), [startRunner.ts](startRunner.ts) | Marks leftover `running` runs interrupted, and stops a leftover Claude process only after checking its program name. A `waiting` run has no process and is left alone. |
 
 ### What launchRun.ts calls, in order
@@ -31,7 +31,7 @@ command = await claudeCli.resolveCommand()
 spawned = spawnRun({ command, args, cwd: directory, env, stdinText: playbookText, onStdoutLine })
   // save spawned.pid on the run; start the timeout (settings.timeoutMinutes)
   // each line: append to join(directory, TRANSCRIPT_FILE_NAME), then parseStreamLine(line)
-  //   init   -> save sessionId; reason = checkInitEvent(init, allowedTools); if reason: kill, fail "This run was stopped for safety"
+  //   init   -> save sessionId; reason = checkInitEvent(init, allowedTools); if reason: kill, fail with OUTCOME_MESSAGES.stoppedForSafety
   //   result -> keep it
 exit = await spawned.exit
 end = classifyRunEnd({ exitCode: exit.exitCode, result, timedOut, cancelled, tasks })
@@ -64,19 +64,20 @@ The run token is never on the command line or in a file. `mcp.json` holds `Beare
 | File | Idea |
 | --- | --- |
 | [runConstants.ts](runConstants.ts) | The MCP server name, token variable name and file names, in one place |
-| [claudeCli.ts](claudeCli.ts) | Find, check, install and sign in the person's Claude Code |
+| [claudeCli.ts](claudeCli.ts) | Check, install and sign in the person's Claude Code |
+| [findClaudeProgram.ts](findClaudeProgram.ts) | Find the `claude` program on disk (PATH, then the installers' folders) |
 | [claudeArgs.ts](claudeArgs.ts) | The flags, the job-board domain list, the allowed tool rules |
 | [runEnvironment.ts](runEnvironment.ts) | The scrubbed environment |
 | [runDirectory.ts](runDirectory.ts) | The playbook text and the run directory's files |
 | [streamJson.ts](streamJson.ts) | Reading the stream; the init safety check |
-| [outcome.ts](outcome.ts) | How a run ended |
+| [outcome.ts](outcome.ts) | How a run ended, and `OUTCOME_MESSAGES`: every sentence a run card shows |
 | [processes.ts](processes.ts) | The only file that imports `node:child_process` |
 | [recovery.ts](recovery.ts) | Leftover runs after a crash or restart |
 | [launcher.ts](launcher.ts) | The queue: which run goes when, how many at once, pausing after `blocked`, cancel |
 | [launchRun.ts](launchRun.ts) | One run from claim to final status, step by step as above |
 | [finishRun.ts](finishRun.ts) | Saving how a run ended (tasks never reached, status, message, token revoked) |
 | [afterRun.ts](afterRun.ts) | Admit to tailoring after a hunt or paste; the one tailor retry on sonnet |
-| [stopRun.ts](stopRun.ts) | Stop a process tree: politely, then for good after 5 seconds |
+| [stopRun.ts](stopRun.ts) | `stopProcessPolitelyThenForce`: stop a process tree politely, then for good after 5 seconds |
 | [startRunner.ts](startRunner.ts) | Start-up: recovery, then the launcher |
 | [runFolderCleanup.ts](runFolderCleanup.ts) | Run folders (and transcripts) older than 14 days are removed |
 | `testSupport.ts`, `stubMcpServer.ts` | Test helpers only |
@@ -95,7 +96,7 @@ The run token is never on the command line or in a file. `mcp.json` holds `Beare
 6. **`exitCode` is accepted but does not change the answer.** A success `result` means every result was already saved through tools, so the run is done even if the process was killed afterwards. No `result` is always failed. Any other `is_error` result is failed too, so an error can never become "done".
 7. **Pending tasks count as failed.** `classifyRunEnd` calls a run waiting when at least one task waits; `tasksLeftPending` lists the tasks the launcher must mark failed.
 8. **Recovery interrupts every `running` run,** with or without a saved pid, and clears the pid. A `waiting` run is not touched: its process already ended and it waits for the person's answer. It stops a process only when it is alive and its program name matches the Claude command (`node` when the command is node, for the fake). On macOS the native installer may run a versioned binary whose `ps` name is not `claude`; recovery then leaves it alone, which is the safe direction.
-9. **`claudeCommand` must be absolute paths,** all of them, and `createClaudeCli` throws otherwise. Detection never returns `claude.cmd`. Besides PATH and `~/.local/bin`, Windows also looks in `%LOCALAPPDATA%\Microsoft\WinGet\Links`, because winget installs there and the running server's PATH does not know it yet.
+9. **`claudeCommand` must be absolute paths,** all of them, and `createClaudeCli` throws otherwise. Detection (`findClaudeProgram.ts`) never returns `claude.cmd`. Besides PATH and `~/.local/bin`, Windows also looks in `%LOCALAPPDATA%\Microsoft\WinGet\Links`, because winget installs there and the running server's PATH does not know it yet.
 10. **`signIn()` waits up to 5 minutes** for `claude auth login` to end, then returns the status. The dashboard polls `GET /api/claude/status` meanwhile. `authMethod` must be `claude.ai`; other methods count as signed out. Only the login state, the method and the plan are kept; the e-mail address in the JSON is dropped.
 11. **`spawnRun` takes a line callback, not a stream.** The listener exists before any output can arrive, so no line is ever lost.
 12. **Playbook line endings are normalised to `\n`** so line 1 and 2 are the same on every system.

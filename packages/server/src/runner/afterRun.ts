@@ -9,6 +9,7 @@ import type { Application, Run, RunTask } from "@jobgoblin/schemas";
 import { getApplication, listRunTasks, updateApplicationFields } from "@jobgoblin/storage";
 import type { ServerContext } from "../context";
 import { announceApplication, saveChangesSoon } from "../services/changes";
+import { queueRun } from "../services/runs";
 import { ServiceError } from "../services/serviceError";
 import { admitAfterHuntOrPaste } from "../services/tailoring";
 
@@ -64,7 +65,7 @@ function explainFailure(ctx: ServerContext, entry: UntailoredApplication): void 
 // The first failure: one more run, on the stronger model, for all of them together.
 function queueOneRetry(ctx: ServerContext, run: Run, entries: UntailoredApplication[]): void {
   try {
-    ctx.runs.queueRun({
+    queueRun(ctx, {
       kind: "tailor",
       applicationIds: entries.map((entry) => entry.application.id),
       input: run.input,

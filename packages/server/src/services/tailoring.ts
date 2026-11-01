@@ -15,7 +15,7 @@ import { announceApplication, saveChangesSoon } from "./changes";
 import { recordHistory } from "./history";
 import { loadApplicationOrFail, loadJobOfApplication } from "./loaders";
 import { moveApplication } from "./moves";
-import { announceQueuedRun, findActiveRunFor, insertQueuedRun } from "./runs";
+import { announceQueuedRun, findRunHoldingApplication, insertQueuedRun } from "./runs";
 import { conflict } from "./serviceError";
 
 export type AdmissionReport = { runId: string | null; admitted: number; refused: number };
@@ -53,7 +53,7 @@ function findAdmissionCandidates(ctx: ServerContext): AdmissionCandidate[] {
     const isWorthTailoring = application.band === "apply" || application.band === "stretch";
     // tailorAttempts above zero means a tailor run already tried and gave up; the person decides about those.
     if (!isWorthTailoring || application.tailorAttempts > 0) continue;
-    if (findActiveRunFor(ctx, application.id) !== null) continue;
+    if (findRunHoldingApplication(ctx, application.id) !== null) continue;
 
     const job = getJob(ctx.db, application.jobId);
     if (job === null) continue;

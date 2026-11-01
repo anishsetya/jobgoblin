@@ -15,7 +15,7 @@ export type StopInput = {
   immediately: boolean; // true: skip the polite attempt
 };
 
-export async function stopProcessTree(input: StopInput): Promise<void> {
+export async function stopProcessPolitelyThenForce(input: StopInput): Promise<void> {
   try {
     if (!input.immediately) {
       await killProcessTree(input.pid, { force: false });

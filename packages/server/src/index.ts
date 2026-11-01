@@ -4,4 +4,4 @@
 // Spec: ARCHITECTURE.md section 11 (server entry).
 export { readStartOptions } from "./startOptions";
 export { startServer, type RunningServer } from "./startServer";
-export type { Launcher, QueueRunRequest, RunQueue, ServerContext, StartOptions } from "./context";
+export type { Launcher, QueueRunRequest, ServerContext, StartOptions } from "./context";

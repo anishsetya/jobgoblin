@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { CAP_STATUSES } from "@jobgoblin/schemas";
 import type { ApplicationStatus } from "@jobgoblin/schemas";
 import { admitInScoreOrder, checkLimits } from "./limits";
 import type { AdmissionCandidate, OtherApplication } from "./limits";
@@ -36,16 +37,16 @@ describe("checkLimits: open applications per company", () => {
     expect(error?.message).toContain("3 open applications at Acme Cloud");
   });
 
-  it.each([
-    "Tailored", "Awaiting approval", "Approved", "Filling", "Needs your input", "Applied", "OA", "Phone screen", "Onsite", "Offer",
-  ] as const)("counts an application that is %s", (status) => {
-    expect(checkTheNewJob(openAtAcme(3, status))?.code).toBe("cap");
+  it("counts an application whose status is in CAP_STATUSES (Tailored through Offer)", () => {
+    expect(CAP_STATUSES).toContain("Awaiting approval");
+    expect(checkTheNewJob(openAtAcme(3, "Awaiting approval"))?.code).toBe("cap");
   });
 
-  it.each([
-    "Found", "Scored", "Long shot", "Skipped (low fit)", "Skipped", "Rejected", "Ghosted", "Withdrawn", "Accepted", "Declined",
-  ] as const)("does not count an application that is %s", (status) => {
-    expect(checkTheNewJob(openAtAcme(5, status))).toBeNull();
+  it("does not count an application that has no resume yet or is closed", () => {
+    expect(CAP_STATUSES).not.toContain("Scored");
+    expect(CAP_STATUSES).not.toContain("Rejected");
+    expect(checkTheNewJob(openAtAcme(5, "Scored"))).toBeNull();
+    expect(checkTheNewJob(openAtAcme(5, "Rejected"))).toBeNull();
   });
 
   it("never counts the application being checked against itself", () => {

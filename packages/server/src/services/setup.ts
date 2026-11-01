@@ -23,6 +23,7 @@ import {
   saveMasterResume,
   saveProfileSection,
   setSetting,
+  type Upload,
 } from "@jobgoblin/storage";
 import type { ServerContext } from "../context";
 import { announceProfileChange, saveChangesSoon } from "./changes";
@@ -109,10 +110,16 @@ export function getUploadsForRun(ctx: ServerContext): ImportResumeOutput {
   return {
     uploads: listLatestUploads(ctx.db).map((upload) => ({
       kind: upload.kind,
-      fileName: upload.fileName,
+      fileName: neutralFileName(upload),
       text: upload.redactedText,
     })),
   };
+}
+
+// The person's own file name ("Alex Rivera - Resume.pdf") usually contains their name, and contact
+// details must never reach a run (D10). The run gets "resume.pdf" or "linkedin.pdf" instead.
+function neutralFileName(upload: Upload): string {
+  return upload.kind + path.extname(upload.fileName);
 }
 
 // The last step of the wizard: the master resume is built from the confirmed items, and setup is done.

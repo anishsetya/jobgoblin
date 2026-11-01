@@ -151,3 +151,45 @@ describe("redactContactDetails: other shapes of header", () => {
     expect(found.fullName).toBe("Alex Rivera");
   });
 });
+
+// What a LinkedIn "Save to PDF" export looks like after extraction: the sidebar comes first, then the name.
+const LINKEDIN_EXPORT_TEXT = `Contact
+alex.rivera@example.com
+www.linkedin.com/in/alexrivera (LinkedIn)
+Top Skills
+TypeScript
+PostgreSQL
+Distributed Systems
+Languages
+English (Native or Bilingual)
+Certifications
+AWS Certified Developer
+Alex Rivera
+Software Engineer at Northwind Logistics
+Austin, Texas, United States
+Summary
+Backend engineer who builds reliable APIs.
+Experience
+Northwind Logistics
+Software Engineer
+June 2024 - Present
+Alex Rivera built the shipment-tracking API.
+Education
+State University`;
+
+describe("redactContactDetails: a LinkedIn export", () => {
+  const { redacted, found } = redactContactDetails(LINKEDIN_EXPORT_TEXT);
+
+  it("finds the person's name after the sidebar, not the word Contact", () => {
+    expect(found.fullName).toBe("Alex Rivera");
+    expect(found.email).toBe("alex.rivera@example.com");
+    expect(found.linkedin).toBe("www.linkedin.com/in/alexrivera");
+    expect(found.location).toBe("Austin, Texas, United States");
+  });
+
+  it("removes the name and contact details everywhere, and keeps the sections from Summary on", () => {
+    expect(redacted).not.toMatch(/Rivera|alex\.rivera@|linkedin\.com/i);
+    expect(redacted).toContain("{fullName} built the shipment-tracking API.");
+    expect(redacted).toContain("Summary\nBackend engineer who builds reliable APIs.\nExperience");
+  });
+});

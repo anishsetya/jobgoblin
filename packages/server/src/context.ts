@@ -3,9 +3,9 @@
 // reaches for a global, and a test can build a context over a temporary folder.
 // `db` and `folder` are mutable on purpose: restoring a backup swaps the database and choosing a folder swaps
 // the folder, while the tracker and backups keep running. They are given getters (`() => ctx.db`).
-// Spec: ARCHITECTURE.md section 10 (ServerContext, EventBus, RunQueue, StartOptions).
+// Spec: ARCHITECTURE.md section 10 (ServerContext, EventBus, StartOptions).
 import path from "node:path";
-import type { ModelTier, Run, RunInput, RunKind } from "@jobgoblin/schemas";
+import type { ModelTier, RunInput, RunKind } from "@jobgoblin/schemas";
 import { createResumeRenderer, type ResumeRenderer } from "@jobgoblin/render";
 import {
   createBackups,
@@ -20,7 +20,6 @@ import { createRunTokens, type RunTokens } from "./auth/runTokens";
 import { createSessionToken } from "./auth/tokens";
 import { createEventBus, type EventBus } from "./bus";
 import type { Logger } from "./logger";
-import { createRunQueue } from "./services/runs";
 
 // What the person's computer tells the server when it starts (flags and environment, see main.ts).
 export type StartOptions = {
@@ -41,14 +40,6 @@ export type QueueRunRequest = {
   retryOf?: string;
 };
 
-// The queue side of runs, which services use. The launcher (which starts the processes) is separate: it is
-// told to wake up when a run is queued.
-export interface RunQueue {
-  queueRun(request: QueueRunRequest): Run;
-  cancelRun(runId: string): Promise<Run>;
-  wake(): void;
-}
-
 // Set by the run launcher once it exists. Until then `wake` does nothing and a running run cannot be stopped.
 //   wake    start queued runs if there is room (the queue calls it after every change)
 //   cancel  stop a running run's process and record "cancelled"; resolves once the run has ended
@@ -66,7 +57,6 @@ export type ServerContext = {
   now: () => Date;
   appDataDir: string;
   resourcesDir: string;
-  runs: RunQueue;
   tracker: TrackerExporter;
   backups: Backups;
   logger: Logger;
@@ -104,7 +94,6 @@ export function createServerContext(parts: ContextParts): ServerContext {
     now,
     appDataDir: parts.options.appDataDir,
     resourcesDir: parts.options.resourcesDir,
-    runs: createRunQueue(() => ctx),
     tracker: createTrackerExporter({
       getDb: () => ctx.db,
       getFolder: () => ctx.folder,

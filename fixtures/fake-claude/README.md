@@ -114,6 +114,6 @@ pnpm --filter @jobgoblin/fake-claude build
 pnpm exec vitest run fixtures/fake-claude
 ```
 
-- `src/*.test.ts`: the small pieces (argument parsing, scoring, resume edits) and the fixtures: the three story files must agree on every id, kind, parent and text.
-- `test/*.test.ts`: the built `dist/cli.mjs` is started as a child process, from a temporary run directory, with the playbook on stdin. A stub MCP server (`test/stubJobgoblinServer.ts`: Streamable HTTP, stateless, checks the bearer token, validates tool input with the real schemas) answers the calls. The tests assert the tool-call sequence per run kind, the token header, the `init`, `assistant` and `result` lines, every failure mode and its exit code.
+- `src/*.test.ts`: argument parsing, and the fixtures: the three story files must agree on every id, kind, parent and text. Scoring, the tailor and answers scripts, and `FAKE_CLAUDE_REWORD` have no tests of their own: the server's runner integration and launcher tests and the Playwright tests in `e2e/` drive the built fake end to end.
+- `test/*.test.ts` (modes, version and auth): the built `dist/cli.mjs` is started as a child process, from a temporary run directory, with the playbook on stdin. A stub MCP server (`test/stubJobgoblinServer.ts`: Streamable HTTP, stateless, checks the bearer token, validates tool input with the real schemas) answers the calls. The tests assert the token header, the `init`, `assistant` and `result` lines, every failure mode and its exit code.
 - A test fails with "dist/cli.mjs is older than ..." when the bundle is out of date, instead of testing old code.

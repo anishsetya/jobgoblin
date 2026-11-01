@@ -165,7 +165,7 @@ ApplicationResume = { applicationId, versionId, shortId, state: "draft" | "appro
 ResumeDiff = { added: string[], removed: string[], reordered: boolean, reworded: { src, from, to }[] }
 ```
 
-### 5.7 `application.ts`, `datasheet.ts`, `submission.ts`
+### 5.7 `application.ts`, `dataSheet.ts`, `submission.ts`
 
 ```ts
 SubmitMode = "manual" | "extension"            // the POC builds manual only
@@ -235,6 +235,8 @@ ServerEvent =
 Wire format: `data: <json>\n\n` per event, and a `: ping` comment every 15 seconds.
 
 ### 5.11 `mcp.ts`
+
+`mcp.ts` only re-exports; the schemas are in `mcp/<area>.ts`, one file per area of `packages/server/src/mcp/tools/*Tools.ts`.
 
 `MCP_TOOL_NAMES` (21, D20), one input schema and one **output schema** per tool (section 9), `RUN_KIND_TOOLS`, and:
 
@@ -343,7 +345,7 @@ fileSha256(path): string
 
 Tracker (`src/tracker.ts`): `createTrackerExporter({ db, folder, now })` → `{ schedule(), flushNow(), status() }`. Debounce 2 s (60 s when the folder is cloud-synced). Writes `Tracker.csv` (header first) and `Tracker.xlsx` (Applications sheet + Read me sheet) through a temp file and rename; on `EBUSY`/`EPERM` status becomes `locked` and it retries in 30 s. Columns: Company, Role, Status, Fit, Band, Resume version, Applied on, Follow up on, Posting, Folder, Updated.
 
-Backups (`src/backups.ts`): `createBackups({ getDb, folder, now })` → `{ backupNow(reason), scheduleAfterChange() /* at most every 5 minutes */, runDailyIfDue(), list(), restore(id, reopen) }`. `VACUUM INTO` a temp file in `Backups/`, then rename to `YYYY-MM-DD HH-mm.jobgoblin-backup` (add `-2` on collision). Retention: everything from the last 2 days, one per day for 14 days. `restore` checks the id against the file-name pattern, backs up the current database first, closes it, copies the backup over it, reopens it, and keeps the current `personFolder` setting.
+Backups (`src/backups.ts`; file names and retention are in `src/backupFiles.ts`): `createBackups({ getDb, folder, now })` → `{ backupNow(reason), scheduleAfterChange() /* at most every 5 minutes */, runDailyIfDue(), list(), restore(id, reopen) }`. `VACUUM INTO` a temp file in `Backups/`, then rename to `YYYY-MM-DD HH-mm.jobgoblin-backup` (add `-2` on collision). Retention: everything from the last 2 days, one per day for 14 days. `restore` checks the id against the file-name pattern, backs up the current database first, closes it, copies the backup over it, reopens it, and keeps the current `personFolder` setting.
 
 `verifyApprovedFiles(db, folder)` at startup rewrites any missing approved file from `application_resumes.pdf_bytes` (D19).
 
@@ -427,7 +429,7 @@ A profile change voids every live approval whose data sheet hash no longer match
 | `submit_resume_draft` | `{ applicationId, body }` | `{ versionId, shortId, status }` or errors | tailor |
 | `save_answers` | `{ applicationId, answers }` | `{ saved }` | answers |
 | `list_ready` | {} | `{ applications: { applicationId, company, title, fitScore, band }[] }` | ask |
-| `get_approved` | `{ applicationId }` | `{ application, jobSummary, questions, dataSheet /* personal values as "{key}" */, answeredQuestions }` | answers |
+| `get_approved` | `{ applicationId }` | `{ application, jobSummary, questions, dataSheet /* personal values as "{key}" */, answeredQuestions, resume /* the approved ResumeBody, no contact details */ }` | answers |
 | `update_status` | `{ applicationId, to }` | `{ status }` (via status, actor run) | none in the POC |
 | `get_pipeline` | {} | `{ counts: Record<status, number>, rows: { applicationId, company, title, status, fitScore }[] }` | ask |
 | `get_application` | `{ applicationId }` | `{ application, job: { company, title, location, url }, fit, resume: ResumeBody \| null, answers, history }` | ask |
@@ -450,21 +452,21 @@ A profile change voids every live approval whose data sheet hash no longer match
 | answers | Approve | sonnet | none | 30 | 10 min |
 | ask | Ask about this application | sonnet | none | 20 | 5 min |
 
-Interfaces shared with the services (wave 3 builds the queue side, wave 4 the launcher):
+Interfaces shared with the services:
 
 ```ts
-type ServerContext = { db: Database; folder: PersonFolder | null; bus: EventBus; now: () => Date; appDataDir: string; resourcesDir: string; runs: RunQueue; tracker: TrackerExporter; backups: Backups; logger: Logger; options: StartOptions }
+type ServerContext = { db: Database; folder: PersonFolder | null; bus: EventBus; now: () => Date; appDataDir: string; resourcesDir: string; tracker: TrackerExporter; backups: Backups; logger: Logger; options: StartOptions }
 type EventBus = { emit(event: ServerEvent): void; subscribe(listener: (event: ServerEvent) => void): () => void }
-interface RunQueue { queueRun(request: { kind: RunKind; applicationIds: string[]; input: RunInput; model?: ModelTier; retryOf?: string }): Run; cancelRun(runId: string): Promise<Run>; wake(): void }
+type QueueRunRequest = { kind: RunKind; applicationIds: string[]; input: RunInput; model?: ModelTier; retryOf?: string }
 type StartOptions = { appDataDir; resourcesDir; port; claudeCommand: string[] | null; claudeInstallCommand: string[] | null; feedFixturesDir: string | null; devOrigin: string | null }
 ```
 
-`queueRun` (wave 3, `services/runs.ts`) inserts the run and its `run_tasks`, joins an already queued run of the same kind when the request is a single re-queued application, refuses an application already in an active run, emits `run.updated`, and calls `wake()`. Until wave 4 plugs in the launcher, `wake()` does nothing.
+`queueRun(ctx, request)` (`services/runs.ts`) is the only way a run enters the queue. It inserts the run and its `run_tasks`, joins an already queued run of the same kind when the request is a single re-queued application, refuses an application already in an active run, emits `run.updated`, and wakes the launcher (`ctx.launcher?.wake()`, which does nothing until a launcher exists). Cancel, retry and dismiss are in `services/runLifecycle.ts`.
 
-Launch (`launch.ts`), each step a named function:
+Launch (`launchRun.ts`), each step a named function:
 
-1. `refreshFeedsIfHunt(run)`: hunt runs first call `services/feeds.refreshFeeds(ctx)` (step "Checking job boards"), which fetches feeds through `packages/sources`, applies `core.codeFilter` and `core.dedupeKey`, and inserts new jobs. `search_jobs` only reads the database.
-2. `checkClaudeBeforeLaunch()`: `authStatus()`; signed out → blocked.
+1. `fetchJobBoards(ctx, run)`: hunt runs first call `services/feeds.refreshFeeds(ctx)` (step "Checking job boards"), which fetches feeds through `packages/sources`, applies `core.codeFilter` and `core.dedupeKey`, and inserts new jobs. `search_jobs` only reads the database.
+2. `whyClaudeIsBlocked(claudeCli)`: the Claude Code status; anything but connected (not installed, needs an update, signed out) → blocked.
 3. `createRunDirectory(run)`: `<appData>/runs/<runId>/` with `PLAYBOOK.md`, `.claude/agents/*.md` (hunt: the screener, listing only `mcp__jobgoblin__*` tools), `.claude/settings.json` (hunt: `WebFetch` permission rules limited to job-board domains), and `mcp.json`: `{"mcpServers":{"jobgoblin":{"type":"http","url":"http://127.0.0.1:<port>/mcp","headers":{"Authorization":"Bearer ${JOBGOBLIN_RUN_TOKEN}"}}}}`.
 4. `buildClaudeArgs(run)`: `-p`, `--output-format stream-json`, `--verbose`, `--model <tier>`, `--mcp-config mcp.json`, `--strict-mcp-config`, `--tools <list or "">`, `--allowedTools <mcp__jobgoblin__… + built-ins + domain-limited WebFetch>`, `--setting-sources project`, `--permission-mode dontAsk`, `--max-turns <n>`.
 5. `buildRunEnvironment(processEnv, runToken)`: copy, delete every `ANTHROPIC_*` and `CLAUDE_CODE_USE_*` key, add `JOBGOBLIN_RUN_TOKEN`.
@@ -489,7 +491,7 @@ Cancel: `taskkill /PID <pid> /T` (Windows) or `SIGTERM`, then after 5 s `taskkil
 
 After a run (`afterRun.ts`): hunt or paste → admit to tailoring (section 8.3); tailor → applications whose drafts never passed get one retry run on sonnet (`tailor_attempts`), then `tailor_error` = "Couldn't tailor this one: <reason>"; answers → nothing extra.
 
-Claude Code CLI (`claudeCli.ts`): `detect()` checks `claudeCommand` from start options, then `claude.exe` on PATH and in `%USERPROFILE%\.local\bin` (never `claude.cmd`, which Node cannot start without a shell), then `~/.local/bin/claude`; `version()`; `authStatus()` (`claude auth status`, JSON, `authMethod` must be `claude.ai`); `install()` runs `claudeInstallCommand` (default `winget install Anthropic.ClaudeCode` or the macOS script); `signIn()` runs `claude auth login`. `MINIMUM_CLAUDE_VERSION = "2.1.0"`.
+Claude Code CLI (`claudeCli.ts`; finding the program is `findClaudeProgram.ts`): `detect()` checks `claudeCommand` from start options, then `claude.exe` on PATH and in `%USERPROFILE%\.local\bin` (never `claude.cmd`, which Node cannot start without a shell), then `~/.local/bin/claude`; `version()`; `authStatus()` (`claude auth status`, JSON, `authMethod` must be `claude.ai`); `install()` runs `claudeInstallCommand` (default `winget install Anthropic.ClaudeCode` or the macOS script); `signIn()` runs `claude auth login`. `MINIMUM_CLAUDE_VERSION = "2.1.0"`.
 
 ## 11. HTTP API (`packages/server/src/http`)
 
@@ -525,11 +527,11 @@ Middleware: `hostCheck` (Host must be `127.0.0.1:<port>` or `localhost:<port>`) 
 | `GET /api/backups`; `POST /api/backups`; `POST /api/backups/:id/restore` | → `Backup[]` / `Backup` / `SettingsResponse` |
 | `POST /api/open` | `{ path }` (inside the person's folder only) → `{ opened: boolean, path }`; inside Electron the server asks main to open it; otherwise it returns `opened: false` and the dashboard shows the path |
 
-Server entry (`main.ts`): `startServer(options: StartOptions)` → `{ port, sessionToken, url, stop() }`. As a script it reads flags and env (`JOBGOBLIN_APP_DATA`, `JOBGOBLIN_PORT`, `JOBGOBLIN_RESOURCES_DIR`, `JOBGOBLIN_CLAUDE_COMMAND` (JSON array), `JOBGOBLIN_CLAUDE_INSTALL_COMMAND`, `JOBGOBLIN_FEED_FIXTURES`, `JOBGOBLIN_DEV_ORIGIN`). Outside Electron it prints one line `JOBGOBLIN_READY {"port":…,"url":"http://127.0.0.1:…/#token=…"}`; inside a `utilityProcess` it posts `{ type: "ready", port, sessionToken }` to `process.parentPort` and prints nothing secret. It writes `server.json` (port, pid, version, startedAt; no secrets). Messages from main: `{ type: "shutdown" }` → cancel queued runs, stop running ones, flush the tracker, close the database, remove `server.json`, exit. Messages to main: `{ type: "open-path", path }`. `JOBGOBLIN_FEED_FIXTURES` makes sources read saved responses instead of the network and seeds companies from that folder's `companies.json`; otherwise companies are seeded from the prototype's `companies/targets.yaml` list, converted to `packages/server/src/seed/companies.json`.
+Server entry (`main.ts`): `startServer(options: StartOptions)` → `{ port, sessionToken, url, stop() }`. As a script it reads flags and env (`JOBGOBLIN_APP_DATA`, `JOBGOBLIN_PORT`, `JOBGOBLIN_RESOURCES_DIR`, `JOBGOBLIN_CLAUDE_COMMAND` (JSON array), `JOBGOBLIN_CLAUDE_INSTALL_COMMAND`, `JOBGOBLIN_FEED_FIXTURES`, `JOBGOBLIN_DEV_ORIGIN`). Outside Electron it prints one line `JOBGOBLIN_READY {"port":…,"url":"http://127.0.0.1:…/#token=…"}`; inside a `utilityProcess` it posts `{ type: "ready", port, sessionToken }` to `process.parentPort` and prints nothing secret. It writes `server.json` (port, pid, version, startedAt; no secrets). Messages from main: `{ type: "shutdown" }` → cancel queued runs, stop running ones, flush the tracker, close the database, remove `server.json`, exit. Messages to main: `{ type: "open-path", path, personFolder }`. `JOBGOBLIN_FEED_FIXTURES` makes sources read saved responses instead of the network and seeds companies from that folder's `companies.json`; otherwise companies are seeded from the prototype's `companies/targets.yaml` list, converted to `packages/server/src/seed/companies.json`.
 
 ## 12. Dashboard (`apps/dashboard`)
 
-React 19 + Vite + Tailwind 4 + TanStack Query + TanStack Router (code-based route tree in one `router.tsx`) + i18next (`src/i18n/en.json` holds every string). Small shadcn-style components in `src/components/ui/` (Button, Card, Badge, Dialog, Input, Textarea, Tabs) on Radix primitives where focus handling matters. No `dangerouslySetInnerHTML` anywhere: job text and ask results render as plain text.
+React 19 + Vite + Tailwind 4 + TanStack Query + TanStack Router (code-based route tree in one `router.tsx`) + i18next (`src/i18n/en/<area>.json` holds every string, one file per area). Small shadcn-style components in `src/components/ui/` (Button, Card, Badge, Dialog, Input, Textarea, Tabs) on Radix primitives where focus handling matters. No `dangerouslySetInnerHTML` anywhere: job text and ask results render as plain text.
 
 | Route | Screen |
 | --- | --- |

@@ -36,7 +36,7 @@ export function getQuestion(db: Database, id: string): Question | null {
 
 // Stores the person's answer to a question that is still open. Returns the question, or null when there
 // is no such question or it was already answered (the first answer stands).
-export function answerQuestion(db: Database, input: { id: string; answer: string; answeredAt: string }): Question | null {
+export function saveQuestionAnswer(db: Database, input: { id: string; answer: string; answeredAt: string }): Question | null {
   const result = db.sqlite
     .prepare("UPDATE questions SET answer = ?, answered_at = ? WHERE id = ? AND answer IS NULL")
     .run(input.answer, input.answeredAt, input.id);

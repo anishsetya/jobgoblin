@@ -7,7 +7,7 @@ import type { IncomingMessage, Server, ServerResponse } from "node:http";
 import type { AddressInfo } from "node:net";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import type { ToolError, ToolReply } from "@jobgoblin/schemas";
+import type { ToolReply } from "@jobgoblin/schemas";
 import type { z } from "zod";
 import { TOOL_SCHEMAS } from "../src/toolSchemas";
 import type { ToolName, ToolOutput } from "../src/toolSchemas";
@@ -27,17 +27,8 @@ export type StubServer = {
   close(): Promise<void>;
 };
 
-// The inputs the stub received for one tool, in order.
-export function inputsOf<Name extends ToolName>(server: StubServer, tool: Name): ParsedInput<Name>[] {
-  return server.calls.filter((call) => call.tool === tool).map((call) => call.input as ParsedInput<Name>);
-}
-
 export function ok<T>(data: T, next: string | null = null): ToolReply<T> {
   return { ok: true, data, next };
-}
-
-export function refused(errors: ToolError[]): ToolReply<never> {
-  return { ok: false, errors, next: null };
 }
 
 export async function startStubServer(handlers: ToolHandlers, token = "run-token-for-tests"): Promise<StubServer> {

@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { aHistoryEvent, aRun, anApplicationInDatabase, openTestDatabase, removeTempDirs } from "../testSupport";
 import { countStatusChangesSince, insertHistoryEvent, listHistoryEvents } from "./historyEvents";
 import {
-  answerQuestion,
+  saveQuestionAnswer,
   getQuestion,
   hasOpenQuestion,
   insertQuestion,
@@ -52,7 +52,7 @@ describe("questions", () => {
     expect(listOpenQuestions(db).map((question) => question.id)).toEqual(["q-early", "q-late"]);
     expect(hasOpenQuestion(db, "app-1")).toBe(true);
 
-    const answered = answerQuestion(db, { id: "q-early", answer: "Austin", answeredAt: "2026-10-31T17:00:00.000Z" });
+    const answered = saveQuestionAnswer(db, { id: "q-early", answer: "Austin", answeredAt: "2026-10-31T17:00:00.000Z" });
 
     expect(answered).toMatchObject({ answer: "Austin", answeredAt: "2026-10-31T17:00:00.000Z" });
     expect(listOpenQuestions(db).map((question) => question.id)).toEqual(["q-late"]);
@@ -64,9 +64,9 @@ describe("questions", () => {
     const db = openTestDatabase();
     setUp(db);
     insertQuestion(db, aQuestion("q-1", "app-1", "2026-10-31T14:00:00.000Z"));
-    answerQuestion(db, { id: "q-1", answer: "Austin", answeredAt: "2026-10-31T17:00:00.000Z" });
+    saveQuestionAnswer(db, { id: "q-1", answer: "Austin", answeredAt: "2026-10-31T17:00:00.000Z" });
 
-    const secondAnswer = answerQuestion(db, { id: "q-1", answer: "Boston", answeredAt: "2026-10-31T18:00:00.000Z" });
+    const secondAnswer = saveQuestionAnswer(db, { id: "q-1", answer: "Boston", answeredAt: "2026-10-31T18:00:00.000Z" });
 
     expect(secondAnswer).toBeNull();
     expect(getQuestion(db, "q-1")?.answer).toBe("Austin");
@@ -78,7 +78,7 @@ describe("questions", () => {
     setUp(db);
     insertQuestion(db, aQuestion("q-1", "app-1", "2026-10-31T14:00:00.000Z"));
     insertQuestion(db, aQuestion("q-2", "app-2", "2026-10-31T15:00:00.000Z"));
-    answerQuestion(db, { id: "q-1", answer: "Austin", answeredAt: "2026-10-31T17:00:00.000Z" });
+    saveQuestionAnswer(db, { id: "q-1", answer: "Austin", answeredAt: "2026-10-31T17:00:00.000Z" });
 
     expect(listQuestionsForApplication(db, "app-1").map((question) => question.id)).toEqual(["q-1"]);
     db.close();

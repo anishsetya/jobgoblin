@@ -1,6 +1,6 @@
 // An on-screen version of the tailored resume, built from the resume's data (ResumeBody + ResumeHeader)
 // and the Your story items it cites. It exists because a PDF cannot highlight what changed and an
-// <iframe> cannot send the session key (decision D12). The real PDF is opened with "Open PDF".
+// <iframe> cannot send the session token (decision D12). The real PDF is opened with "Open PDF".
 // SAFETY: every piece of text here is rendered as text by React, never as HTML (no dangerouslySetInnerHTML),
 // so nothing in a resume or a story item can run as code in this page.
 import type { ResumeBody, ResumeDiff, ResumeHeader, StoryItem } from "@jobgoblin/schemas";

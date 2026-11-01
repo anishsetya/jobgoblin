@@ -1,4 +1,4 @@
-// Finds the session key the dashboard must send with every request, and keeps it out of the address bar.
+// Finds the session token the dashboard must send with every request, and keeps it out of the address bar.
 // Where it comes from, in order: the desktop app's preload script, then this tab's session storage,
 // which is filled from the "#token=" part of the address the server printed (decision D4).
 // A fragment is never sent to a server or written to a log, and it is removed as soon as it is read.

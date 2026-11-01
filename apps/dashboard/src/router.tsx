@@ -161,7 +161,7 @@ const routeTree = rootRoute.addChildren([
   ]),
 ]);
 
-// Made by main.tsx after the session key has been taken out of the address bar.
+// Made by main.tsx after the session token has been taken out of the address bar.
 export function createAppRouter(queryClient: QueryClient) {
   return createRouter({ routeTree, context: { queryClient }, scrollRestoration: true });
 }

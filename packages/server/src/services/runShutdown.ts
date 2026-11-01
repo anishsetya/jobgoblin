@@ -4,7 +4,7 @@
 // Spec: tech spec "Processes and startup" (Shutdown); ARCHITECTURE.md section 11 (shutdown message).
 import { listRunsByStatus, updateRun } from "@jobgoblin/storage";
 import type { ServerContext } from "../context";
-import { cancelRun } from "./runs";
+import { cancelRun } from "./runLifecycle";
 
 const SHUTDOWN_MESSAGE = "Cancelled because Jobgoblin was closed.";
 

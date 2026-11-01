@@ -50,7 +50,8 @@ Everything under `/api` needs the session token. The dashboard's own files (`app
 | "I submitted" | `submissions.ts` | `POST .../submitted` |
 | Skip, undo skip, withdraw, record what happened after applying | `decisions.ts`; `statusForRuns.ts` for a run | `POST .../skip`, `.../undo-skip`, `.../withdraw`, `.../status` |
 | Questions between a run and the person | `questions.ts` | `ask_person`, `POST /api/questions/:id/answer` |
-| Queue, cancel, retry, dismiss; the tasks inside a run | `runs.ts`, `runTasks.ts` | many (see below), `/api/runs` |
+| Queue a run; the tasks inside a run | `runs.ts`, `runTasks.ts` | many (see below), the tool adapters |
+| Find Jobs, cancel, retry, dismiss a run | `runLifecycle.ts` | `/api/runs` |
 | Ask about this application | `askRuns.ts`, `askReadModels.ts` | `POST .../ask`; `list_ready`, `get_pipeline`, `get_application` |
 | Profile (the person's view; the run's view) | `profile.ts`; `profileForRuns.ts`, `missingValues.ts` | `/api/profile`; `get_profile`, `save_profile_section` |
 | Your story | `story.ts`; `storyProposals.ts` for a run | `/api/story`; `propose_story_items` |
@@ -94,7 +95,7 @@ Functions that can refuse in a way a run can fix return an `Outcome`; the adapte
 
 ## How runs are queued
 
-A run is a row in `runs` (status `queued`) plus one `run_tasks` row per application it works through. `ctx.runs.queueRun(request)` (`services/runs.ts`) is the only way in; the person-facing services call the same function.
+A run is a row in `runs` (status `queued`) plus one `run_tasks` row per application it works through. `queueRun(ctx, request)` (`services/runs.ts`) is the only way in: the person-facing services and the runner's `afterRun.ts` all call that one function. (There is no `ctx.runs`.)
 
 | Who queues | Kind | Tasks | Input |
 | --- | --- | --- | --- |
@@ -105,19 +106,20 @@ A run is a row in `runs` (status `queued`) plus one `run_tasks` row per applicat
 | `approveApplication` | answers | the application | `{}` |
 | `POST .../ask` (`startAsk`) | ask | none | `{ applicationId, question }` |
 | `answerQuestion` | the kind that asked | that one application | the asking run's input, model and kind |
-| `retryRun` | the failed run's kind | its pending and failed tasks | its input, model, `retryOf` |
+| `retryRun` (`runLifecycle.ts`) | the failed run's kind | its pending and failed tasks | its input, model, `retryOf` |
+| `afterRun` (`runner/afterRun.ts`), when a tailor run left drafts that never passed | tailor | those applications, once, on sonnet | the run's input, `retryOf` |
 
-The queue enforces three rules, all tested in `runs.test.ts`:
+The queue enforces three rules (tested in `runs.test.ts`; the lifecycle functions are tested in `runLifecycle.test.ts`):
 
 - **An application sits in only one active run** (`queued`, `running` or `waiting` with work left). A tailor or answers run holds an application through its tasks; a paste run holds the application of its job, an ask run the one it was asked about. A second request is refused with "This application already has a run in progress."
 - **One hunt and one setup at a time.** Uploading the resume twice reuses the setup run that is already waiting.
 - **A single re-queued application joins** the oldest queued run of the same kind, model and input (D8), so three answers make one run, not three. A retry never joins.
 
-`insertQueuedRun` is the database half, for a service that must queue inside its own transaction; it announces nothing, so the caller calls `announceQueuedRun(ctx, run)` after the commit. That function emits `run.updated` and calls `wake()`, which calls `ctx.launcher?.wake()`. **The queue never starts a process.** Until a launcher is set, a queued run simply waits.
+`insertQueuedRun` is the database half, for a service that must queue inside its own transaction; it announces nothing, so the caller calls `announceQueuedRun(ctx, run)` after the commit. That function emits `run.updated` and calls `ctx.launcher?.wake()`. **The queue never starts a process.** Until a launcher is set, a queued run simply waits.
 
 Inside a tailor or answers run, `nextTask` hands out the next pending task whose application has no open question (D17), and `completeTask` records `done`, `failed` or `waiting` and updates `progress_done` and `progress_total`. `waiting` is accepted only for an application that really has an open question.
 
-`cancelRun` asks the launcher to stop a `running` run, and finishes the job in the database itself if the launcher could not (a `queued` or `waiting` run has no process). `cancelRunsForShutdown` does the same for every run when Jobgoblin quits, except `waiting` runs, which have no process and keep their open question.
+`cancelRun` (`runLifecycle.ts`) asks the launcher to stop a `running` run, and finishes the job in the database itself if the launcher could not (a `queued` or `waiting` run has no process). `cancelRunsForShutdown` does the same for every run when Jobgoblin quits, except `waiting` runs, which have no process and keep their open question.
 
 ## Starting it
 

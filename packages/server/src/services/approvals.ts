@@ -4,7 +4,7 @@
 // Then it writes the files and queues an answers run for the screening questions.
 // Threat stopped: an application going out with details or a resume the person did not approve.
 // Spec: ARCHITECTURE.md section 8.5.
-import type { Application, Approval, ApproveRequest, ResumeVersion } from "@jobgoblin/schemas";
+import type { Application, Approval, ApproveRequest, ResumeShortId, ResumeVersion } from "@jobgoblin/schemas";
 import { findBannedTerms, headerHash, requiredMissing, sha256Hex } from "@jobgoblin/core";
 import { readPdf, TEMPLATE_VERSION } from "@jobgoblin/render";
 import {
@@ -56,7 +56,7 @@ export async function approveApplication(
   const shortId = chooseShortId(ctx.db, resume.versionId);
   const applicationFolder = application.folder ?? folder.applicationFolderPath(folder.applicationFolderName(ctx.now(), application.company, application.title));
 
-  saveApproval(ctx, { application, resume, sheet, pdf, applicationFolder, isReapproval, request });
+  saveApproval(ctx, { application, resume, shortId, sheet, pdf, applicationFolder, isReapproval, request });
 
   writeApprovedFiles(ctx, {
     bytes: pdf.bytes,
@@ -145,6 +145,7 @@ async function freezeFinalPdf(ctx: ServerContext, resume: CurrentResume): Promis
 type SaveInput = {
   application: Application;
   resume: CurrentResume;
+  shortId: ResumeShortId; // chosen once in approveApplication and used for the file name, the history and the version row
   sheet: CurrentDataSheet;
   pdf: FrozenPdf;
   applicationFolder: string;
@@ -154,11 +155,11 @@ type SaveInput = {
 
 // One transaction: the approval, the frozen PDF, the folder, and the move to Approved (or a "re-approved" event).
 function saveApproval(ctx: ServerContext, input: SaveInput): void {
-  const { application, resume, sheet, pdf } = input;
+  const { application, resume, shortId, sheet, pdf } = input;
   const now = ctx.now().toISOString();
 
   ctx.db.transaction(() => {
-    useResumeVersion(ctx, application, resume);
+    switchToCurrentResumeVersion(ctx, application, resume, shortId);
     markResumeApproved(ctx.db, {
       applicationId: application.id,
       versionId: resume.versionId,
@@ -168,7 +169,6 @@ function saveApproval(ctx: ServerContext, input: SaveInput): void {
     updateApplicationFields(ctx.db, application.id, { folder: input.applicationFolder }, now);
     insertApproval(ctx.db, approvalRecord(ctx, input));
 
-    const shortId = chooseShortId(ctx.db, resume.versionId);
     if (input.isReapproval) {
       recordHistory(ctx, { applicationId: application.id, actor: "person", type: "re-approved", detail: `Resume ${shortId}` });
     } else {
@@ -201,12 +201,12 @@ function approvalRecord(ctx: ServerContext, input: SaveInput): Approval {
 
 // If the contact details changed since the draft, the same body has a new version id. The application
 // then moves to that version (a new draft row), so the approved file and the version id describe each other.
-function useResumeVersion(ctx: ServerContext, application: Application, resume: CurrentResume): void {
+function switchToCurrentResumeVersion(ctx: ServerContext, application: Application, resume: CurrentResume, shortId: ResumeShortId): void {
   if (resume.versionId === resume.stored.versionId) return;
 
   const version: ResumeVersion = {
     versionId: resume.versionId,
-    shortId: chooseShortId(ctx.db, resume.versionId),
+    shortId,
     body: resume.stored.body,
     headerHash: headerHash(resume.header),
     templateVersion: TEMPLATE_VERSION,

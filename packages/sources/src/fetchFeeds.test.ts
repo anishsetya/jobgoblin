@@ -63,10 +63,12 @@ describe("fetchFeeds with the demo fixtures", () => {
     }
   });
 
-  it.each(DEMO_BOARD)("has %s as %s, %s, %s", async (jobId, company, title, location) => {
+  it("reads each demo posting's company, title and location", async () => {
     const { postings } = await aDemoRun();
 
-    expect(byJobId(postings, jobId)).toMatchObject({ company, title, location });
+    const read = postings.map(({ jobId, company, title, location }) => [jobId, company, title, location]);
+
+    expect(read.sort()).toEqual([...DEMO_BOARD].sort());
   });
 
   it("never touches the network", async () => {

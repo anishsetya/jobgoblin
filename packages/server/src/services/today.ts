@@ -5,6 +5,7 @@ import type { Application, NeedsYouItem, Run, RunKind, TodayResponse } from "@jo
 import {
   countApplicationsCreatedSince,
   countStatusChangesSince,
+  formatLocalDay,
   getApplication,
   getLiveApproval,
   getSettings,
@@ -14,7 +15,7 @@ import {
   listRecentRuns,
 } from "@jobgoblin/storage";
 import type { ServerContext } from "../context";
-import { localDay, startOfLocalDay } from "./dates";
+import { startOfLocalDay } from "./dates";
 
 const RECENT_RUNS_LOOKED_AT = 50;
 const ENDED_RUN_CARD_HOURS = 24; // a finished run's card stays on Today this long, unless it is dismissed
@@ -135,8 +136,8 @@ function longShotItems(ctx: ServerContext): NeedsYouItem[] {
 }
 
 function followUpItems(ctx: ServerContext): NeedsYouItem[] {
-  return listFollowUpsDue(ctx.db, localDay(ctx.now())).map((application) => {
-    const day = application.followUpOn ?? localDay(ctx.now());
+  return listFollowUpsDue(ctx.db, formatLocalDay(ctx.now())).map((application) => {
+    const day = application.followUpOn ?? formatLocalDay(ctx.now());
     return applicationItem("follow-up-due", application, `You planned to follow up on ${day}.`, `${day}T00:00:00.000Z`);
   });
 }

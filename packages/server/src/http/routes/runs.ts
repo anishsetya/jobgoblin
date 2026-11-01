@@ -2,7 +2,7 @@
 import { StartRunRequest } from "@jobgoblin/schemas";
 import { Hono } from "hono";
 import type { ServerContext } from "../../context";
-import { cancelRun, dismissRun, retryRun, startHunt } from "../../services/runs";
+import { cancelRun, dismissRun, retryRun, startHunt } from "../../services/runLifecycle";
 import { parseJsonBody } from "../validation";
 
 export function runRoutes(ctx: ServerContext): Hono {

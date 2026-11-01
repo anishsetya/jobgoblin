@@ -1,8 +1,9 @@
 // The contract of POST /mcp, tested through the real app with plain JSON-RPC requests (no Claude involved):
-// which run sees which tools, who may knock, and what three of the tools promise (nothing personal from
-// get_profile, wrapped job text, errors as values from submit_resume_draft).
+// which run sees which tools, who may knock, and what four of the tools promise (nothing personal from
+// get_profile, a file name without the person's name from import_resume, wrapped job text, errors as values
+// from submit_resume_draft).
 import { MCP_TOOL_NAMES, RUN_KIND_TOOLS, type RunKind } from "@jobgoblin/schemas";
-import { insertRun, newId, saveProfileSection } from "@jobgoblin/storage";
+import { insertRun, insertUpload, newId, saveProfileSection } from "@jobgoblin/storage";
 import { afterEach, describe, expect, it } from "vitest";
 import { z } from "zod";
 import type { ServerContext } from "../context";
@@ -124,7 +125,7 @@ describe("who may call /mcp", () => {
 });
 
 // ---------------------------------------------------------------------------------------------
-// Three tools' promises
+// Four tools' promises
 // ---------------------------------------------------------------------------------------------
 
 describe("get_profile", () => {
@@ -142,6 +143,25 @@ describe("get_profile", () => {
       expect(text, secret).not.toContain(secret);
     }
     expect(Object.keys((reply as { data: object }).data).sort()).toEqual(["facts", "missing", "rules", "targets"]);
+  });
+});
+
+describe("import_resume", () => {
+  it("never shows a run the person's name, not even in the file name", async () => {
+    const { ctx, call } = createTestApp();
+    insertUpload(ctx.db, {
+      id: newId(),
+      kind: "resume",
+      fileName: "Alex Rivera - Resume.pdf",
+      redactedText: "Software engineer at Northwind Logistics. {email}",
+      uploadedAt: ctx.now().toISOString(),
+    });
+    const run = aGoingRun(ctx, "setup");
+
+    const reply = await callTool(call, run.token, "import_resume");
+
+    expect(JSON.stringify(reply)).not.toContain("Rivera");
+    expect(reply).toMatchObject({ ok: true, data: { uploads: [{ kind: "resume", fileName: "resume.pdf" }] } });
   });
 });
 

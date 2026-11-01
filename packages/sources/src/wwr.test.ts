@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readRssItems, readXmlText } from "./rss";
 import { expectUsablePosting, readRecordedFixture } from "./testSupport";
-import { parseWwrFeed, wwrCategoryUrl } from "./wwr";
+import { parseWwrFeed } from "./wwr";
 
 describe("parseWwrFeed", () => {
   const postings = parseWwrFeed(readRecordedFixture("wwr-back-end.xml"));
@@ -69,11 +69,5 @@ describe("the RSS reader", () => {
 
     expect(posting?.text).toBe("Build things.");
     expect(posting?.location).toBe("Remote");
-  });
-});
-
-describe("We Work Remotely addresses", () => {
-  it("reads one feed per category", () => {
-    expect(wwrCategoryUrl("remote-devops-sysadmin-jobs")).toBe("https://weworkremotely.com/categories/remote-devops-sysadmin-jobs.rss");
   });
 });

@@ -20,10 +20,10 @@ import { spawnRun, type RunExit, type SpawnedRun } from "./processes";
 import { buildPlaybook, createRunDirectory } from "./runDirectory";
 import { buildRunEnvironment } from "./runEnvironment";
 import { TRANSCRIPT_FILE_NAME } from "./runConstants";
-import { stopProcessTree } from "./stopRun";
+import { stopProcessPolitelyThenForce } from "./stopRun";
 import { checkInitEvent, parseStreamLine, type ResultEvent, type StreamEvent } from "./streamJson";
 
-const STOPPED_FOR_SAFETY: RunEnd = { status: "failed", outcomeMessage: "This run was stopped for safety" };
+const STOPPED_FOR_SAFETY: RunEnd = { status: "failed", outcomeMessage: OUTCOME_MESSAGES.stoppedForSafety };
 const CANCELLED: RunEnd = { status: "cancelled", outcomeMessage: OUTCOME_MESSAGES.cancelled };
 const MILLISECONDS_PER_MINUTE = 60_000;
 
@@ -58,7 +58,7 @@ async function launchSteps(deps: LaunchDeps, run: Run, handle: RunHandle): Promi
   if (blockedMessage !== null) return endWithout({ status: "blocked", outcomeMessage: blockedMessage });
 
   const command = await claudeCli.resolveCommand();
-  if (command === null) return endWithout({ status: "blocked", outcomeMessage: BLOCKED_MESSAGES["not-installed"] });
+  if (command === null) return endWithout({ status: "blocked", outcomeMessage: OUTCOME_MESSAGES.notInstalled });
   if (handle.cancelRequested) return endWithout(CANCELLED);
 
   return superviseProcess(deps, run, handle, command);
@@ -76,8 +76,8 @@ async function fetchJobBoards(ctx: ServerContext, run: Run): Promise<void> {
 // ---------------------------------------------------------------------------------------------
 
 const BLOCKED_MESSAGES = {
-  "not-installed": "Claude Code is not installed",
-  "update-needed": "Claude Code needs an update",
+  "not-installed": OUTCOME_MESSAGES.notInstalled,
+  "update-needed": OUTCOME_MESSAGES.updateNeeded,
   "signed-out": OUTCOME_MESSAGES.signedOut,
 } as const;
 
@@ -109,7 +109,7 @@ async function superviseProcess(deps: LaunchDeps, run: Run, handle: RunHandle, c
   const stopProcess = (immediately: boolean): Promise<void> => {
     ctx.runTokens.revoke(run.id); // a process being stopped must not make more tool calls
     if (spawned === null || spawned.pid === null) return Promise.resolve();
-    return stopProcessTree({ pid: spawned.pid, exited: spawned.exit, logger: ctx.logger, immediately });
+    return stopProcessPolitelyThenForce({ pid: spawned.pid, exited: spawned.exit, logger: ctx.logger, immediately });
   };
 
   const readLine = (line: string): void => {

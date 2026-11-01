@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { findHiringThreadId, hnThreadUrl, parseHnThread } from "./hn";
+import { findHiringThreadId, parseHnThread } from "./hn";
 import { expectUsablePosting, readRecordedFixture } from "./testSupport";
 
 describe("findHiringThreadId", () => {
@@ -63,11 +63,5 @@ describe("parseHnThread", () => {
     const body = JSON.stringify({ children: [{ id: 1, text: null }, { id: 2, text: "Acme | Engineer | Remote", created_at: "2026-10-01T00:00:00.000Z" }] });
 
     expect(parseHnThread(body).map((posting) => posting.jobId)).toEqual(["hn:hn:2"]);
-  });
-});
-
-describe("Hacker News addresses", () => {
-  it("reads a thread through the items endpoint", () => {
-    expect(hnThreadUrl("49922569")).toBe("https://hn.algolia.com/api/v1/items/49922569");
   });
 });

@@ -3,7 +3,7 @@
 // S skip, J next and K previous among the applications waiting for review.
 // Spec: PRD A1-A3 and "Interaction rules", ARCHITECTURE.md sections 8.5 and 12.
 import type { ApplicationDetail } from "@jobgoblin/schemas";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -12,7 +12,6 @@ import {
   useRequestEdit,
   useSkipApplication,
 } from "@/api/applications";
-import { usePipeline } from "@/api/pipeline";
 import { ApplicationHeader } from "@/components/ApplicationHeader";
 import { BandBadge } from "@/components/BandBadge";
 import { DataSheetTable } from "@/components/DataSheetTable";
@@ -25,9 +24,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useKeyboardShortcuts } from "@/lib/keyboardShortcuts";
 import { usePageTitle } from "@/lib/pageTitle";
-
-// The queue the J and K keys walk through.
-const AWAITING_REVIEW_QUERY = { status: ["Awaiting approval" as const] };
+import { useReviewQueue } from "./useReviewQueue";
 
 export function ReviewContent({ detail }: { detail: ApplicationDetail }) {
   const { t } = useTranslation();
@@ -35,41 +32,16 @@ export function ReviewContent({ detail }: { detail: ApplicationDetail }) {
   const applicationId = application.id;
   usePageTitle(t("review:pageTitle", { company: application.company, title: application.title }));
 
-  const navigate = useNavigate();
   const approve = useApproveApplication(applicationId);
   const skip = useSkipApplication(applicationId);
   const requestEdit = useRequestEdit(applicationId);
   const downloadPdf = useDownloadResumePdf(applicationId);
   const [isNoteOpen, setIsNoteOpen] = useState(false);
 
-  const queue = usePipeline(AWAITING_REVIEW_QUERY);
-  const queueIds = (queue.data ?? []).map((row) => row.id);
-  const positionInQueue = queueIds.indexOf(applicationId);
+  const { queueIds, positionInQueue, goToNeighbour, goToNextOrToday } = useReviewQueue(applicationId);
 
   const missingRequired = dataSheet?.fields.filter((field) => field.required && field.missing) ?? [];
   const canApproveNow = actions.canApprove && dataSheetHash !== null && missingRequired.length === 0;
-
-  function goToApplication(id: string): void {
-    void navigate({ to: "/review/$id", params: { id } });
-  }
-
-  // J goes to the next application waiting for review, K to the previous one, wrapping around.
-  function goToNeighbour(step: 1 | -1): void {
-    if (queueIds.length === 0) return;
-    const from = positionInQueue === -1 ? (step === 1 ? -1 : 0) : positionInQueue;
-    const target = queueIds[(from + step + queueIds.length) % queueIds.length];
-    if (target !== undefined && target !== applicationId) goToApplication(target);
-  }
-
-  // After a decision, carry on with the next waiting application, or go back to Today when none is left.
-  function goToNextOrToday(): void {
-    const next = queueIds.find((id) => id !== applicationId);
-    if (next === undefined) {
-      void navigate({ to: "/today" });
-    } else {
-      goToApplication(next);
-    }
-  }
 
   function approveApplication(): void {
     if (!canApproveNow || dataSheetHash === null || approve.isPending) return;

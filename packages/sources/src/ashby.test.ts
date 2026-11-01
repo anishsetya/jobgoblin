@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ashbyBoardUrl, parseAshbyBoard } from "./ashby";
+import { parseAshbyBoard } from "./ashby";
 import { expectUsablePosting, readRecordedFixture } from "./testSupport";
 
 const SIERRA = { slug: "sierra", companyName: "Sierra" };
@@ -69,11 +69,5 @@ describe("parseAshbyBoard", () => {
 
   it("refuses a response that is not an object", () => {
     expect(() => parseAshbyBoard("[]", SIERRA)).toThrow("was not a JSON object");
-  });
-});
-
-describe("Ashby addresses", () => {
-  it("asks the board for pay information too", () => {
-    expect(ashbyBoardUrl("copperleaf")).toBe("https://api.ashbyhq.com/posting-api/job-board/copperleaf?includeCompensation=true");
   });
 });

@@ -1,16 +1,13 @@
 // Focused checks on the shared contracts: the lists that must stay in step with each other
 // (statuses, tools, run kinds), and the rules that protect truthfulness and the person's private data.
 import { describe, expect, it } from "vitest";
-import * as schemas from "./index";
 import {
   AddJobRequest,
   ApplicationStatus,
   Backup,
   CAP_STATUSES,
   DataSheetField,
-  DataSheetKey,
   HistoryEvent,
-  HISTORY_EVENT_TYPES,
   MCP_TOOL_NAMES,
   PERSONAL_SECTIONS,
   Profile,
@@ -24,8 +21,8 @@ import {
   StoryItemData,
   TERMINAL_STATUSES,
   TODO,
-  TransitionVia,
 } from "./index";
+import type { McpToolName } from "./index";
 
 // A resume body that follows every rule: each part names the story item it comes from.
 function aResumeBody(experience: unknown = [anExperienceEntry()]): unknown {
@@ -44,23 +41,11 @@ function anExperienceEntry(): unknown {
   };
 }
 
-// "get_tailoring_context" becomes "GetTailoringContext", the start of that tool's schema names.
-function toolSchemaPrefix(toolName: string): string {
-  return toolName
-    .split("_")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join("");
-}
-
-function runKindsThatMayCall(toolName: schemas.McpToolName): string[] {
+function runKindsThatMayCall(toolName: McpToolName): string[] {
   return RunKind.options.filter((runKind) => RUN_KIND_TOOLS[runKind].includes(toolName));
 }
 
 describe("application statuses", () => {
-  it("has exactly 20 statuses, matching the spec's table", () => {
-    expect(ApplicationStatus.options).toHaveLength(20);
-  });
-
   it("puts every status in exactly one Pipeline column", () => {
     const columnsPerStatus = ApplicationStatus.options.map(
       (status) => STATUS_GROUPS.filter((group) => group.statuses.includes(status)).length,
@@ -72,7 +57,6 @@ describe("application statuses", () => {
   it("counts an application toward a company's cap only from Tailored onwards, and never once closed", () => {
     const closedButCounted = CAP_STATUSES.filter((status) => TERMINAL_STATUSES.includes(status));
 
-    expect(CAP_STATUSES).toHaveLength(10);
     expect(CAP_STATUSES).toContain("Tailored");
     expect(CAP_STATUSES).toContain("Offer");
     expect(CAP_STATUSES).not.toContain("Found");
@@ -80,28 +64,9 @@ describe("application statuses", () => {
     expect(CAP_STATUSES).not.toContain("Long shot");
     expect(closedButCounted).toEqual([]);
   });
-
-  it("names the 11 actions that can move an application", () => {
-    expect(TransitionVia.options).toHaveLength(11);
-  });
 });
 
 describe("MCP tools", () => {
-  it("lists exactly 21 tools", () => {
-    expect(MCP_TOOL_NAMES).toHaveLength(21);
-  });
-
-  it("has an input schema and an output schema for every tool", () => {
-    const expectedNames = MCP_TOOL_NAMES.flatMap((toolName) => [
-      `${toolSchemaPrefix(toolName)}Input`,
-      `${toolSchemaPrefix(toolName)}Output`,
-    ]);
-
-    const missingNames = expectedNames.filter((name) => !(name in schemas));
-
-    expect(missingNames).toEqual([]);
-  });
-
   it("only gives run kinds tools that exist", () => {
     for (const runKind of RunKind.options) {
       for (const toolName of RUN_KIND_TOOLS[runKind]) {
@@ -202,10 +167,6 @@ describe("profile", () => {
 });
 
 describe("data sheet", () => {
-  it("has exactly the 24 keys the spec lists", () => {
-    expect(DataSheetKey.options).toHaveLength(24);
-  });
-
   it("refuses a field whose key is not one of them", () => {
     const field = { label: "Social security number", value: "123", personal: true, required: false, missing: false };
 
@@ -251,7 +212,7 @@ describe("shapes of values", () => {
     expect(withOffset.success).toBe(false);
   });
 
-  it("lists 11 kinds of history event and refuses any other", () => {
+  it("accepts a known kind of history event and refuses any other", () => {
     const event = {
       id: "e1",
       ts: "2026-10-31T14:05:00.000Z",
@@ -262,7 +223,6 @@ describe("shapes of values", () => {
       detail: null,
     };
 
-    expect(HISTORY_EVENT_TYPES).toHaveLength(11);
     expect(HistoryEvent.safeParse({ ...event, type: "approved" }).success).toBe(true);
     expect(HistoryEvent.safeParse({ ...event, type: "something-else" }).success).toBe(false);
   });

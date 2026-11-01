@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { greenhouseBoardUrl, greenhouseJobUrl, parseGreenhouseBoard, parseGreenhouseJob } from "./greenhouse";
+import { parseGreenhouseBoard, parseGreenhouseJob } from "./greenhouse";
 import { expectUsablePosting, readRecordedFixture } from "./testSupport";
 
 const ANTHROPIC = { slug: "anthropic", companyName: "Anthropic" };
@@ -76,15 +76,5 @@ describe("parseGreenhouseJob", () => {
 
   it("puts the real question after the label when the label is only a heading", () => {
     expect(posting!.questions).toContain("(Optional) Personal Preferences: How do you pronounce your name?");
-  });
-});
-
-describe("Greenhouse addresses", () => {
-  it("asks the board for descriptions", () => {
-    expect(greenhouseBoardUrl("acmecloud")).toBe("https://boards-api.greenhouse.io/v1/boards/acmecloud/jobs?content=true");
-  });
-
-  it("asks a single job for its questions", () => {
-    expect(greenhouseJobUrl("gridline", "4100")).toBe("https://boards-api.greenhouse.io/v1/boards/gridline/jobs/4100?questions=true");
   });
 });

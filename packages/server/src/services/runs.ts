@@ -1,9 +1,11 @@
-// The queue side of runs: put a run in the queue with its tasks, cancel it, retry it, dismiss its card.
+// The queue side of runs: put a run in the queue with its tasks. This is the only way a run enters the queue;
+// every service and the runner's afterRun.ts call queueRun (or insertQueuedRun inside their own transaction).
 // Starting the Claude Code process is the launcher's job (ctx.launcher); this file only writes the
 // database and tells the launcher to wake up. Until a launcher exists, a queued run simply waits.
+// Cancel, retry and dismiss are in runLifecycle.ts.
 // Rules: an application sits in only one active run at a time (section 8.3); answering a question joins a
-// queued run of the same kind (D8); cancel has a terminal state of its own (D11).
-// Spec: ARCHITECTURE.md sections 5.8, 8.3 and 10 (RunQueue).
+// queued run of the same kind (D8).
+// Spec: ARCHITECTURE.md sections 5.8, 8.3 and 10.
 import { RUN_KIND_SETTINGS, type Run, type RunKind } from "@jobgoblin/schemas";
 import { canonicalJson } from "@jobgoblin/core";
 import {
@@ -13,38 +15,22 @@ import {
   findOldestQueuedRun,
   getApplication,
   getApplicationByJobId,
-  getSetting,
   insertRun,
   listQuestionsForApplication,
-  listRunTasks,
   listRunsByStatus,
   newId,
   updateRun,
 } from "@jobgoblin/storage";
-import type { QueueRunRequest, RunQueue, ServerContext } from "../context";
+import type { QueueRunRequest, ServerContext } from "../context";
 import { announceRun } from "./changes";
-import { loadRunOrFail } from "./loaders";
 import { conflict } from "./serviceError";
 
 // Runs of these kinds work through a list of applications (run_tasks) with next_task and complete_task.
 // The others (paste, ask) are about one thing named in their input, and setup and hunt have no applications.
-const KINDS_WITH_TASKS: readonly RunKind[] = ["tailor", "answers"];
+export const KINDS_WITH_TASKS: readonly RunKind[] = ["tailor", "answers"];
 // Two of these at once would only compete for the same work, so a second one is refused.
 const KINDS_ONE_AT_A_TIME: readonly RunKind[] = ["hunt", "setup"];
-const ACTIVE_STATUSES = ["queued", "running", "waiting"] as const;
-const RETRYABLE_STATUSES = ["failed", "blocked", "interrupted", "cancelled"];
-
-export function createRunQueue(getContext: () => ServerContext): RunQueue {
-  return {
-    queueRun: (request) => queueRun(getContext(), request),
-    cancelRun: (runId) => cancelRun(getContext(), runId),
-    wake: () => wake(getContext()),
-  };
-}
-
-export function wake(ctx: ServerContext): void {
-  ctx.launcher?.wake();
-}
+export const ACTIVE_STATUSES = ["queued", "running", "waiting"] as const;
 
 // ---------------------------------------------------------------------------------------------
 // Queueing
@@ -73,7 +59,7 @@ export function insertQueuedRun(ctx: ServerContext, request: QueueRunRequest): R
 
 export function announceQueuedRun(ctx: ServerContext, run: Run): void {
   announceRun(ctx, run);
-  wake(ctx);
+  ctx.launcher?.wake();
 }
 
 function buildQueuedRun(ctx: ServerContext, request: QueueRunRequest): Run {
@@ -109,7 +95,7 @@ function refuseSecondRunOfSameKind(ctx: ServerContext, kind: RunKind): void {
 // PRD / section 8.3: an application may sit in only one active run at a time.
 function refuseBusyApplications(ctx: ServerContext, request: QueueRunRequest): void {
   for (const applicationId of applicationsTouchedBy(ctx, request)) {
-    if (findActiveRunFor(ctx, applicationId) !== null) {
+    if (findRunHoldingApplication(ctx, applicationId) !== null) {
       throw conflict(
         "application-busy",
         "This application already has a run in progress.",
@@ -132,7 +118,7 @@ function applicationsTouchedBy(ctx: ServerContext, request: QueueRunRequest): st
 
 // The active run (queued, running or waiting) that holds this application, if any. Tailor and answers runs
 // hold it through their tasks; a paste run holds the application of its job, an ask run the one it was asked about.
-export function findActiveRunFor(ctx: ServerContext, applicationId: string): Run | null {
+export function findRunHoldingApplication(ctx: ServerContext, applicationId: string): Run | null {
   const holdingTask = findActiveRunForApplication(ctx.db, applicationId);
   if (holdingTask !== null) return holdingTask;
 
@@ -161,86 +147,4 @@ function joinQueuedRun(ctx: ServerContext, request: QueueRunRequest): Run | null
 
   addRunTask(ctx.db, queued.id, applicationId);
   return updateRun(ctx.db, queued.id, { progressTotal: (queued.progressTotal ?? 0) + 1 }) ?? queued;
-}
-
-// ---------------------------------------------------------------------------------------------
-// Cancel, retry, dismiss
-// ---------------------------------------------------------------------------------------------
-
-export async function cancelRun(ctx: ServerContext, runId: string): Promise<Run> {
-  const run = loadRunOrFail(ctx, runId);
-
-  if (run.status === "running" && ctx.launcher !== null) {
-    await ctx.launcher.cancel(runId);
-    const afterCancel = loadRunOrFail(ctx, runId);
-    // The launcher records the end itself. If it could not (the process was already gone), finish the job here.
-    return afterCancel.status === "running" ? cancelInDatabase(ctx, afterCancel) : afterCancel;
-  }
-  if (isActive(run)) return cancelInDatabase(ctx, run);
-
-  throw conflict("run-finished", "This run has already finished.", "Dismiss it from Today.");
-}
-
-function isActive(run: Run): boolean {
-  return (ACTIVE_STATUSES as readonly string[]).includes(run.status);
-}
-
-function cancelInDatabase(ctx: ServerContext, run: Run): Run {
-  const cancelled = updateRun(ctx.db, run.id, {
-    status: "cancelled",
-    endedAt: ctx.now().toISOString(),
-    outcomeMessage: "You cancelled this run.",
-  });
-  ctx.runTokens.revoke(run.id);
-  const result = cancelled ?? run;
-  announceRun(ctx, result);
-  return result;
-}
-
-// A new run with the same kind and input, for the work that was left. The old run's card is cleared.
-export function retryRun(ctx: ServerContext, runId: string): Run {
-  const old = loadRunOrFail(ctx, runId);
-  if (!RETRYABLE_STATUSES.includes(old.status)) {
-    throw conflict("run-not-retryable", "Only a run that stopped early can be tried again.", "Start a new run instead.");
-  }
-
-  const unfinished = listRunTasks(ctx.db, old.id).filter((task) => task.state === "pending" || task.state === "failed");
-  const applicationIds = unfinished.map((task) => task.applicationId);
-  if (KINDS_WITH_TASKS.includes(old.kind) && applicationIds.length === 0) {
-    throw conflict("nothing-to-retry", "Nothing in this run is left to do.", "Dismiss it from Today.");
-  }
-
-  const run = atomically(ctx.db, () => {
-    const retried = insertQueuedRun(ctx, {
-      kind: old.kind,
-      applicationIds,
-      input: old.input,
-      model: old.model,
-      retryOf: old.id,
-    });
-    updateRun(ctx.db, old.id, { dismissedAt: ctx.now().toISOString() });
-    return retried;
-  });
-  announceRun(ctx, loadRunOrFail(ctx, old.id));
-  announceQueuedRun(ctx, run);
-  return run;
-}
-
-// Clears a finished run's card from Today.
-export function dismissRun(ctx: ServerContext, runId: string): Run {
-  const run = loadRunOrFail(ctx, runId);
-  if (run.status === "queued" || run.status === "running") {
-    throw conflict("run-active", "This run is still going.", "Cancel it first if you want to stop it.");
-  }
-  const dismissed = updateRun(ctx.db, runId, { dismissedAt: ctx.now().toISOString() }) ?? run;
-  announceRun(ctx, dismissed);
-  return dismissed;
-}
-
-// The "Find jobs" button.
-export function startHunt(ctx: ServerContext): Run {
-  if (!getSetting(ctx.db, "setupComplete")) {
-    throw conflict("setup-incomplete", "Finish setting up Jobgoblin before looking for jobs.", "Open the setup steps from Today.");
-  }
-  return queueRun(ctx, { kind: "hunt", applicationIds: [], input: {} });
 }

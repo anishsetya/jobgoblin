@@ -5,12 +5,12 @@ import type { Application, ApplicationActions, HistoryEvent } from "@jobgoblin/s
 import { canTransition, statusBeforeSkip } from "@jobgoblin/core";
 import { getLiveApproval } from "@jobgoblin/storage";
 import type { ServerContext } from "../context";
-import { findActiveRunFor } from "./runs";
+import { findRunHoldingApplication } from "./runs";
 
 export function computeActions(ctx: ServerContext, application: Application, history: HistoryEvent[]): ApplicationActions {
   const { status } = application;
   const hasLiveApproval = getLiveApproval(ctx.db, application.id) !== null;
-  const hasActiveRun = findActiveRunFor(ctx, application.id) !== null;
+  const hasActiveRun = findRunHoldingApplication(ctx, application.id) !== null;
   const statusBeforeTheSkip = statusBeforeSkip(history);
 
   return {

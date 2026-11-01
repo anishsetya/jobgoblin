@@ -123,7 +123,7 @@ export function useMarkSubmitted(applicationId: string) {
 }
 
 // Fetches the resume PDF and saves it as a file. It is fetched here, not linked, because the
-// route needs the session key, which a plain link or an <iframe> cannot send (decision D12).
+// route needs the session token, which a plain link or an <iframe> cannot send (decision D12).
 // `versionId` null means the application's current resume.
 export function useDownloadResumePdf(applicationId: string) {
   return useMutation({

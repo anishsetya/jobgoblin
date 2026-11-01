@@ -1,12 +1,12 @@
-// Finds, checks, installs and signs in the person's own Claude Code. Jobgoblin never modifies, wraps or copies
+// Checks, installs and signs in the person's own Claude Code. Jobgoblin never modifies, wraps or copies
 // it, and never reads its credential files: it only runs `claude --version`, `claude auth status` and
-// `claude auth login`, and shows the install command before it runs.
+// `claude auth login`, and shows the install command before it runs. Where the program is on disk is
+// found by findClaudeProgram.ts.
 // Spec: ARCHITECTURE.md section 10 (Claude Code CLI) and decision D21; tech spec "Claude Code integration".
-import { statSync } from "node:fs";
-import os from "node:os";
 import path from "node:path";
 import { z } from "zod";
 import type { ClaudeStatus } from "@jobgoblin/schemas";
+import { findClaudeProgram } from "./findClaudeProgram";
 import { runCommand } from "./processes";
 import type { CommandRunner } from "./processes";
 import { scrubClaudeEnvironment } from "./runEnvironment";
@@ -134,7 +134,7 @@ function buildStatus(parts: StatusParts): ClaudeStatus {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Finding the program
+// The configured program
 // ---------------------------------------------------------------------------------------------
 
 // Relative paths are refused (decision D21 and the launch rule): the program's place must not depend on the
@@ -145,47 +145,6 @@ function checkedClaudeCommand(command: string[] | null): string[] | null {
     throw new Error("The Claude command must be a list of absolute paths.");
   }
   return command;
-}
-
-type SearchInput = { platform: NodeJS.Platform; env: NodeJS.ProcessEnv };
-
-// In order: every PATH folder, then the folders the installers use. Only a real program is accepted:
-// `claude.cmd` (what an npm install makes) is never used, because Node cannot start a .cmd file without a shell.
-export function findClaudeProgram(input: SearchInput): string | null {
-  const fileName = input.platform === "win32" ? "claude.exe" : "claude";
-
-  const candidates = [
-    ...pathFolders(input.env).map((folder) => path.join(folder, fileName)),
-    ...installerFolders(input).map((folder) => path.join(folder, fileName)),
-  ];
-  return candidates.find(isFile) ?? null;
-}
-
-function pathFolders(env: NodeJS.ProcessEnv): string[] {
-  // Windows spells the variable "Path"; a copy of process.env keeps that spelling.
-  const pathKey = Object.keys(env).find((name) => name.toUpperCase() === "PATH");
-  const value = pathKey === undefined ? undefined : env[pathKey];
-  return (value ?? "").split(path.delimiter).filter((folder) => folder !== "");
-}
-
-function installerFolders(input: SearchInput): string[] {
-  const home = (input.platform === "win32" ? input.env.USERPROFILE : input.env.HOME) ?? os.homedir();
-  const folders = [path.join(home, ".local", "bin")];
-
-  // winget puts a link to the program here, and the running server's PATH does not know about it yet.
-  const localAppData = input.env.LOCALAPPDATA;
-  if (input.platform === "win32" && localAppData !== undefined) {
-    folders.push(path.join(localAppData, "Microsoft", "WinGet", "Links"));
-  }
-  return folders;
-}
-
-function isFile(candidate: string): boolean {
-  try {
-    return statSync(candidate).isFile();
-  } catch {
-    return false; // not there, or not readable by us
-  }
 }
 
 // ---------------------------------------------------------------------------------------------

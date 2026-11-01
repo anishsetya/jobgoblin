@@ -5,6 +5,7 @@
 import type { GetApplicationOutput, GetPipelineOutput, ListReadyOutput } from "@jobgoblin/schemas";
 import {
   countApplicationsByStatus,
+  formatLocalDay,
   getFit,
   getResumeVersion,
   listAnswers,
@@ -13,7 +14,6 @@ import {
   listHistoryEvents,
 } from "@jobgoblin/storage";
 import type { ServerContext } from "../context";
-import { localDay } from "./dates";
 import { loadApplicationOrFail, loadJobOfApplication } from "./loaders";
 
 // The applications waiting for the person's approval.
@@ -32,7 +32,7 @@ export function listReady(ctx: ServerContext): ListReadyOutput {
 export function getPipelineSummary(ctx: ServerContext): GetPipelineOutput {
   return {
     counts: countApplicationsByStatus(ctx.db),
-    rows: listApplications(ctx.db, {}, localDay(ctx.now())).map((row) => ({
+    rows: listApplications(ctx.db, {}, formatLocalDay(ctx.now())).map((row) => ({
       applicationId: row.id,
       company: row.company,
       title: row.title,

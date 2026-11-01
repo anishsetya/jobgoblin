@@ -7,7 +7,7 @@ export * from "./job";
 export * from "./fit";
 export * from "./resume";
 export * from "./application";
-export * from "./datasheet";
+export * from "./dataSheet";
 export * from "./submission";
 export * from "./run";
 export * from "./api";

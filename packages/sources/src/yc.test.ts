@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { expectUsablePosting, readRecordedFixture } from "./testSupport";
-import { parseYcPage, ycRoleUrl } from "./yc";
+import { parseYcPage } from "./yc";
 
 describe("parseYcPage", () => {
   const postings = parseYcPage(readRecordedFixture("yc-software-engineer.html"));
@@ -30,11 +30,5 @@ describe("parseYcPage", () => {
 
   it("explains when the page layout has changed", () => {
     expect(() => parseYcPage("<html><body>No data here</body></html>")).toThrow("no data-page attribute");
-  });
-});
-
-describe("YC addresses", () => {
-  it("reads one page per role", () => {
-    expect(ycRoleUrl("backend-engineer")).toBe("https://www.ycombinator.com/jobs/role/backend-engineer");
   });
 });

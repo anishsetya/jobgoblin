@@ -8,7 +8,7 @@ import { approveApplication } from "./approvals";
 import { skipApplication } from "./decisions";
 import { listPipeline } from "./pipeline";
 import { recoverInterruptedRuns } from "./runRecovery";
-import { startHunt } from "./runs";
+import { startHunt } from "./runLifecycle";
 import { aScoredApplication, anApplicationAwaitingApproval, closeTestContexts, createTestContext } from "./testSupport";
 
 afterEach(closeTestContexts);

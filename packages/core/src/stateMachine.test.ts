@@ -64,9 +64,19 @@ describe("TRANSITIONS", () => {
     expect(fromTable).toEqual(expect.arrayContaining(EVERY_ALLOWED_MOVE));
   });
 
-  it.each(EVERY_ALLOWED_MOVE)("allows %s -> %s by the %s via %s", (from, to, actor, via) => {
-    expect(canTransition(from, to, actor, via)).toBe(true);
-    expect(() => assertTransition(from, to, actor, via)).not.toThrow();
+  it("allows every move in the spec's table, and says which move it refused", () => {
+    const refused = EVERY_ALLOWED_MOVE.filter(([from, to, actor, via]) => !canTransition(from, to, actor, via));
+    const thrown = EVERY_ALLOWED_MOVE.filter(([from, to, actor, via]) => {
+      try {
+        assertTransition(from, to, actor, via);
+        return false;
+      } catch {
+        return true;
+      }
+    });
+
+    expect(refused).toEqual([]);
+    expect(thrown).toEqual([]);
   });
 
   it("refuses every other actor and every other via for each row", () => {

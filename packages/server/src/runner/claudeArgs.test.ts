@@ -4,6 +4,16 @@ import { allowedToolsFor, buildClaudeArgs, JOB_BOARD_DOMAINS } from "./claudeArg
 
 const NEVER_AVAILABLE = ["Bash", "PowerShell", "Read", "Edit", "Write"];
 
+// The built-in tools (--tools) each run kind gets: only a hunt searches the web and starts the screener.
+const BUILT_IN_TOOLS: Record<RunKind, string[]> = {
+  setup: [],
+  hunt: ["WebSearch", "WebFetch", "Agent"],
+  paste: [],
+  tailor: [],
+  answers: [],
+  ask: [],
+};
+
 function argsForKind(kind: RunKind, model = RUN_KIND_SETTINGS[kind].model): string[] {
   return buildClaudeArgs({ kind, model }, RUN_KIND_SETTINGS[kind]);
 }
@@ -21,43 +31,47 @@ function listOf(args: string[], flag: string): string[] {
 }
 
 describe("buildClaudeArgs", () => {
-  it.each(RunKind.options)("seals a %s run: strict MCP config, project settings only, dontAsk", (kind) => {
-    const args = argsForKind(kind);
+  it("seals every run kind: strict MCP config, project settings only, dontAsk", () => {
+    for (const kind of RunKind.options) {
+      const args = argsForKind(kind);
 
-    expect(args[0]).toBe("-p");
-    expect(valueOf(args, "--output-format")).toBe("stream-json");
-    expect(args).toContain("--verbose");
-    expect(args).toContain("--strict-mcp-config");
-    expect(valueOf(args, "--mcp-config")).toBe("mcp.json");
-    expect(valueOf(args, "--setting-sources")).toBe("project");
-    expect(valueOf(args, "--permission-mode")).toBe("dontAsk");
-    expect(valueOf(args, "--max-turns")).toBe(String(RUN_KIND_SETTINGS[kind].maxTurns));
-  });
-
-  it.each(RunKind.options)("never offers or allows Bash, PowerShell, Read, Edit or Write in a %s run", (kind) => {
-    const args = argsForKind(kind);
-
-    const everyListedTool = [...listOf(args, "--tools"), ...listOf(args, "--allowedTools")];
-    const toolNames = everyListedTool.map((entry) => entry.split("(")[0]);
-    for (const forbidden of NEVER_AVAILABLE) {
-      expect(toolNames).not.toContain(forbidden);
+      expect(args[0], kind).toBe("-p");
+      expect(valueOf(args, "--output-format"), kind).toBe("stream-json");
+      expect(args, kind).toContain("--verbose");
+      expect(args, kind).toContain("--strict-mcp-config");
+      expect(valueOf(args, "--mcp-config"), kind).toBe("mcp.json");
+      expect(valueOf(args, "--setting-sources"), kind).toBe("project");
+      expect(valueOf(args, "--permission-mode"), kind).toBe("dontAsk");
+      expect(valueOf(args, "--max-turns"), kind).toBe(String(RUN_KIND_SETTINGS[kind].maxTurns));
     }
   });
 
-  it.each(["setup", "paste", "tailor", "answers", "ask"] as const)("gives a %s run no built-in tools at all", (kind) => {
-    const args = argsForKind(kind);
+  it("never offers or allows Bash, PowerShell, Read, Edit or Write in any run kind", () => {
+    for (const kind of RunKind.options) {
+      const args = argsForKind(kind);
 
-    expect(valueOf(args, "--tools")).toBe("");
-    const allowed = listOf(args, "--allowedTools");
-    expect(allowed.every((tool) => tool.startsWith("mcp__jobgoblin__"))).toBe(true);
+      const everyListedTool = [...listOf(args, "--tools"), ...listOf(args, "--allowedTools")];
+      const toolNames = everyListedTool.map((entry) => entry.split("(")[0]);
+      for (const forbidden of NEVER_AVAILABLE) {
+        expect(toolNames, `${kind} run lists ${forbidden}`).not.toContain(forbidden);
+      }
+    }
   });
 
-  it.each(RunKind.options)("allows exactly the MCP tools listed for a %s run", (kind) => {
-    const allowedMcpTools = listOf(argsForKind(kind), "--allowedTools").filter((tool) => tool.startsWith("mcp__"));
+  it("gives each run kind its own built-in tools and exactly the MCP tools listed for it", () => {
+    for (const kind of RunKind.options) {
+      const args = argsForKind(kind);
+      const allowed = listOf(args, "--allowedTools");
 
-    expect(allowedMcpTools).toEqual(RUN_KIND_TOOLS[kind].map((tool) => `mcp__jobgoblin__${tool}`));
+      expect(listOf(args, "--tools"), `${kind} built-in tools`).toEqual(BUILT_IN_TOOLS[kind]);
+      expect(allowed.filter((tool) => tool.startsWith("mcp__")), `${kind} MCP tools`).toEqual(
+        RUN_KIND_TOOLS[kind].map((tool) => `mcp__jobgoblin__${tool}`),
+      );
+      if (BUILT_IN_TOOLS[kind].length === 0) {
+        expect(allowed.every((tool) => tool.startsWith("mcp__jobgoblin__")), `${kind} allows only Jobgoblin tools`).toBe(true);
+      }
+    }
   });
-
   it("gives a hunt run WebSearch, WebFetch and Agent as tools, but fetches only from job-board domains", () => {
     const args = argsForKind("hunt");
     const allowed = listOf(args, "--allowedTools");

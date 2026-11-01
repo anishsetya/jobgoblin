@@ -3,6 +3,7 @@
 // GET /api/export/csv and /xlsx. Spec: ARCHITECTURE.md section 11.
 import {
   ChooseFolderResponse,
+  OpenPathResponse,
   SettingsResponse,
   type Settings,
 } from "@jobgoblin/schemas";
@@ -58,16 +59,6 @@ export function useFinishSetup() {
   });
 }
 
-export type OpenPathResult = { opened: boolean; path: string };
-
-// Needs: OpenPathResponse on api.ts. Read by hand because the dashboard has no schema for it.
-function readOpenPathResult(data: unknown): OpenPathResult {
-  if (typeof data === "object" && data !== null && "opened" in data && "path" in data) {
-    const { opened, path } = data;
-    if (typeof opened === "boolean" && typeof path === "string") return { opened, path };
-  }
-  throw new TypeError("Expected { opened, path }.");
-}
 
 // Opens a file or folder inside the person's folder with the computer's own program.
 // The desktop app does it through its bridge (which asks the local server itself); in a browser the
@@ -75,11 +66,11 @@ function readOpenPathResult(data: unknown): OpenPathResult {
 // screen shows the path so the person can find the file themselves.
 export function useOpenPath() {
   return useMutation({
-    mutationFn: async (path: string): Promise<OpenPathResult> => {
+    mutationFn: async (path: string): Promise<OpenPathResponse> => {
       const desktopResult = await openPathWithDesktop(path);
       if (desktopResult === "opened") return { opened: true, path };
       if (desktopResult === "refused") return { opened: false, path };
-      return apiFetch("/api/open", { method: "POST", json: { path }, schema: { parse: readOpenPathResult } });
+      return apiFetch("/api/open", { method: "POST", json: { path }, schema: OpenPathResponse });
     },
   });
 }
@@ -91,7 +82,7 @@ const EXPORT_FILE_NAMES: Record<ExportFormat, string> = {
   xlsx: "Jobgoblin tracker.xlsx",
 };
 
-// The tracker as a file download. It is fetched, not linked, because the route needs the session key.
+// The tracker as a file download. It is fetched, not linked, because the route needs the session token.
 export function useDownloadExport() {
   return useMutation({
     mutationFn: async (format: ExportFormat) => {

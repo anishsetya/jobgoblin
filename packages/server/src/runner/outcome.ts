@@ -5,14 +5,18 @@
 import type { RunStatus, RunTask } from "@jobgoblin/schemas";
 import type { ResultEvent } from "./streamJson";
 
-// The words the person sees on the run card. Plain, calm, no blame.
+// Every sentence the person sees on a run card, in one place. Plain, calm, no blame.
 export const OUTCOME_MESSAGES = {
   done: "Finished",
+  finishedAfterAnswer: "Finished after your answer",
   waiting: "Waiting for your answer",
   cancelled: "This run was cancelled",
   stopped: "This run stopped before finishing",
+  stoppedForSafety: "This run was stopped for safety",
   usageLimit: "Your Claude plan limit is reached",
   signedOut: "Sign in with Claude again",
+  notInstalled: "Claude Code is not installed",
+  updateNeeded: "Claude Code needs an update",
 } as const;
 
 export type RunEndFacts = {

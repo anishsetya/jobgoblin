@@ -1,7 +1,7 @@
 // The one place that turns a tool's few lines into a registered MCP tool, so each tool file is only: a name, the
 // input and output schemas, and one call to a service. Around every call this helper
 //   1. shows the run's step on its card ("Checking every bullet against your profile") and announces the run,
-//   2. runs the adapter, and refuses any key the output schema does not list (so a service can never leak a field),
+//   2. runs the adapter, and removes any key the output schema does not list (so a service can never leak a field),
 //   3. turns a refusal (ServiceError) or an unexpected error into an ok:false ToolReply instead of an exception,
 //   4. returns the ToolReply as JSON text in content[0].text.
 // Spec: ARCHITECTURE.md section 9 ("Every tool parses its input, calls a service, returns ToolReply as JSON").

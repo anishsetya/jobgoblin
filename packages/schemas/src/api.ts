@@ -4,7 +4,7 @@
 // Spec: "Local HTTP API and authentication". ARCHITECTURE.md sections 5.9 and 11.
 import { z } from "zod";
 import { Application } from "./application";
-import { Approval, DataSheet } from "./datasheet";
+import { Approval, DataSheet } from "./dataSheet";
 import { Band, Fit } from "./fit";
 import { Job, Region } from "./job";
 import { ApplicationResume, ResumeDiff, ResumeHeader, ResumeVersion, Sha256Hex } from "./resume";

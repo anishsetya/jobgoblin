@@ -38,7 +38,7 @@ Each file in `src/tables/` is plain exported functions that take `db` first and 
 | `historyEvents.ts` | `history_events` | The append-only change log |
 | `settings.ts` | `settings` | Settings, with defaults from the `Settings` schema |
 
-Outside the tables: `personFolder.ts`, `tracker.ts` (Tracker.csv and Tracker.xlsx), `backups.ts`, `verifyApprovedFiles.ts`. Supporting files: `errors.ts` (typed errors with a `code`), `rows.ts` (row helpers), `localTime.ts`, `scheduler.ts` (a replaceable timer), `hash.ts`.
+Outside the tables: `personFolder.ts`, `tracker.ts` (Tracker.csv and Tracker.xlsx), `backups.ts`, `verifyApprovedFiles.ts`. Supporting files: `backupFiles.ts` (backup file names and which backups are kept), `errors.ts` (typed errors with a `code`), `rows.ts` (row helpers), `localTime.ts`, `scheduler.ts` (a replaceable timer), `hash.ts` (a small sha256 that repeats core's, because storage does not depend on core).
 
 ## How it is tested
 

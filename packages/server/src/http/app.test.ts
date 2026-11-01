@@ -88,42 +88,16 @@ describe("authentication on /api", () => {
   });
 });
 
+// Who may call /mcp with a run token (the session token, a finished run, GET and DELETE) is tested in mcp/endpoint.test.ts.
 describe("authentication on /mcp", () => {
-  it("refuses the session token", async () => {
-    const { call } = createTestApp();
-
-    const response = await call("/mcp", { method: "POST", token: TEST_SESSION_TOKEN });
-
-    expect(response.status).toBe(401);
-  });
-
-  it("refuses a request with no token or an unknown one", async () => {
+  it("refuses a request with no token, an unknown one, or the session token on a sub-path", async () => {
     const { call } = createTestApp();
 
     expect((await call("/mcp", { method: "POST", token: null })).status).toBe(401);
     expect((await call("/mcp", { method: "POST", token: "unknown" })).status).toBe(401);
     expect((await call("/mcp/anything", { method: "POST", token: TEST_SESSION_TOKEN })).status).toBe(401);
   });
-
-  it("lets a live token past the check, and the endpoint then refuses a run that does not exist", async () => {
-    const { ctx, call } = createTestApp();
-    const runToken = ctx.runTokens.issue("run-1");
-
-    const response = await call("/mcp", { method: "POST", token: runToken });
-
-    expect(response.status).toBe(401);
-    expect(await response.json()).toMatchObject({ code: "unauthorized" });
-  });
-
-  it("refuses a run token after the run ended", async () => {
-    const { ctx, call } = createTestApp();
-    const runToken = ctx.runTokens.issue("run-1");
-    ctx.runTokens.revoke("run-1");
-
-    expect((await call("/mcp", { method: "POST", token: runToken })).status).toBe(401);
-  });
 });
-
 describe("the Host check", () => {
   it("refuses another website's name, even with a valid token", async () => {
     const { call } = createTestApp();

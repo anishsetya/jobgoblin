@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { getRun, getSetting, listStoryItems, updateRun } from "@jobgoblin/storage";
 import { backupNow, listBackups, restoreBackup } from "./backups";
-import { startHunt } from "./runs";
+import { startHunt } from "./runLifecycle";
 import { addStoryItem } from "./story";
 import { closeTestContexts, createTestContext } from "./testSupport";
 

@@ -36,7 +36,7 @@ Only `src/api/`. Components never call `fetch`; they call a hook.
 
 | File | Routes |
 | --- | --- |
-| `client.ts` | `apiFetch` (adds the session key, checks the answer against its schema, throws `ApiProblem`), `apiFetchBlob`, `withQuery` |
+| `client.ts` | `apiFetch` (adds the session token, checks the answer against its schema, throws `ApiProblem`), `apiFetchBlob`, `withQuery` |
 | `token.ts` | `readSessionToken()` |
 | `events.ts` | `subscribeToServerEvents()`, the fetch-based event stream with reconnect and backoff |
 | `desktop.ts` | `window.jobgoblin` (folder chooser, open file) with browser fallbacks |
@@ -95,10 +95,10 @@ Checks: `pnpm --filter @jobgoblin/dashboard typecheck` and `pnpm --filter @jobgo
 
 ## Decisions
 
-1. **One JSON file per area** under `src/i18n/en/` (common, today, review, apply, pipeline, application, setup, profile, settings) instead of the single `en.json` in CODE_STYLE.md. Components ask for `t("today:needsYou.title")`; the namespace is always written out, so a key is easy to search for.
+1. **One JSON file per area** under `src/i18n/en/` (common, today, review, apply, pipeline, application, setup, profile, settings) instead of the single `en.json` that ARCHITECTURE.md section 12 describes: strings live in `src/i18n/en/<area>.json`. Components ask for `t("today:needsYou.title")`; the namespace is always written out, so a key is easy to search for.
 2. **Every answer is checked against its schema** from `@jobgoblin/schemas` in `apiFetch`. A reply with the wrong shape becomes a calm `ApiProblem`, never a half-drawn screen. Lists use `arrayOf(schema)`.
-3. **The session key from the address wins over an older stored one.** `readSessionToken` follows the order in section 12 (desktop preload, session storage, fragment), but writes a fresh `#token=` into session storage first, so reopening the new address after a server restart works.
-4. **The router is created after the key is read** (`createAppRouter` in `main.tsx`), so the router never sees the `#token=` fragment.
+3. **The session token from the address wins over an older stored one.** `readSessionToken` follows the order in section 12 (desktop preload, session storage, fragment), but writes a fresh `#token=` into session storage first, so reopening the new address after a server restart works.
+4. **The router is created after the session token is read** (`createAppRouter` in `main.tsx`), so the router never sees the `#token=` fragment.
 5. **Files are saved with a clicked `<a download>`**, never `window.open(blob:)`, because Electron refuses blob addresses in new windows. So "Open PDF" is "Download PDF" (Review and Application) and the CSV and Excel exports download the same way. "Open resume file" and "Open tracker" go through `window.jobgoblin.openPath` in the desktop app (a rejected promise means refused) or `POST /api/open` in a browser; if neither can open the file the screen shows its path.
 6. **Pipeline filters pick one status and one band.** Each query parameter then holds one value, so the request means the same whether the server reads repeated or comma-separated values. The filters live in the address (`?view=list&status=Applied`).
 7. **Every screen except Today is loaded on demand** with `React.lazy`; `Suspense` sits in `AppShell` and in the setup route. The wizard, Review and Profile are the largest.
@@ -116,8 +116,6 @@ Checks: `pnpm --filter @jobgoblin/dashboard typecheck` and `pnpm --filter @jobgo
 
 These are marked `// Needs:` where they occur in the code.
 
-- `NewStoryItemRequest` and `UpdateStoryItemRequest` for `POST /api/story` and `PUT /api/story/:id` (`api/story.ts` sends `{ kind, parentId, data, keywords }` and `{ data, keywords }`).
-- `ImportResumeResponse` (`{ runId }`) and `OpenPathResponse` (`{ opened, path }`), which are read by hand in `api/story.ts` and `api/settings.ts`.
 - What `NeedsYouItem.id` holds for `kind: "question"`. The dashboard assumes it is the question's id, and `detail` its text.
 - The tracker file's path (assumed `<person folder>/Tracker.xlsx`) and the application folder's layout (assumed `<person folder>/<application.folder>/<resumeFileName>` for the approved resume).
 - A route to fetch one run, which would remove the need to keep run state only from events.

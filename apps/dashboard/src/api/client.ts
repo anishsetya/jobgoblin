@@ -1,4 +1,4 @@
-// The one place the dashboard talks to the local server. `apiFetch` adds the session key, checks the
+// The one place the dashboard talks to the local server. `apiFetch` adds the session token, checks the
 // answer against its schema, and turns every failure into an `ApiProblem` the screens can show as it is.
 // Components never call `fetch` themselves; they use the hooks in this folder, which use this file.
 // Spec: ARCHITECTURE.md sections 11 and 12.

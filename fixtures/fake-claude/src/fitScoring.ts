@@ -29,8 +29,7 @@ const MAX_TERMS_IN_REASON = 3;
 // A headline or a degree says little about fit, so only these kinds can support one.
 const MATCHABLE_KINDS: ReadonlySet<StoryItem["kind"]> = new Set(["experience", "project", "achievement", "skill"]);
 
-// The same cut-offs as bandFor in packages/core. The fake does not import core, so a change there is
-// not followed here automatically; the e2e tests would show the drift.
+// Mirrors core.bandFor (the fake does not depend on core, so a change there must be repeated here).
 export function bandForScore(score: number): Band {
   if (score >= 75) return "apply";
   if (score >= 60) return "stretch";

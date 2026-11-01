@@ -5,7 +5,7 @@
 // Spec: ARCHITECTURE.md decisions D8 and D17; section 9 (ask_person).
 import type { AskPersonOutput, Question } from "@jobgoblin/schemas";
 import {
-  answerQuestion as saveAnswerToQuestion,
+  saveQuestionAnswer,
   getQuestion,
   hasOpenQuestion,
   insertQuestion,
@@ -15,6 +15,7 @@ import {
   updateRun,
 } from "@jobgoblin/storage";
 import type { ServerContext } from "../context";
+import { OUTCOME_MESSAGES } from "../runner/outcome";
 import { announceApplication, announceRun } from "./changes";
 import { recordHistory } from "./history";
 import { loadApplicationOrFail, loadRunOrFail } from "./loaders";
@@ -69,7 +70,7 @@ export function answerQuestion(ctx: ServerContext, questionId: string, answer: s
 
   const originalRun = loadRunOrFail(ctx, question.runId);
   const result = ctx.db.transaction(() => {
-    const answered = saveAnswerToQuestion(ctx.db, { id: questionId, answer, answeredAt: ctx.now().toISOString() });
+    const answered = saveQuestionAnswer(ctx.db, { id: questionId, answer, answeredAt: ctx.now().toISOString() });
     if (answered === null) throw conflict("already-answered", "This question has already been answered.", "Reload Today.");
     recordHistory(ctx, { applicationId: question.applicationId, actor: "person", type: "question-answered" });
 
@@ -104,6 +105,6 @@ function releaseFromOriginalRun(ctx: ServerContext, runId: string, applicationId
   const run = loadRunOrFail(ctx, runId);
   const stillWaiting = listRunTasks(ctx.db, runId).some((task) => task.state === "waiting" || task.state === "pending");
   if (run.status === "waiting" && !stillWaiting) {
-    updateRun(ctx.db, runId, { status: "done", outcomeMessage: "Finished after your answer." });
+    updateRun(ctx.db, runId, { status: "done", outcomeMessage: OUTCOME_MESSAGES.finishedAfterAnswer });
   }
 }

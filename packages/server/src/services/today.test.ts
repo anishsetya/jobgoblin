@@ -5,7 +5,7 @@ import { getApplicationDetail } from "./applicationDetail";
 import { markSubmitted } from "./submissions";
 import { getProfile, updateProfileSection } from "./profile";
 import { changeStatus } from "./decisions";
-import { startHunt } from "./runs";
+import { startHunt } from "./runLifecycle";
 import { getToday } from "./today";
 import { aScoredApplication, anApplicationAwaitingApproval, advanceTime, closeTestContexts, createTestContext } from "./testSupport";
 import type { ServerContext } from "../context";

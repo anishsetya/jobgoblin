@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { leverBoardUrl, leverPostingUrl, parseLeverBoard, parseLeverPosting } from "./lever";
+import { parseLeverBoard, parseLeverPosting } from "./lever";
 import { expectUsablePosting, readRecordedFixture } from "./testSupport";
 
 const PALANTIR = { slug: "palantir", companyName: "Palantir" };
@@ -58,15 +58,5 @@ describe("parseLeverPosting", () => {
     expect(posting).not.toBeNull();
     expectUsablePosting(posting!, "lever");
     expect(posting!.company).toBe("Palantir");
-  });
-});
-
-describe("Lever addresses", () => {
-  it("asks the board for JSON", () => {
-    expect(leverBoardUrl("brightpath")).toBe("https://api.lever.co/v0/postings/brightpath?mode=json");
-  });
-
-  it("asks for one posting by id", () => {
-    expect(leverPostingUrl("brightpath", "abc-123")).toBe("https://api.lever.co/v0/postings/brightpath/abc-123");
   });
 });

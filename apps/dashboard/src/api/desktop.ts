@@ -1,5 +1,5 @@
 // The small bridge to the desktop app. Inside Electron the preload script adds `window.jobgoblin`
-// with the session key, a native folder chooser and "open this file". In a plain browser (tests,
+// with the session token, a native folder chooser and "open this file". In a plain browser (tests,
 // development) none of that exists, so every function here has a browser fallback or says so.
 // Spec: ARCHITECTURE.md sections 12 and 13.
 

@@ -1,5 +1,5 @@
 // Gives the person a file the dashboard fetched itself (a resume PDF, the CSV or Excel tracker).
-// The files come from routes that need the session key, so a plain link would not work; the
+// The files come from routes that need the session token, so a plain link would not work; the
 // dashboard fetches the bytes first and hands the browser a temporary local address for them.
 // It is always a download through a clicked <a download> link, never window.open(blob:...), because
 // the desktop app (Electron) refuses to open blob addresses in a new window.
