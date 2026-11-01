@@ -124,8 +124,13 @@ function readResult(json: object): StreamEvent {
 // lists the tool by that plain name, while --allowedTools holds the rules.
 function toolNameOfRule(rule: string): string {
   const bracketAt = rule.indexOf("(");
-  return bracketAt === -1 ? rule : rule.slice(0, bracketAt);
+  const name = bracketAt === -1 ? rule : rule.slice(0, bracketAt);
+  return SAME_TOOL_OLDER_NAME[name] ?? name;
 }
+
+// The subagent tool is "Agent" in newer Claude Code and "Task" in older versions (2.1.316 still lists "Task").
+// Both names mean the same tool, so the check compares them as one.
+const SAME_TOOL_OLDER_NAME: Readonly<Record<string, string>> = { Task: "Agent" };
 
 // Returns null when the run is safe to continue, or a plain reason to stop it. The launcher stops the run
 // ("This run was stopped for safety") on any reason, because the launch flags did not seal the run as intended:

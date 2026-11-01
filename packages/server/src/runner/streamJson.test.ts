@@ -162,8 +162,10 @@ describe("checkInitEvent", () => {
     const allowed = ["WebSearch", "WebFetch(domain:jobs.lever.co)", "Agent"];
 
     expect(checkInitEvent(anInit({ tools: ["WebSearch", "WebFetch", "Agent"] }), allowed)).toBeNull();
+    // Claude Code 2.1.316 still calls the subagent tool "Task".
+    expect(checkInitEvent(anInit({ tools: ["WebSearch", "Task"] }), allowed)).toBeNull();
     expect(checkInitEvent(anInit({ tools: ["WebFetch(domain:jobs.lever.co)"] }), allowed)).toBeNull();
-    expect(checkInitEvent(anInit({ tools: ["Task"] }), allowed)).toContain("Task");
+    expect(checkInitEvent(anInit({ tools: ["Bash"] }), allowed)).toContain("Bash");
   });
 
   it("rejects a run whose jobgoblin server is not connected", () => {
