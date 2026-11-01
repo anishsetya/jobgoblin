@@ -59,7 +59,8 @@ export function TargetsEditor({ profileResponse, saveLabel, onSaved }: TargetsEd
   }
 
   return (
-    <form onSubmit={save} className="space-y-6">
+    // noValidate: the browser's own bubble for a number below its minimum would hide the plain-words message.
+    <form onSubmit={save} noValidate className="space-y-6">
       <Card title={t("profile:targets.lookingFor")}>
         <div className="space-y-5">
           <LineListField

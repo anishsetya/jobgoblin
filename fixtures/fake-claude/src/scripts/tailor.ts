@@ -8,6 +8,7 @@
 //   4. complete_task          done, failed or waiting
 // With FAKE_CLAUDE_ASK_FIRST=1 the first application gets ask_person after step 2 and is completed as waiting.
 // With FAKE_CLAUDE_INVENT_BULLET=1 the first draft carries two lies the server must refuse.
+// With FAKE_CLAUDE_REWORD=1 one bullet is reworded ("... that ..." becomes "..., which ...") with every fact kept.
 // Spec: ARCHITECTURE.md section 14 (tailor).
 import type { GetTailoringContextOutput, ResumeBody, ToolError } from "@jobgoblin/schemas";
 import {
@@ -15,6 +16,7 @@ import {
   dropLastBulletOfFirstEntry,
   dropPartsNamedByErrors,
   putMustHavesFirst,
+  rewordFirstBulletThatCan,
 } from "../resumeDraft";
 import type { RunScript, ScriptSession } from "../session";
 import { askPersonIfSwitchedOn, summariseTaskCounts, workThroughTasks } from "../taskQueue";
@@ -42,18 +44,23 @@ async function tailorOneApplication(
   });
   if (hasAsked) return { outcome: "waiting" };
 
-  const honestDraft = buildHonestDraft(context, session.input.editNote);
+  const honestDraft = buildHonestDraft(context, session.input.editNote, session.settings.rewordOneBullet);
   const mustBeRefused = session.settings.inventBullet;
   const firstDraft = mustBeRefused ? addPartsThatCannotBeTraced(honestDraft) : honestDraft;
   return submitDraft(session, applicationId, firstDraft, { mustBeRefused });
 }
 
 // The master resume with the must-have bullets first, and one bullet less when the person asked for an edit.
-function buildHonestDraft(context: GetTailoringContextOutput, runEditNote: string | undefined): ResumeBody {
+function buildHonestDraft(
+  context: GetTailoringContextOutput,
+  runEditNote: string | undefined,
+  shouldReword: boolean,
+): ResumeBody {
   // The context knows the note for this application; the run input has the note the run was started with.
   const editNote = context.editNote ?? runEditNote ?? null;
 
-  const draft = putMustHavesFirst(context.master, context.mustHaves);
+  const reordered = putMustHavesFirst(context.master, context.mustHaves);
+  const draft = shouldReword ? rewordFirstBulletThatCan(reordered) : reordered;
   return editNote === null ? draft : dropLastBulletOfFirstEntry(draft);
 }
 

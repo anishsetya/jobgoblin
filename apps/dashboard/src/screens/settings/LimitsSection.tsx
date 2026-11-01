@@ -52,7 +52,8 @@ export function LimitsSection({ settings }: { settings: SettingsResponse }) {
 
   return (
     <Card title={t("settings:limits.title")} description={t("settings:limits.description")}>
-      <form onSubmit={save} className="space-y-4">
+      {/* noValidate: the browser's own "Value must be greater than or equal to 1" bubble would hide the plain-words message. */}
+      <form onSubmit={save} noValidate className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label={t("settings:limits.concurrency")} hint={t("settings:limits.concurrencyHint")}>
             {(control) => (

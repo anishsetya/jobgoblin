@@ -40,6 +40,24 @@ function firstEntryOf(body: ResumeBody): ResumeEntry | undefined {
   return body.sections.experience[0] ?? body.sections.projects[0];
 }
 
+// FAKE_CLAUDE_REWORD: the one rewording a real run might make, so Review has a reworded line to highlight.
+// The first bullet that says "... that ..." becomes "..., which ...". Every number, tool, verb and name is
+// kept, so the truth trace accepts it.
+const REWORD_FROM = " that ";
+const REWORD_TO = ", which ";
+
+export function rewordFirstBulletThatCan(body: ResumeBody): ResumeBody {
+  const draft = structuredClone(body);
+
+  for (const entry of [...draft.sections.experience, ...draft.sections.projects]) {
+    const bullet = entry.bullets.find((candidate) => candidate.text.includes(REWORD_FROM));
+    if (bullet === undefined) continue;
+    bullet.text = bullet.text.replace(REWORD_FROM, REWORD_TO);
+    return draft;
+  }
+  return draft;
+}
+
 // ---------------------------------------------------------------------------------------------
 // FAKE_CLAUDE_INVENT_BULLET: a draft the truth trace must refuse
 // ---------------------------------------------------------------------------------------------

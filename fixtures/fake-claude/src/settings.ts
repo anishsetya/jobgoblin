@@ -19,6 +19,7 @@ export type FakeSettings = {
   mode: FakeClaudeMode;
   askFirst: boolean; // FAKE_CLAUDE_ASK_FIRST=1: ask the person about the first application
   inventBullet: boolean; // FAKE_CLAUDE_INVENT_BULLET=1: first submit a resume with made-up parts
+  rewordOneBullet: boolean; // FAKE_CLAUDE_REWORD=1: reword one bullet without changing a single fact
 };
 
 function isFakeClaudeMode(value: string): value is FakeClaudeMode {
@@ -36,5 +37,6 @@ export function readFakeSettings(env: NodeJS.ProcessEnv): FakeSettings {
     mode: requestedMode,
     askFirst: env.FAKE_CLAUDE_ASK_FIRST === "1",
     inventBullet: env.FAKE_CLAUDE_INVENT_BULLET === "1",
+    rewordOneBullet: env.FAKE_CLAUDE_REWORD === "1",
   };
 }

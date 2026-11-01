@@ -5,6 +5,7 @@ import {
   dropLastBulletOfFirstEntry,
   dropPartsNamedByErrors,
   putMustHavesFirst,
+  rewordFirstBulletThatCan,
 } from "./resumeDraft";
 
 function aResume(): ResumeBody {
@@ -61,6 +62,23 @@ describe("dropLastBulletOfFirstEntry", () => {
 
     expect(bulletIds(draft, 0)).toEqual(["ach-1", "ach-2"]);
     expect(bulletIds(draft, 1)).toEqual(["ach-4"]);
+  });
+});
+
+describe("rewordFirstBulletThatCan", () => {
+  it("turns the first '... that ...' into '..., which ...' and leaves every other bullet alone", () => {
+    const master = aResume();
+    const first = master.sections.experience[0]?.bullets[0];
+    if (first !== undefined) first.text = "Built an API in Python that serves 2M requests a day";
+
+    const draft = rewordFirstBulletThatCan(master);
+
+    expect(draft.sections.experience[0]?.bullets[0]?.text).toBe("Built an API in Python, which serves 2M requests a day");
+    expect(draft.sections.experience[0]?.bullets[1]).toEqual(master.sections.experience[0]?.bullets[1]);
+  });
+
+  it("changes nothing when no bullet has a 'that' to reword", () => {
+    expect(rewordFirstBulletThatCan(aResume())).toEqual(aResume());
   });
 });
 
