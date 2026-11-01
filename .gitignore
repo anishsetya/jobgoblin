@@ -15,3 +15,16 @@ applications/
 outreach/
 state/
 *.pdf
+# Sample resumes for tests are fake people, safe to commit.
+!fixtures/**/*.pdf
+
+# Desktop app (TypeScript monorepo)
+node_modules/
+dist/
+*.tsbuildinfo
+.vite/
+test-results/
+playwright-report/
+*.db
+*.db-wal
+*.db-shm

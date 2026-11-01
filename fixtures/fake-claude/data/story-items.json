@@ -1,0 +1,260 @@
+[
+  {
+    "tempId": "headline-backend",
+    "parentTempId": null,
+    "kind": "headline",
+    "data": {
+      "text": "Backend engineer who builds reliable APIs and the platforms they run on",
+      "tools": [],
+      "numbers": []
+    },
+    "keywords": ["backend", "platform"]
+  },
+  {
+    "tempId": "exp-northwind",
+    "parentTempId": null,
+    "kind": "experience",
+    "data": {
+      "text": "Software Engineer at Northwind Logistics",
+      "title": "Software Engineer",
+      "organization": "Northwind Logistics",
+      "location": "Austin, TX",
+      "startDate": "2024-06",
+      "endDate": "Present",
+      "tools": [],
+      "numbers": []
+    },
+    "keywords": []
+  },
+  {
+    "tempId": "ach-northwind-tracking-api",
+    "parentTempId": "exp-northwind",
+    "kind": "achievement",
+    "data": {
+      "text": "Built a shipment-tracking API in Python and PostgreSQL that serves 2M requests a day",
+      "tools": ["Python", "PostgreSQL"],
+      "numbers": ["2M"]
+    },
+    "keywords": ["api", "python", "postgresql"]
+  },
+  {
+    "tempId": "ach-northwind-latency",
+    "parentTempId": "exp-northwind",
+    "kind": "achievement",
+    "data": {
+      "text": "Cut p95 latency of the orders service 40% by adding a Redis read-through cache",
+      "tools": ["Redis"],
+      "numbers": ["40%", "p95"]
+    },
+    "keywords": ["latency", "cache", "redis"]
+  },
+  {
+    "tempId": "ach-northwind-kubernetes",
+    "parentTempId": "exp-northwind",
+    "kind": "achievement",
+    "data": {
+      "text": "Led the migration of 12 services from VMs to Kubernetes on AWS with zero downtime",
+      "tools": ["Kubernetes", "AWS"],
+      "numbers": ["12"]
+    },
+    "keywords": ["migration", "kubernetes", "aws"]
+  },
+  {
+    "tempId": "ach-northwind-oncall",
+    "parentTempId": "exp-northwind",
+    "kind": "achievement",
+    "data": {
+      "text": "Contributed to the on-call rotation and wrote 15 runbooks for incident response",
+      "tools": [],
+      "numbers": ["15"]
+    },
+    "keywords": ["on-call", "runbooks", "incident response"]
+  },
+  {
+    "tempId": "exp-contoso",
+    "parentTempId": null,
+    "kind": "experience",
+    "data": {
+      "text": "Software Engineering Intern at Contoso Health",
+      "title": "Software Engineering Intern",
+      "organization": "Contoso Health",
+      "location": "Remote",
+      "startDate": "2023-05",
+      "endDate": "2023-08",
+      "tools": [],
+      "numbers": []
+    },
+    "keywords": []
+  },
+  {
+    "tempId": "ach-contoso-sync",
+    "parentTempId": "exp-contoso",
+    "kind": "achievement",
+    "data": {
+      "text": "Designed a TypeScript service that syncs patient appointment data between two systems",
+      "tools": ["TypeScript"],
+      "numbers": []
+    },
+    "keywords": ["typescript", "integration"]
+  },
+  {
+    "tempId": "ach-contoso-tests",
+    "parentTempId": "exp-contoso",
+    "kind": "achievement",
+    "data": {
+      "text": "Wrote integration tests that raised coverage of the scheduling module from 55% to 85%",
+      "tools": [],
+      "numbers": ["55%", "85%"]
+    },
+    "keywords": ["testing", "coverage"]
+  },
+  {
+    "tempId": "proj-ledgerline",
+    "parentTempId": null,
+    "kind": "project",
+    "data": {
+      "text": "Ledgerline, open-source double-entry ledger in Go",
+      "title": "Ledgerline",
+      "tools": ["Go"],
+      "numbers": []
+    },
+    "keywords": ["open source", "go", "ledger"]
+  },
+  {
+    "tempId": "ach-ledgerline-stars",
+    "parentTempId": "proj-ledgerline",
+    "kind": "achievement",
+    "data": {
+      "text": "Built an open-source double-entry ledger library in Go with 300 GitHub stars",
+      "tools": ["Go"],
+      "numbers": ["300"]
+    },
+    "keywords": ["open source", "go"]
+  },
+  {
+    "tempId": "edu-state-university",
+    "parentTempId": null,
+    "kind": "education",
+    "data": {
+      "text": "B.S. Computer Science, State University",
+      "title": "B.S. Computer Science",
+      "organization": "State University",
+      "location": "Austin, TX",
+      "startDate": "2020-08",
+      "endDate": "2024-05",
+      "tools": [],
+      "numbers": []
+    },
+    "keywords": []
+  },
+  {
+    "tempId": "skill-python",
+    "parentTempId": null,
+    "kind": "skill",
+    "data": {
+      "text": "Python",
+      "tools": [],
+      "numbers": []
+    },
+    "keywords": []
+  },
+  {
+    "tempId": "skill-typescript",
+    "parentTempId": null,
+    "kind": "skill",
+    "data": {
+      "text": "TypeScript",
+      "tools": [],
+      "numbers": []
+    },
+    "keywords": []
+  },
+  {
+    "tempId": "skill-go",
+    "parentTempId": null,
+    "kind": "skill",
+    "data": {
+      "text": "Go",
+      "tools": [],
+      "numbers": []
+    },
+    "keywords": []
+  },
+  {
+    "tempId": "skill-postgresql",
+    "parentTempId": null,
+    "kind": "skill",
+    "data": {
+      "text": "PostgreSQL",
+      "tools": [],
+      "numbers": []
+    },
+    "keywords": []
+  },
+  {
+    "tempId": "skill-redis",
+    "parentTempId": null,
+    "kind": "skill",
+    "data": {
+      "text": "Redis",
+      "tools": [],
+      "numbers": []
+    },
+    "keywords": []
+  },
+  {
+    "tempId": "skill-docker",
+    "parentTempId": null,
+    "kind": "skill",
+    "data": {
+      "text": "Docker",
+      "tools": [],
+      "numbers": []
+    },
+    "keywords": []
+  },
+  {
+    "tempId": "skill-kubernetes",
+    "parentTempId": null,
+    "kind": "skill",
+    "data": {
+      "text": "Kubernetes",
+      "tools": [],
+      "numbers": []
+    },
+    "keywords": []
+  },
+  {
+    "tempId": "skill-aws",
+    "parentTempId": null,
+    "kind": "skill",
+    "data": {
+      "text": "AWS",
+      "tools": [],
+      "numbers": []
+    },
+    "keywords": []
+  },
+  {
+    "tempId": "skill-react",
+    "parentTempId": null,
+    "kind": "skill",
+    "data": {
+      "text": "React",
+      "tools": [],
+      "numbers": []
+    },
+    "keywords": []
+  },
+  {
+    "tempId": "skill-terraform",
+    "parentTempId": null,
+    "kind": "skill",
+    "data": {
+      "text": "Terraform",
+      "tools": [],
+      "numbers": []
+    },
+    "keywords": []
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "pageTitle": "Review: {{title}} at {{company}}",
+  "position": "{{current}} of {{total}} waiting for review",
+  "notWaiting": "This application is not waiting for your review.",
+  "seeApplication": "See the application",
+  "decision": {
+    "label": "Your decision"
+  },
+  "approve": "Approve",
+  "approving": "Approving...",
+  "skip": "Skip",
+  "shortcuts": "Keys: A approve, E request an edit, S skip, J next, K previous.",
+  "missingValues": "Add these before you approve: {{labels}}.",
+  "addMissing": "Open Form answers",
+  "requestEdit": {
+    "open": "Request edit",
+    "title": "Request an edit",
+    "description": "Say what should change. Claude prepares a new version of the resume, and you review it again.",
+    "noteLabel": "What should change?",
+    "noteHint": "For example: lead with the Python work, and keep the summary shorter.",
+    "send": "Send request",
+    "sending": "Sending..."
+  },
+  "dataSheet": {
+    "title": "What will be sent",
+    "description": "Every value on the form. Approving locks this exact list.",
+    "none": "The details for this application are not ready yet."
+  },
+  "resume": {
+    "title": "Resume",
+    "version": "Version {{version}}",
+    "downloadPdf": "Download PDF",
+    "none": "There is no tailored resume for this application yet."
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "jobs": [
+    {
+      "id": "9a8b7c03-1d2e-4f3a-8b4c-0000000c0003",
+      "title": "Software Engineer, Applied AI",
+      "department": "Engineering",
+      "team": "Applied AI",
+      "employmentType": "FullTime",
+      "location": "San Francisco, CA",
+      "shouldDisplayCompensationOnJobPostings": true,
+      "secondaryLocations": [],
+      "publishedAt": "2026-10-23T16:00:00.000+00:00",
+      "isListed": true,
+      "isRemote": false,
+      "workplaceType": "Hybrid",
+      "address": {
+        "postalAddress": {
+          "addressRegion": "CA",
+          "addressCountry": "United States",
+          "addressLocality": "San Francisco"
+        }
+      },
+      "jobUrl": "https://jobs.ashbyhq.com/copperleaf/9a8b7c03-1d2e-4f3a-8b4c-0000000c0003",
+      "applyUrl": "https://jobs.ashbyhq.com/copperleaf/9a8b7c03-1d2e-4f3a-8b4c-0000000c0003/application",
+      "descriptionHtml": "<h2>About Copperleaf AI</h2>\n<p>Copperleaf AI builds assistants that help insurance adjusters read claims faster. Our product turns long documents into short, checked answers, and it is used by claims teams at a dozen carriers.</p>\n<h2>The role</h2>\n<p>You will build the applied AI features behind that product. That means working with large language models (LLMs), retrieval-augmented generation, vector databases and evaluation harnesses, and turning research prototypes into reliable services.</p>\n<h2>What you will do</h2>\n<ul>\n<li>Build retrieval-augmented generation pipelines in Python on top of LLM APIs</li>\n<li>Design evaluation suites that measure answer quality, cost and latency</li>\n<li>Build TypeScript and React tools that let adjusters review model output</li>\n<li>Run services on AWS and keep them observable</li>\n<li>Work closely with our ML researchers to ship their ideas</li>\n</ul>\n<h2>What we are looking for</h2>\n<ul>\n<li>1 to 3 years of software engineering experience</li>\n<li>Strong Python; comfortable with TypeScript</li>\n<li>Experience with LLM applications, embeddings or vector search (PyTorch or fine-tuning is a plus)</li>\n<li>Curiosity about how models fail</li>\n</ul>\n<p>Salary range $150,000 to $190,000 plus equity. San Francisco office, four days a week.</p>",
+      "descriptionPlain": "About Copperleaf AI\n\nCopperleaf AI builds assistants that help insurance adjusters read claims faster. Our product turns long documents into short, checked answers, and it is used by claims teams at a dozen carriers.\n\nThe role\n\nYou will build the applied AI features behind that product. That means working with large language models (LLMs), retrieval-augmented generation, vector databases and evaluation harnesses, and turning research prototypes into reliable services.\n\nWhat you will do\n\n- Build retrieval-augmented generation pipelines in Python on top of LLM APIs\n\n- Design evaluation suites that measure answer quality, cost and latency\n\n- Build TypeScript and React tools that let adjusters review model output\n\n- Run services on AWS and keep them observable\n\n- Work closely with our ML researchers to ship their ideas\n\nWhat we are looking for\n\n- 1 to 3 years of software engineering experience\n\n- Strong Python; comfortable with TypeScript\n\n- Experience with LLM applications, embeddings or vector search (PyTorch or fine-tuning is a plus)\n\n- Curiosity about how models fail\n\nSalary range $150,000 to $190,000 plus equity. San Francisco office, four days a week.",
+      "compensation": {
+        "compensationTierSummary": "$150K – $190K • Offers Equity",
+        "scrapeableCompensationSalarySummary": "$150K – $190K • Offers Equity",
+        "compensationTiers": [],
+        "summaryComponents": []
+      }
+    },
+    {
+      "id": "9a8b7c03-1d2e-4f3a-8b4c-0000000c0004",
+      "title": "Data Analyst",
+      "department": "Data",
+      "team": "Business Intelligence",
+      "employmentType": "FullTime",
+      "location": "San Francisco, CA",
+      "shouldDisplayCompensationOnJobPostings": true,
+      "secondaryLocations": [],
+      "publishedAt": "2026-10-21T16:00:00.000+00:00",
+      "isListed": true,
+      "isRemote": false,
+      "workplaceType": "Hybrid",
+      "address": {
+        "postalAddress": {
+          "addressRegion": "CA",
+          "addressCountry": "United States",
+          "addressLocality": "San Francisco"
+        }
+      },
+      "jobUrl": "https://jobs.ashbyhq.com/copperleaf/9a8b7c03-1d2e-4f3a-8b4c-0000000c0004",
+      "applyUrl": "https://jobs.ashbyhq.com/copperleaf/9a8b7c03-1d2e-4f3a-8b4c-0000000c0004/application",
+      "descriptionHtml": "<h2>About Copperleaf AI</h2>\n<p>Copperleaf AI builds assistants that help insurance adjusters read claims faster.</p>\n<h2>The role</h2>\n<p>As a Data Analyst you will turn product and customer data into clear reports for our leadership team. You will work with SQL, Excel and Tableau every day. This role does not involve writing production software.</p>\n<h2>What you will do</h2>\n<ul>\n<li>Build weekly dashboards in Tableau on customer usage and revenue</li>\n<li>Write SQL queries to answer questions from sales and finance</li>\n<li>Prepare slide decks and summaries for stakeholder meetings</li>\n</ul>\n<h2>What we are looking for</h2>\n<ul>\n<li>2+ years of experience as a data or business analyst</li>\n<li>Strong SQL and Excel; Tableau preferred</li>\n<li>Clear communication with non-technical teams</li>\n</ul>\n<p>Salary range $85,000 to $110,000. San Francisco office.</p>",
+      "descriptionPlain": "About Copperleaf AI\n\nCopperleaf AI builds assistants that help insurance adjusters read claims faster.\n\nThe role\n\nAs a Data Analyst you will turn product and customer data into clear reports for our leadership team. You will work with SQL, Excel and Tableau every day. This role does not involve writing production software.\n\nWhat you will do\n\n- Build weekly dashboards in Tableau on customer usage and revenue\n\n- Write SQL queries to answer questions from sales and finance\n\n- Prepare slide decks and summaries for stakeholder meetings\n\nWhat we are looking for\n\n- 2+ years of experience as a data or business analyst\n\n- Strong SQL and Excel; Tableau preferred\n\n- Clear communication with non-technical teams\n\nSalary range $85,000 to $110,000. San Francisco office.",
+      "compensation": {
+        "compensationTierSummary": "$85K – $110K",
+        "scrapeableCompensationSalarySummary": "$85K – $110K",
+        "compensationTiers": [],
+        "summaryComponents": []
+      }
+    }
+  ],
+  "apiVersion": "1"
+}

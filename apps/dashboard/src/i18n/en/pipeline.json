@@ -1,0 +1,45 @@
+{
+  "title": "Pipeline",
+  "view": {
+    "label": "View",
+    "board": "Board",
+    "list": "List"
+  },
+  "filters": {
+    "search": "Search",
+    "status": "Status",
+    "allStatuses": "All statuses",
+    "band": "Fit",
+    "allBands": "All fits",
+    "overdueOnly": "Overdue follow-ups only"
+  },
+  "groups": {
+    "To review": "To review",
+    "Ready to apply": "Ready to apply",
+    "Applied": "Applied",
+    "Interviewing": "Interviewing",
+    "Offer": "Offer",
+    "Closed": "Closed"
+  },
+  "emptyColumn": "Nothing here.",
+  "fit": "Fit {{score}}",
+  "followUp": "Follow up {{date}}",
+  "followUpOverdue": "Follow-up overdue since {{date}}",
+  "list": {
+    "caption": "Every application",
+    "role": "Role",
+    "company": "Company",
+    "status": "Status",
+    "fit": "Fit",
+    "followUp": "Follow up"
+  },
+  "empty": {
+    "title": "No applications yet",
+    "description": "Every job you are pursuing will appear here, from the first look to the final answer.",
+    "action": "Go to Today"
+  },
+  "noMatches": {
+    "title": "No applications match",
+    "description": "Try a different search or clear a filter."
+  }
+}

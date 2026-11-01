@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss">
+  <channel>
+    <title>We Work Remotely: Back-End Programming Jobs</title>
+    <link>https://weworkremotely.com/categories/remote-back-end-programming-jobs.rss</link>
+    <description>We Work Remotely: Back-End Programming Jobs</description>
+    <language>en-US</language>
+    <ttl>60</ttl>
+    <item>
+      <title>Dropbox: Backend Product Software Engineer</title>
+      <region>Anywhere in the World</region>
+      <country></country>
+      <state></state>
+      <skills></skills>
+      <category>Back-End Programming</category>
+      <type>Full-Time</type>
+      <description>
+&lt;p&gt;
+  &lt;strong&gt;Headquarters:&lt;/strong&gt; Remote - Mexico
+&lt;/p&gt;
+
+&lt;h2&gt;&lt;strong&gt;Role Description&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;As a Product Engineer at Dropbox, you will play a pivotal role in shaping the future of collaboration and file sharing. Your responsibilities will revolve around developing and enhancing our suite of Dropbox Products to deliver exceptional user experiences. You will work closely with cross-functional teams, turning innovative ideas into robust, scalable, and user-friendly features.&lt;/p&gt;
+&lt;p&gt;This year, Dropbox is on a mission to expedite the creation and implementation of AI-enabled products by providing a comprehensive technology stack that facilitates rapid prototyping and reliable deployment of AI-augmented functionality.&lt;/p&gt;
+</description>
+      <pubDate>Sat, 31 Oct 2026 07:31:12 +0000</pubDate>
+      <expires_at>Mon, 30 Nov 2026 07:31:12 +0000</expires_at>
+      <guid>https://weworkremotely.com/remote-jobs/dropbox-backend-product-software-engineer-1</guid>
+      <link>https://weworkremotely.com/remote-jobs/dropbox-backend-product-software-engineer-1</link>
+    </item>
+    <item>
+      <media:content url="https://wwr-pro.s3.amazonaws.com/logos/0171/6655/logo.gif" type="image/png"/>
+      <title>Bitovi: Backend / Platform Developer Consultant (Temporal &amp; Kubernetes)</title>
+      <region>Anywhere in the World</region>
+      <country></country>
+      <state>Illinois</state>
+      <skills>Kubernetes and Kafka</skills>
+      <category>Back-End Programming</category>
+      <type>Full-Time</type>
+      <description>
+&lt;img src="https://we-work-remotely.imgix.net/logos/0171/6655/logo.gif?ixlib=rails-4.0.0&amp;w=50&amp;h=50&amp;dpr=2&amp;fit=fill&amp;auto=compress" /&gt;
+
+&lt;p&gt;
+  &lt;strong&gt;Headquarters:&lt;/strong&gt; United States
+    &lt;br /&gt;&lt;strong&gt;URL:&lt;/strong&gt; https://bitovi.com
+&lt;/p&gt;
+
+&lt;h2&gt;JOIN OUR TEAM!&lt;/h2&gt;
+</description>
+      <pubDate>Thu, 29 Oct 2026 22:31:03 +0000</pubDate>
+      <expires_at>Sat, 28 Nov 2026 22:31:03 +0000</expires_at>
+      <guid>https://weworkremotely.com/remote-jobs/bitovi-backend-platform-developer-consultant-temporal-kubernetes</guid>
+      <link>https://weworkremotely.com/remote-jobs/bitovi-backend-platform-developer-consultant-temporal-kubernetes</link>
+    </item>
+    <item>
+      <title>Legion: Senior Integration Engineer</title>
+      <region>Anywhere in the World</region>
+      <country>🇲🇽 Mexico</country>
+      <state></state>
+      <skills></skills>
+      <category>Back-End Programming</category>
+      <type>Full-Time</type>
+      <description>
+&lt;p&gt;
+  &lt;strong&gt;Headquarters:&lt;/strong&gt; Remote, Mexico
+&lt;/p&gt;
+
+&lt;h1&gt;&lt;strong&gt;Senior Integration Engineer&lt;/strong&gt;&lt;/h1&gt;
+&lt;h2&gt;&lt;strong&gt;Remote, Mexico&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;JOB OVERVIEW&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Are you passionate about building large-scale applications leveraging public cloud services and integration design patterns? As an Integration Engineer, you will work on developing and maintaining Integration &amp;amp; Automation Solutions for Legion WFM customers.&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;RESPONSIBILITIES AND DUTIES&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Integration Engineers provide leadership, facilitate analysis and design tasks, and support multiple Legion teams in developing an enterprise's solution architecture. Job responsibilities are grouped across four key areas: Technical Integrations, Customer-Centric Consulting, Legion Product Expertise, and a Commitment to One Another.&lt;/p&gt;
+</description>
+      <pubDate>Thu, 29 Oct 2026 07:30:52 +0000</pubDate>
+      <expires_at>Sat, 28 Nov 2026 07:30:52 +0000</expires_at>
+      <guid>https://weworkremotely.com/remote-jobs/legion-senior-integration-engineer</guid>
+      <link>https://weworkremotely.com/remote-jobs/legion-senior-integration-engineer</link>
+    </item>
+  </channel>
+</rss>

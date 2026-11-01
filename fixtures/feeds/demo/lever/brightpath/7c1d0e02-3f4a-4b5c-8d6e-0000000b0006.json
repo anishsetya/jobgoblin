@@ -1,0 +1,35 @@
+{
+  "additionalPlain": "Brightpath is an equal opportunity employer. Salary range $230,000 to $280,000 plus equity.",
+  "additional": "<div>Brightpath is an equal opportunity employer. Salary range $230,000 to $280,000 plus equity.</div>",
+  "categories": {
+    "commitment": "Full-time",
+    "location": "New York, NY",
+    "team": "Engineering",
+    "allLocations": [
+      "New York, NY"
+    ]
+  },
+  "createdAt": 1792504800000,
+  "descriptionPlain": "Brightpath helps families plan and pay for college. We are looking for a Senior Staff Engineer to set technical direction across our payments and aid-matching systems.",
+  "description": "<p>Brightpath helps families plan and pay for college. We are looking for a Senior Staff Engineer to set technical direction across our payments and aid-matching systems.</p>",
+  "id": "7c1d0e02-3f4a-4b5c-8d6e-0000000b0006",
+  "lists": [
+    {
+      "text": "What you will do",
+      "content": "\n<li>Own the architecture of our distributed payments platform</li>\n<li>Lead design reviews and mentor senior engineers across four teams</li>\n<li>Drive multi-quarter technical roadmaps with product and security leaders</li>\n"
+    },
+    {
+      "text": "What you bring",
+      "content": "\n<li>8+ years of professional software engineering experience, including 3+ years at staff level</li>\n<li>Deep experience designing distributed systems at scale</li>\n<li>A record of technical leadership across teams</li>\n"
+    }
+  ],
+  "text": "Senior Staff Engineer (8+ years)",
+  "country": "US",
+  "workplaceType": "hybrid",
+  "opening": "<p>Brightpath helps families plan and pay for college. We are looking for a Senior Staff Engineer to set technical direction across our payments and aid-matching systems.</p>",
+  "openingPlain": "Brightpath helps families plan and pay for college. We are looking for a Senior Staff Engineer to set technical direction across our payments and aid-matching systems.",
+  "descriptionBody": "",
+  "descriptionBodyPlain": "",
+  "hostedUrl": "https://jobs.lever.co/brightpath/7c1d0e02-3f4a-4b5c-8d6e-0000000b0006",
+  "applyUrl": "https://jobs.lever.co/brightpath/7c1d0e02-3f4a-4b5c-8d6e-0000000b0006/apply"
+}

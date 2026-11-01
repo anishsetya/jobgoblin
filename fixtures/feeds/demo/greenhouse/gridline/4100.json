@@ -1,0 +1,163 @@
+{
+  "absolute_url": "https://boards.greenhouse.io/gridline/jobs/4100",
+  "data_compliance": [],
+  "internal_job_id": 1004100,
+  "location": {
+    "name": "Remote - US"
+  },
+  "metadata": null,
+  "id": 4100,
+  "updated_at": "2026-10-27T10:15:00-04:00",
+  "requisition_id": "GL-4100",
+  "title": "Backend Engineer",
+  "company_name": "Gridline Energy",
+  "first_published": "2026-10-27T10:15:00-04:00",
+  "language": "en",
+  "application_deadline": null,
+  "content": "&lt;p&gt;&lt;strong&gt;About Gridline Energy&lt;/strong&gt;&lt;/p&gt;\n&lt;p&gt;Gridline Energy builds software that helps solar and battery operators sell power at the right moment. Our platform ingests readings from tens of thousands of devices and decides, minute by minute, when to charge and when to sell.&lt;/p&gt;\n&lt;p&gt;&lt;strong&gt;The role&lt;/strong&gt;&lt;/p&gt;\n&lt;p&gt;We are looking for a Backend Engineer to build the services that collect device data and run our trading logic. You will write Python and SQL against PostgreSQL every day and deploy to AWS.&lt;/p&gt;\n&lt;p&gt;&lt;strong&gt;What you will do&lt;/strong&gt;&lt;/p&gt;\n&lt;ul&gt;\n&lt;li&gt;Build Python services that ingest and validate device readings&lt;/li&gt;\n&lt;li&gt;Model time-series data in PostgreSQL and keep queries fast&lt;/li&gt;\n&lt;li&gt;Design REST APIs for our operator dashboard&lt;/li&gt;\n&lt;li&gt;Deploy with Docker on AWS and keep the services observable&lt;/li&gt;\n&lt;/ul&gt;\n&lt;p&gt;&lt;strong&gt;What we are looking for&lt;/strong&gt;&lt;/p&gt;\n&lt;ul&gt;\n&lt;li&gt;2+ years of backend experience, or strong internships&lt;/li&gt;\n&lt;li&gt;Python and PostgreSQL&lt;/li&gt;\n&lt;li&gt;Interest in energy and the electricity grid&lt;/li&gt;\n&lt;/ul&gt;\n&lt;p&gt;Salary range $125,000 to $150,000. Remote within the United States.&lt;/p&gt;",
+  "departments": [
+    {
+      "id": 9100,
+      "name": "Engineering",
+      "child_ids": [],
+      "parent_id": null
+    }
+  ],
+  "offices": [],
+  "compliance": [],
+  "demographic_questions": null,
+  "questions": [
+    {
+      "description": null,
+      "label": "First Name",
+      "required": true,
+      "fields": [
+        {
+          "name": "first_name",
+          "type": "input_text",
+          "values": []
+        }
+      ]
+    },
+    {
+      "description": null,
+      "label": "Last Name",
+      "required": true,
+      "fields": [
+        {
+          "name": "last_name",
+          "type": "input_text",
+          "values": []
+        }
+      ]
+    },
+    {
+      "description": null,
+      "label": "Email",
+      "required": true,
+      "fields": [
+        {
+          "name": "email",
+          "type": "input_text",
+          "values": []
+        }
+      ]
+    },
+    {
+      "description": null,
+      "label": "Phone",
+      "required": false,
+      "fields": [
+        {
+          "name": "phone",
+          "type": "input_text",
+          "values": []
+        }
+      ]
+    },
+    {
+      "description": null,
+      "label": "Resume/CV",
+      "required": true,
+      "fields": [
+        {
+          "name": "resume",
+          "type": "input_file",
+          "values": []
+        },
+        {
+          "name": "resume_text",
+          "type": "textarea",
+          "values": []
+        }
+      ]
+    },
+    {
+      "description": null,
+      "label": "LinkedIn Profile",
+      "required": false,
+      "fields": [
+        {
+          "name": "question_70001",
+          "type": "input_text",
+          "values": []
+        }
+      ]
+    },
+    {
+      "description": null,
+      "label": "Are you legally authorized to work in the United States?",
+      "required": true,
+      "fields": [
+        {
+          "name": "question_70002",
+          "type": "multi_value_single_select",
+          "values": [
+            {
+              "label": "Yes",
+              "value": 1
+            },
+            {
+              "label": "No",
+              "value": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": null,
+      "label": "Will you now or in the future require sponsorship for employment visa status?",
+      "required": true,
+      "fields": [
+        {
+          "name": "question_70003",
+          "type": "multi_value_single_select",
+          "values": [
+            {
+              "label": "Yes",
+              "value": 1
+            },
+            {
+              "label": "No",
+              "value": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "<p>In a few sentences, tell us what draws you to energy software.</p>",
+      "label": "Why Gridline?",
+      "required": true,
+      "fields": [
+        {
+          "name": "question_70004",
+          "type": "textarea",
+          "values": []
+        }
+      ]
+    }
+  ],
+  "location_questions": []
+}

@@ -1,0 +1,47 @@
+{
+  "author": "whoishiring",
+  "children": [
+    {
+      "author": "acme-hiring",
+      "children": [
+        {
+          "author": "curious-reader",
+          "children": [],
+          "created_at": "2026-10-02T09:10:00.000Z",
+          "created_at_i": 1790932200,
+          "id": 40000008,
+          "options": [],
+          "parent_id": 40000007,
+          "points": null,
+          "story_id": 40000000,
+          "text": "Is this role open to new grads?",
+          "title": null,
+          "type": "comment",
+          "url": null
+        }
+      ],
+      "created_at": "2026-10-01T15:20:00.000Z",
+      "created_at_i": 1790868000,
+      "id": 40000007,
+      "options": [],
+      "parent_id": 40000000,
+      "points": null,
+      "story_id": 40000000,
+      "text": "Acme Cloud | Backend Engineer | Remote (US) | Full-time<p>We build deployment and monitoring infrastructure for engineering teams. The Core API team is hiring a Backend Engineer to design and run our REST services.<p>Stack: Python, PostgreSQL, Redis, Docker, Kubernetes on AWS, Terraform. About 2 years of experience (or strong internships) is plenty; we mentor.<p>Details and how to apply: <a href=\"https:&#x2F;&#x2F;acmecloud.example&#x2F;careers&#x2F;backend-engineer\" rel=\"nofollow\">https:&#x2F;&#x2F;acmecloud.example&#x2F;careers&#x2F;backend-engineer</a>",
+      "title": null,
+      "type": "comment",
+      "url": null
+    }
+  ],
+  "created_at": "2026-10-01T15:00:00.000Z",
+  "created_at_i": 1790866800,
+  "id": 40000000,
+  "options": [],
+  "parent_id": null,
+  "points": 120,
+  "story_id": 40000000,
+  "text": "Please state the location and include REMOTE for remote work.",
+  "title": "Ask HN: Who is hiring? (October 2026)",
+  "type": "story",
+  "url": null
+}

@@ -1,5 +1,7 @@
 # Jobgoblin: a job-application copilot that runs on the AI you already pay for
 
+**Working on the desktop app** (`apps/`, `packages/`, `e2e/`, `fixtures/`, `playbooks/`)? Start with the README's "Start here: reading order" and the guides in `docs/poc/` (`ARCHITECTURE.md` for what to build, `CODE_STYLE.md` for how to write it). The rules and workflow below describe the earlier Claude Code prototype (`.claude/`, `scripts/`, `profile/` and friends).
+
 This repo runs a daily pipeline inside Claude Code: find jobs → score fit → tailor resume → prep answers → the user approves in chat → submit via Chrome → track in Google Sheets.
 "The user" below is the person whose profile lives in `profile/`.
 

@@ -1,0 +1,59 @@
+{
+  "title": "Today",
+  "findJobs": "Find jobs",
+  "addJob": {
+    "open": "Add a job",
+    "title": "Add a job",
+    "description": "Paste a link to a job. If the site needs you to sign in, paste the job's text instead.",
+    "link": "Link to the job",
+    "pasteInstead": "Paste the job text instead",
+    "company": "Company",
+    "jobTitle": "Job title",
+    "location": "Place (optional)",
+    "optional": "You can leave this empty.",
+    "text": "Job description",
+    "adding": "Adding...",
+    "submit": "Add job"
+  },
+  "setupIncomplete": {
+    "title": "Finish setting up",
+    "description": "Jobgoblin needs a few details about you before it can find jobs.",
+    "action": "Continue setup"
+  },
+  "fresh": {
+    "title": "Find your first jobs",
+    "description": "Jobgoblin looks at public job boards, scores each job against your story, and prepares a resume for the best ones. You approve everything before it is sent."
+  },
+  "needsYou": {
+    "title": "Needs you",
+    "empty": "Nothing needs you right now.",
+    "kind": {
+      "review": "Ready to review",
+      "question": "Question",
+      "ready-to-submit": "Ready to send",
+      "long-shot": "Long shot",
+      "not-tailored": "Not tailored",
+      "follow-up-due": "Follow up",
+      "run-attention": "Needs attention"
+    },
+    "action": {
+      "review": "Review",
+      "question": "Answer",
+      "ready-to-submit": "Open application",
+      "long-shot": "See details",
+      "not-tailored": "See details",
+      "follow-up-due": "Update status",
+      "run-attention": "Check settings"
+    }
+  },
+  "running": {
+    "title": "Running"
+  },
+  "done": {
+    "title": "Done today",
+    "found": "Jobs found",
+    "tailored": "Resumes tailored",
+    "approved": "Approved",
+    "applied": "Applied"
+  }
+}

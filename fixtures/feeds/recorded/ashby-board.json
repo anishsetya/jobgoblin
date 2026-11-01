@@ -1,0 +1,245 @@
+{
+  "apiVersion": "1",
+  "jobs": [
+    {
+      "id": "d77487f9-bab3-44c6-be18-744e7125c8b3",
+      "title": "Software Engineer, Platform",
+      "department": "Engineering",
+      "team": "Platform Engineering",
+      "employmentType": "FullTime",
+      "location": "San Francisco, CA",
+      "shouldDisplayCompensationOnJobPostings": true,
+      "secondaryLocations": [],
+      "publishedAt": "2024-08-28T22:10:59.372+00:00",
+      "isListed": true,
+      "isRemote": false,
+      "workplaceType": "OnSite",
+      "address": {
+        "postalAddress": {
+          "addressRegion": "CA",
+          "addressCountry": "United States",
+          "addressLocality": "San Francisco"
+        }
+      },
+      "jobUrl": "https://jobs.ashbyhq.com/sierra/d77487f9-bab3-44c6-be18-744e7125c8b3",
+      "applyUrl": "https://jobs.ashbyhq.com/sierra/d77487f9-bab3-44c6-be18-744e7125c8b3/application",
+      "descriptionHtml": "<h2><strong>About us</strong></h2><p style=\"min-height:1.5em\">Sierra is the leading platform for customer-facing AI agents, working with many of the world's biggest brands — including The GAP, Rocket Mortgage, SoFi, Sutter Health, and SoftBank — to transform how they serve customers and grow their businesses. We are primarily an in-person company based in San Francisco, with growing offices across North America, Europe, and Asia.</p><p style=\"min-height:1.5em\">We are guided by a set of values that are at the core of our actions and define our culture: Trust, Customer Obsession, Craftsmanship, Intensity, and a commitment to balancing Family along the way. These values are the foundation of our work, and we are committed to upholding them in everything we do.</p><p style=\"min-height:1.5em\">Our co-founders are <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" href=\"https://www.linkedin.com/in/brettaylor/\"><u>Bret Taylor</u></a> and <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" href=\"https://www.linkedin.com/in/claybavor/\"><u>Clay Bavor</u></a>. Bret currently serves as Board Chair of OpenAI. Previously, he was co-CEO of Salesforce (which had acquired the company he founded, Quip) and CTO of Facebook. Bret was also one of Google's earliest product managers and co-creator of Google Maps. Before founding Sierra, Clay spent 18 years at Google, where he most recently led Google Labs. Earlier, he started and led Google’s AR/VR effort, Project Starline, and Google Lens. Before that, Clay led the product and design teams for Google Workspace.</p><h2>What you'll do</h2>",
+      "descriptionPlain": "ABOUT US\n\nSierra is the leading platform for customer-facing AI agents, working with many of the world's biggest brands — including The GAP, Rocket Mortgage, SoFi, Sutter Health, and SoftBank — to transform how they serve customers and grow their businesses. We are primarily an in-person company based in San Francisco, with growing offices across North America, Europe, and Asia.\n\nWe are guided by a set of values that are at the core of our actions and define our culture: Trust, Customer Obsession, Craftsmanship, Intensity, and a commitment to balancing Family along the way. These values are the foundation of our work, and we are committed to upholding them in everything we do.\n\nOur co-founders are Bret Taylor https://www.linkedin.com/in/brettaylor/ and Clay Bavor https://www.linkedin.com/in/claybavor/. Bret currently serves as Board Chair of OpenAI. Previously, he was co-CEO of Salesforce (which had acquired the company he founded, Quip) and CTO of Facebook. Bret was also one of Google's earliest product managers and co-creator of Google Maps. Before founding Sierra, Clay spent 18 years at Google, where he most recently led Google Labs. Earlier, he started and led Google’s AR/VR effort, Project Starline, and Google Lens. Before that, Clay led the product and design teams for Google Workspace.\n\n\nWHAT YOU'LL DO\n",
+      "compensation": {
+        "compensationTierSummary": "$230K – $390K • Offers Equity",
+        "scrapeableCompensationSalarySummary": "$230K - $390K",
+        "compensationTiers": [
+          {
+            "id": "f79134a9-5aef-40c2-b78d-ff418b08a569",
+            "tierSummary": "$230K – $390K • Offers Equity",
+            "title": null,
+            "additionalInformation": null,
+            "components": [
+              {
+                "id": "ef02febb-08fd-435f-aa34-584f86edf8ca",
+                "summary": "$230K – $390K",
+                "compensationType": "Salary",
+                "interval": "1 YEAR",
+                "currencyCode": "USD",
+                "minValue": 230000,
+                "maxValue": 390000
+              },
+              {
+                "id": "19cf1f62-e396-41e7-ad1f-ec8a1e009bcc",
+                "summary": "Offers Equity",
+                "compensationType": "EquityPercentage",
+                "interval": "NONE",
+                "currencyCode": null,
+                "minValue": null,
+                "maxValue": null
+              }
+            ]
+          }
+        ],
+        "summaryComponents": [
+          {
+            "compensationType": "Salary",
+            "interval": "1 YEAR",
+            "currencyCode": "USD",
+            "minValue": 230000,
+            "maxValue": 390000
+          },
+          {
+            "compensationType": "EquityPercentage",
+            "interval": "NONE",
+            "currencyCode": null,
+            "minValue": null,
+            "maxValue": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "b7d1dbcd-ca72-472f-b15e-5b4b0f886be0",
+      "title": "Software Engineer, Agent",
+      "department": "Engineering",
+      "team": "Agent Engineering",
+      "employmentType": "FullTime",
+      "location": "London",
+      "shouldDisplayCompensationOnJobPostings": true,
+      "secondaryLocations": [],
+      "publishedAt": "2025-02-13T20:44:17.436+00:00",
+      "isListed": true,
+      "isRemote": false,
+      "workplaceType": "OnSite",
+      "address": {
+        "postalAddress": {
+          "addressRegion": "England",
+          "addressCountry": "United Kingdom",
+          "addressLocality": "London"
+        }
+      },
+      "jobUrl": "https://jobs.ashbyhq.com/sierra/b7d1dbcd-ca72-472f-b15e-5b4b0f886be0",
+      "applyUrl": "https://jobs.ashbyhq.com/sierra/b7d1dbcd-ca72-472f-b15e-5b4b0f886be0/application",
+      "descriptionHtml": "<h2><strong>About us</strong></h2><p style=\"min-height:1.5em\">Sierra is the leading platform for customer-facing AI agents, working with many of the world's biggest brands — including The GAP, Rocket Mortgage, SoFi, Sutter Health, and SoftBank — to transform how they serve customers and grow their businesses. We are primarily an in-person company based in San Francisco, with growing offices across North America, Europe, and Asia.</p><p style=\"min-height:1.5em\">We are guided by a set of values that are at the core of our actions and define our culture: Trust, Customer Obsession, Craftsmanship, Intensity, and a commitment to balancing Family along the way. These values are the foundation of our work, and we are committed to upholding them in everything we do.</p><p style=\"min-height:1.5em\">Our co-founders are <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" href=\"https://www.linkedin.com/in/brettaylor/\"><u>Bret Taylor</u></a> and <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" href=\"https://www.linkedin.com/in/claybavor/\"><u>Clay Bavor</u></a>. Bret currently serves as Board Chair of OpenAI. Previously, he was co-CEO of Salesforce (which had acquired the company he founded, Quip) and CTO of Facebook. Bret was also one of Google's earliest product managers and co-creator of Google Maps. Before founding Sierra, Clay spent 18 years at Google, where he most recently led Google Labs. Earlier, he started and led Google’s AR/VR effort, Project Starline, and Google Lens. Before that, Clay led the product and design teams for Google Workspace.</p><h2><strong>What you’ll do</strong></h2>",
+      "descriptionPlain": "ABOUT US\n\nSierra is the leading platform for customer-facing AI agents, working with many of the world's biggest brands — including The GAP, Rocket Mortgage, SoFi, Sutter Health, and SoftBank — to transform how they serve customers and grow their businesses. We are primarily an in-person company based in San Francisco, with growing offices across North America, Europe, and Asia.\n\nWe are guided by a set of values that are at the core of our actions and define our culture: Trust, Customer Obsession, Craftsmanship, Intensity, and a commitment to balancing Family along the way. These values are the foundation of our work, and we are committed to upholding them in everything we do.\n\nOur co-founders are Bret Taylor https://www.linkedin.com/in/brettaylor/ and Clay Bavor https://www.linkedin.com/in/claybavor/. Bret currently serves as Board Chair of OpenAI. Previously, he was co-CEO of Salesforce (which had acquired the company he founded, Quip) and CTO of Facebook. Bret was also one of Google's earliest product managers and co-creator of Google Maps. Before founding Sierra, Clay spent 18 years at Google, where he most recently led Google Labs. Earlier, he started and led Google’s AR/VR effort, Project Starline, and Google Lens. Before that, Clay led the product and design teams for Google Workspace.\n\n\nWHAT YOU’LL DO\n",
+      "compensation": {
+        "compensationTierSummary": "£150K – £315K • Offers Equity",
+        "scrapeableCompensationSalarySummary": "£150K - £315K",
+        "compensationTiers": [
+          {
+            "id": "93fa1b90-6293-4e1f-9792-da66b413280e",
+            "tierSummary": "£150K – £315K • Offers Equity",
+            "title": null,
+            "additionalInformation": null,
+            "components": [
+              {
+                "id": "79b17f7d-fdc3-417c-9e06-dab3553f67d9",
+                "summary": "£150K – £315K",
+                "compensationType": "Salary",
+                "interval": "1 YEAR",
+                "currencyCode": "GBP",
+                "minValue": 150000,
+                "maxValue": 315000
+              },
+              {
+                "id": "dc2c0733-6abd-43e0-a305-c819c87d51b3",
+                "summary": "Offers Equity",
+                "compensationType": "EquityPercentage",
+                "interval": "NONE",
+                "currencyCode": null,
+                "minValue": null,
+                "maxValue": null
+              }
+            ]
+          }
+        ],
+        "summaryComponents": [
+          {
+            "compensationType": "Salary",
+            "interval": "1 YEAR",
+            "currencyCode": "GBP",
+            "minValue": 150000,
+            "maxValue": 315000
+          },
+          {
+            "compensationType": "EquityPercentage",
+            "interval": "NONE",
+            "currencyCode": null,
+            "minValue": null,
+            "maxValue": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "e9f5fdb6-91ee-4c55-9230-41ec8865650e",
+      "title": "Software Engineer, Agent",
+      "department": "Engineering",
+      "team": "Agent Engineering",
+      "employmentType": "FullTime",
+      "location": "San Francisco, CA",
+      "shouldDisplayCompensationOnJobPostings": true,
+      "secondaryLocations": [
+        {
+          "location": "New York, NY",
+          "address": {
+            "postalAddress": {
+              "addressRegion": "New York",
+              "addressCountry": "United States",
+              "addressLocality": "New York"
+            }
+          }
+        },
+        {
+          "location": "Atlanta, GA",
+          "address": {
+            "postalAddress": {
+              "addressRegion": "GA",
+              "addressCountry": "United States",
+              "addressLocality": "Atlanta"
+            }
+          }
+        }
+      ],
+      "publishedAt": "2025-04-18T20:23:18.804+00:00",
+      "isListed": true,
+      "isRemote": false,
+      "workplaceType": "OnSite",
+      "address": {
+        "postalAddress": {
+          "addressRegion": "CA",
+          "addressCountry": "United States",
+          "addressLocality": "San Francisco"
+        }
+      },
+      "jobUrl": "https://jobs.ashbyhq.com/sierra/e9f5fdb6-91ee-4c55-9230-41ec8865650e",
+      "applyUrl": "https://jobs.ashbyhq.com/sierra/e9f5fdb6-91ee-4c55-9230-41ec8865650e/application",
+      "descriptionHtml": "<h2><strong>About us</strong></h2><p style=\"min-height:1.5em\">Sierra is the leading platform for customer-facing AI agents, working with many of the world's biggest brands — including The GAP, Rocket Mortgage, SoFi, Sutter Health, and SoftBank — to transform how they serve customers and grow their businesses. We are primarily an in-person company based in San Francisco, with growing offices across North America, Europe, and Asia.</p><p style=\"min-height:1.5em\">We are guided by a set of values that are at the core of our actions and define our culture: Trust, Customer Obsession, Craftsmanship, Intensity, and a commitment to balancing Family along the way. These values are the foundation of our work, and we are committed to upholding them in everything we do.</p><p style=\"min-height:1.5em\">Our co-founders are <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" href=\"https://www.linkedin.com/in/brettaylor/\"><u>Bret Taylor</u></a> and <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" href=\"https://www.linkedin.com/in/claybavor/\"><u>Clay Bavor</u></a>. Bret currently serves as Board Chair of OpenAI. Previously, he was co-CEO of Salesforce (which had acquired the company he founded, Quip) and CTO of Facebook. Bret was also one of Google's earliest product managers and co-creator of Google Maps. Before founding Sierra, Clay spent 18 years at Google, where he most recently led Google Labs. Earlier, he started and led Google’s AR/VR effort, Project Starline, and Google Lens. Before that, Clay led the product and design teams for Google Workspace.</p><h2><strong>What you’ll do</strong></h2>",
+      "descriptionPlain": "ABOUT US\n\nSierra is the leading platform for customer-facing AI agents, working with many of the world's biggest brands — including The GAP, Rocket Mortgage, SoFi, Sutter Health, and SoftBank — to transform how they serve customers and grow their businesses. We are primarily an in-person company based in San Francisco, with growing offices across North America, Europe, and Asia.\n\nWe are guided by a set of values that are at the core of our actions and define our culture: Trust, Customer Obsession, Craftsmanship, Intensity, and a commitment to balancing Family along the way. These values are the foundation of our work, and we are committed to upholding them in everything we do.\n\nOur co-founders are Bret Taylor https://www.linkedin.com/in/brettaylor/ and Clay Bavor https://www.linkedin.com/in/claybavor/. Bret currently serves as Board Chair of OpenAI. Previously, he was co-CEO of Salesforce (which had acquired the company he founded, Quip) and CTO of Facebook. Bret was also one of Google's earliest product managers and co-creator of Google Maps. Before founding Sierra, Clay spent 18 years at Google, where he most recently led Google Labs. Earlier, he started and led Google’s AR/VR effort, Project Starline, and Google Lens. Before that, Clay led the product and design teams for Google Workspace.\n\n\nWHAT YOU’LL DO\n",
+      "compensation": {
+        "compensationTierSummary": "$180K – $390K • Offers Equity",
+        "scrapeableCompensationSalarySummary": "$180K - $390K",
+        "compensationTiers": [
+          {
+            "id": "de34892b-e7c9-4838-82ba-5ac1a31ef91b",
+            "tierSummary": "$180K – $390K • Offers Equity",
+            "title": null,
+            "additionalInformation": null,
+            "components": [
+              {
+                "id": "53cda991-312d-43ce-b7d5-934dff7033e7",
+                "summary": "$180K – $390K",
+                "compensationType": "Salary",
+                "interval": "1 YEAR",
+                "currencyCode": "USD",
+                "minValue": 180000,
+                "maxValue": 390000
+              },
+              {
+                "id": "8154d556-4c83-4e93-8201-a0ba863d0696",
+                "summary": "Offers Equity",
+                "compensationType": "EquityPercentage",
+                "interval": "NONE",
+                "currencyCode": null,
+                "minValue": null,
+                "maxValue": null
+              }
+            ]
+          }
+        ],
+        "summaryComponents": [
+          {
+            "compensationType": "Salary",
+            "interval": "1 YEAR",
+            "currencyCode": "USD",
+            "minValue": 180000,
+            "maxValue": 390000
+          },
+          {
+            "compensationType": "EquityPercentage",
+            "interval": "NONE",
+            "currencyCode": null,
+            "minValue": null,
+            "maxValue": null
+          }
+        ]
+      }
+    }
+  ]
+}

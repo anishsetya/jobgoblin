@@ -1,0 +1,73 @@
+{
+  "followUp": "Follow up on {{date}}",
+  "actions": {
+    "review": "Review",
+    "openApplication": "Open application",
+    "tailor": "Tailor a resume",
+    "tailoring": "Starting...",
+    "undoSkip": "Undo skip",
+    "withdraw": "Withdraw"
+  },
+  "withdraw": {
+    "title": "Withdraw this application?",
+    "description": "It moves to Closed. If the company already has your application, tell them yourself.",
+    "noteLabel": "Note (optional)",
+    "noteHint": "Why you are withdrawing. It is saved in the history.",
+    "confirm": "Withdraw"
+  },
+  "questions": {
+    "title": "Claude has a question",
+    "description": "This application waits on your answer. Other applications carry on."
+  },
+  "jobText": {
+    "title": "Job description",
+    "none": "There is no description saved for this job."
+  },
+  "versions": {
+    "title": "Resume versions",
+    "none": "No resume has been made for this application yet.",
+    "draftFileName": "Resume draft {{version}}.pdf",
+    "state": {
+      "draft": "Draft",
+      "approved": "Approved"
+    },
+    "current": "Current",
+    "downloadLabel": "Download PDF of version {{version}}",
+    "download": "Download PDF"
+  },
+  "answers": {
+    "title": "Answers",
+    "none": "No answers have been written yet. They are written after you approve the application."
+  },
+  "status": {
+    "title": "Change status",
+    "description": "Tell Jobgoblin how this application is going. You can also set when to follow up.",
+    "newStatus": "New status",
+    "choose": "Choose a status",
+    "followUp": "Follow up on",
+    "followUpHint": "Leave empty to keep the current day.",
+    "note": "Note (optional)",
+    "change": "Change status"
+  },
+  "ask": {
+    "title": "Ask about this application",
+    "description": "Ask Claude anything about this job, your fit, or the resume that was made.",
+    "label": "Your question",
+    "send": "Ask"
+  },
+  "history": {
+    "title": "History",
+    "none": "Nothing has happened yet.",
+    "status-changed": "moved this from {{from}} to {{to}}",
+    "tailor-requested": "asked for a tailored resume",
+    "resume-drafted": "drafted a tailored resume",
+    "approved": "approved this application",
+    "re-approved": "approved this application again",
+    "approval-voided": "cancelled the approval because your details changed",
+    "question-asked": "asked a question",
+    "question-answered": "answered a question",
+    "answers-saved": "wrote answers for the form",
+    "submitted": "recorded that the application was sent",
+    "note": "added a note"
+  }
+}

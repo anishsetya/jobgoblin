@@ -1,0 +1,75 @@
+{
+  "pageTitle": "Open application: {{title}} at {{company}}",
+  "eyebrow": "Open application",
+  "seeApplication": "See the application",
+  "notApproved": {
+    "title": "This application is not approved yet",
+    "description": "You can open it here after you approve it."
+  },
+  "voided": {
+    "title": "Your details changed since you approved. Review it again.",
+    "description": "Something in your profile is different from what you approved, so the approval no longer applies. Nothing has been sent.",
+    "action": "Review again"
+  },
+  "alreadySubmitted": "You have already marked this application as sent.",
+  "intro": "Fill in the company's form with the values below, attach the resume file, and click Submit on their site yourself. Then come back and tell Jobgoblin you sent it.",
+  "dataSheet": {
+    "title": "Form details",
+    "description": "These are the values you approved. Copy each one into the form."
+  },
+  "answers": {
+    "title": "Answers",
+    "description": "Written for this job after you approved it.",
+    "none": "Your answers are still being written. They will appear here by themselves.",
+    "questionsTitle": "Claude has a question"
+  },
+  "resume": {
+    "title": "Resume file",
+    "version": "Version {{version}}",
+    "fileName": "File name:",
+    "open": "Open resume file",
+    "download": "Download a copy",
+    "notOpened": "The file could not be opened from here. You can find it at"
+  },
+  "submitted": {
+    "open": "I submitted",
+    "openHint": "Use this after you have clicked Submit on the company's site.",
+    "title": "Record that you applied",
+    "description": "An application counts as sent once you give proof that the company received it.",
+    "proofLegend": "How do you know it was sent?",
+    "proofType": {
+      "confirmation-page": {
+        "label": "I saw the confirmation page",
+        "hint": "Paste its web address if you have it.",
+        "field": "Web address of the confirmation page"
+      },
+      "pasted-text": {
+        "label": "I will paste the confirmation text",
+        "hint": "Copy the message the site showed you.",
+        "field": "Confirmation text"
+      },
+      "screenshot": {
+        "label": "I took a screenshot",
+        "hint": "Say where you saved it.",
+        "field": "Where the screenshot is saved"
+      },
+      "email-subject": {
+        "label": "I got a confirmation email",
+        "hint": "Paste the subject line.",
+        "field": "Subject of the email"
+      },
+      "person-saw-it": {
+        "label": "I saw the confirmation, and have nothing to paste",
+        "hint": "Choose this if the page did not give you anything to copy.",
+        "field": "Note"
+      }
+    },
+    "personSawItProof": "I saw the confirmation page.",
+    "fileLabel": "The resume file you attached (optional)",
+    "fileHint": "Pick the file you uploaded to the form. Jobgoblin checks that it is the one you approved. The file stays on your computer.",
+    "differentFile": "This is not the file you approved. The company may have a different resume than the one you reviewed.",
+    "recordAnyway": "Record it anyway",
+    "save": "Record as applied",
+    "saving": "Saving..."
+  }
+}
