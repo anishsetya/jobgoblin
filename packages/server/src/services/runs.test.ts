@@ -24,6 +24,7 @@ function recordedLauncher(): Launcher & { woken: number; cancelled: string[] } {
     async cancel(runId: string) {
       launcher.cancelled.push(runId);
     },
+    resume() {},
   };
   return launcher;
 }

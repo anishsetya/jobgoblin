@@ -1,7 +1,7 @@
 // Builds the Hono app. A request passes through, in this order:
 //   hostCheck -> originCheck -> auth -> route (zod validation) -> errorHandler
 // Routes live one file per area in ./routes and call the services; the dashboard's own files come last.
-// The routes /mcp and /api/claude are mounted by the run launcher (see the two MOUNT POINT comments below).
+// /api/claude (the person's Claude Code) is one more area under /api; /mcp is the door for Claude Code runs.
 // Spec: ARCHITECTURE.md section 11.
 import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
@@ -12,8 +12,10 @@ import { hostCheck } from "./middleware/hostCheck";
 import { originCheck } from "./middleware/originCheck";
 import { requestLog } from "./middleware/requestLog";
 import { securityHeaders } from "./middleware/securityHeaders";
+import { mcpRoutes } from "../mcp/endpoint";
 import { applicationRoutes } from "./routes/applications";
 import { backupRoutes } from "./routes/backups";
+import { claudeRoutes } from "./routes/claude";
 import { eventRoutes } from "./routes/events";
 import { exportRoutes } from "./routes/export";
 import { jobsRoutes } from "./routes/jobs";
@@ -47,15 +49,9 @@ export function createApp(ctx: ServerContext): Hono<AppEnv> {
 
   mountApi(app, ctx);
 
-  // MOUNT POINT 1 (run launcher): app.route("/api/claude", claudeRoutes(ctx));
-  //   GET /api/claude/status and POST /api/claude/install, /sign-in. The auth middleware above already
-  //   requires the session token for everything under /api.
-  // MOUNT POINT 2 (MCP): app.route("/mcp", mcpRoutes(ctx));
-  //   The auth middleware above has already checked the run token and set c.get("runId"); the session token
-  //   is refused on /mcp. Until it is mounted, a valid run token reaches the "not available" answer below.
-
-  app.all("/mcp/*", (c) => c.json(apiError("not-available", "The tool endpoint is not available.", "Try again later."), 404));
-  app.all("/mcp", (c) => c.json(apiError("not-available", "The tool endpoint is not available.", "Try again later."), 404));
+  // The door for Claude Code runs. The auth middleware above has already checked the run token and set
+  // c.get("runId"); the session token is refused here.
+  app.route("/mcp", mcpRoutes(ctx));
 
   // Anything else: the dashboard's files for a page request, a plain 404 for the rest.
   app.notFound((c) => {
@@ -82,4 +78,5 @@ function mountApi(app: Hono<AppEnv>, ctx: ServerContext): void {
   app.route("/api", backupRoutes(ctx));
   app.route("/api", exportRoutes(ctx));
   app.route("/api", openRoutes(ctx));
+  app.route("/api/claude", claudeRoutes(ctx));
 }

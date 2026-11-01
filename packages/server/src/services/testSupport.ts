@@ -60,6 +60,7 @@ function renderer(): ResumeRenderer {
 export type TestContextOptions = {
   withFolder?: boolean; // default true: the person has chosen a folder
   withAlexRivera?: boolean; // default true: Alex's profile and confirmed story are loaded and setup is complete
+  claudeCommand?: string[]; // default none: the Claude command a test wants to use (absolute paths), such as the fake claude
 };
 
 export function createTestContext(options: TestContextOptions = {}): ServerContext {
@@ -71,7 +72,7 @@ export function createTestContext(options: TestContextOptions = {}): ServerConte
     appDataDir,
     resourcesDir: repoRoot(),
     port: 0,
-    claudeCommand: null,
+    claudeCommand: options.claudeCommand ?? null,
     claudeInstallCommand: null,
     feedFixturesDir: demoFeedsDir(),
     devOrigin: null,

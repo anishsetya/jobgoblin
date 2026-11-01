@@ -105,14 +105,14 @@ describe("authentication on /mcp", () => {
     expect((await call("/mcp/anything", { method: "POST", token: TEST_SESSION_TOKEN })).status).toBe(401);
   });
 
-  it("lets a live run's token past the check (the endpoint itself is mounted by the launcher)", async () => {
+  it("lets a live token past the check, and the endpoint then refuses a run that does not exist", async () => {
     const { ctx, call } = createTestApp();
     const runToken = ctx.runTokens.issue("run-1");
 
     const response = await call("/mcp", { method: "POST", token: runToken });
 
-    expect(response.status).toBe(404);
-    expect(await response.json()).toMatchObject({ code: "not-available" });
+    expect(response.status).toBe(401);
+    expect(await response.json()).toMatchObject({ code: "unauthorized" });
   });
 
   it("refuses a run token after the run ended", async () => {

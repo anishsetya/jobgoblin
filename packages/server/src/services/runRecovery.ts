@@ -1,9 +1,6 @@
-// What to do at start-up with runs that were still going when the server last stopped. Their Claude Code
-// process is gone (or must be stopped), so they are marked "interrupted" and their card offers Retry.
-//
-// LAUNCHER PLUG-IN POINT: this is the default. The run launcher owns real recovery (finding a leftover
-// process by its pid, checking that it is Claude Code and stopping its process tree, section 10 "recovery.ts")
-// and replaces the call to this function in startServer.ts. Until then, a "running" run is simply marked.
+// Marks runs that claim to be going as "interrupted" without looking for a process: used when a backup is
+// restored, because the restored database remembers runs of another session. (At server start the runner's
+// recovery.ts does the same and also stops a leftover Claude process.)
 // A "waiting" run has no process; it is waiting for the person's answer and stays as it is.
 // Spec: ARCHITECTURE.md section 10 (Recovery).
 import { listRunsByStatus, updateRun } from "@jobgoblin/storage";

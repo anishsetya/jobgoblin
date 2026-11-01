@@ -18,8 +18,8 @@ import { createServerContext, type ServerContext, type StartOptions } from "./co
 import { createApp } from "./http/app";
 import { BIND_ADDRESS, listenOnFreePort } from "./http/listen";
 import { createLogger, type Logger } from "./logger";
+import { startRunner } from "./runner/startRunner";
 import { seedCompaniesIfEmpty } from "./services/feeds";
-import { recoverInterruptedRuns } from "./services/runRecovery";
 import { cancelRunsForShutdown } from "./services/runShutdown";
 import { openServerDatabase } from "./services/serverDatabase";
 
@@ -44,16 +44,15 @@ export async function startServer(options: StartOptions): Promise<RunningServer>
   seedCompaniesIfEmpty(ctx);
   checkApprovedFiles(ctx);
 
-  // LAUNCHER PLUG-IN POINT 1: the run launcher replaces this call with real process recovery (section 10,
-  // "recovery.ts"). This default only marks runs that were still going as interrupted.
-  recoverInterruptedRuns(ctx);
-  // LAUNCHER PLUG-IN POINT 2: create the launcher here and set `ctx.launcher = createLauncher(ctx)`,
-  // before the server starts listening, so a run queued by the first request is picked up.
+  // Before the server listens, so a run queued by the very first request is picked up.
+  await startRunner(ctx);
 
   const server = createAdaptorServer({ fetch: createApp(ctx).fetch }) as Server;
   ctx.port = await listenOnFreePort(server, options.port);
   const serverJsonPath = writeServerJson(ctx);
   const dailyBackupTimer = startDailyBackupCheck(ctx);
+  // Runs queued before the last quit start now, when their mcp.json can name the real port.
+  ctx.launcher?.wake();
 
   logger.info({ port: ctx.port }, "Jobgoblin's server is ready.");
   return {

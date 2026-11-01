@@ -35,13 +35,13 @@ function recover(db: Database, table: Record<number, string | null>, expectedIma
 }
 
 describe("findLeftoverRuns", () => {
-  it("returns running and waiting runs only, not queued or finished ones", () => {
+  it("returns running runs only, not waiting, queued or finished ones", () => {
     const db = openTestDatabase();
     for (const [id, status] of [["a", "running"], ["b", "waiting"], ["c", "queued"], ["d", "done"], ["e", "failed"], ["f", "interrupted"]] as const) {
       insertRun(db, aRun({ id, status }), []);
     }
 
-    expect(findLeftoverRuns(db).map((run) => run.id).sort()).toEqual(["a", "b"]);
+    expect(findLeftoverRuns(db).map((run) => run.id)).toEqual(["a"]);
   });
 });
 
@@ -115,15 +115,15 @@ describe("recoverLeftoverRuns", () => {
     expect(getRun(db, "run-1")?.status).toBe("interrupted");
   });
 
-  it("interrupts a waiting run too, and leaves queued and finished runs as they are", async () => {
+  it("leaves waiting, queued and finished runs as they are", async () => {
     const db = openTestDatabase();
-    insertRun(db, aRun({ id: "waiting-run", status: "waiting", pid: 11 }), []);
+    insertRun(db, aRun({ id: "waiting-run", status: "waiting", pid: null }), []);
     insertRun(db, aRun({ id: "queued-run", status: "queued", pid: null, startedAt: null }), []);
     insertRun(db, aRun({ id: "done-run", status: "done", pid: 22 }), []);
 
     await recover(db, {}).report;
 
-    expect(getRun(db, "waiting-run")?.status).toBe("interrupted");
+    expect(getRun(db, "waiting-run")?.status).toBe("waiting");
     expect(getRun(db, "queued-run")?.status).toBe("queued");
     expect(getRun(db, "done-run")).toMatchObject({ status: "done", pid: 22 });
   });

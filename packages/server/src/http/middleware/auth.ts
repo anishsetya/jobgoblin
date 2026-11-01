@@ -12,7 +12,7 @@ import { apiError } from "../errorHandler";
 // What the /mcp route can read with c.get("runId") once this middleware has let a request through.
 export type AuthVariables = { runId: string };
 
-const UNAUTHORIZED = apiError(
+export const UNAUTHORIZED = apiError(
   "unauthorized",
   "Jobgoblin did not recognise this request.",
   "Close Jobgoblin and open it again.",

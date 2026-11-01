@@ -2,7 +2,7 @@
 
 The local server of Jobgoblin: an HTTP API on `127.0.0.1` for the dashboard, the **services** (the use cases) behind it, the queue of Claude Code runs, and the runner that starts them. The dashboard talks to it over HTTP; a Claude Code run talks to it over MCP (`/mcp`), and every MCP tool is a thin adapter over one of the services described here.
 
-Spec: [ARCHITECTURE.md](../../docs/poc/ARCHITECTURE.md) sections 7 to 11, and [CODE_STYLE.md](../../docs/poc/CODE_STYLE.md). This README covers the context, the services and the HTTP API. The runner has its own [README](src/runner/README.md); `src/mcp/` and `runner/launcher.ts` are written separately and plug into the hooks listed at the end.
+Spec: [ARCHITECTURE.md](../../docs/poc/ARCHITECTURE.md) sections 7 to 11, and [CODE_STYLE.md](../../docs/poc/CODE_STYLE.md). This README covers the context, the services and the HTTP API. The runner has its own [README](src/runner/README.md). `src/mcp/` (the door a run calls back through) and `runner/launcher.ts` (what starts the runs) are described in "The MCP endpoint" and "The launcher" below.
 
 ## Read first
 
@@ -27,7 +27,7 @@ browser / dashboard
 
 A service throws a `ServiceError` for a refusal the person must be told about (`not-found` 404, `conflict` 409, `invalid` 400, `unavailable` 409); the error handler turns it into the `ApiError`. A rule failure that a **run** can fix (a resume that fails the truth trace, a banned word in an answer) is returned as a value, `Outcome<T> = { ok: true, value } | { ok: false, errors }`, so the run gets every problem at once. Zod errors become `invalid-request`, `CoreError` and `StorageError` have fixed mappings, and anything else is logged to `server.log` and shown as "Something went wrong inside Jobgoblin."
 
-Everything under `/api` needs the session token. The dashboard's own files (`apps/dashboard/dist`, with a fallback to `index.html` for the router's pages) need none: they hold no personal data. `/mcp` is not mounted yet; a valid run token reaches a `404 not-available`.
+Everything under `/api` needs the session token. The dashboard's own files (`apps/dashboard/dist`, with a fallback to `index.html` for the router's pages) need none: they hold no personal data. `/mcp` needs the token of a run that is `running` (any other token, including the session token, gets 401).
 
 ## Where each use case lives
 
@@ -143,16 +143,49 @@ Inside Electron's `utilityProcess` the same program posts `{ type: "ready", port
 
 **Start-up** (`startServer.ts`): create the app data folder and the log (`logs/server.log`, rotated at 10 MB, `Authorization` headers and profile values redacted); open the database (migrations from `resourcesDir`, a backup first when it already holds data); open the person's folder if one was chosen; seed the company list on the very first start; rewrite any missing approved resume file from the database (D19); mark runs that were `running` as interrupted; bind `127.0.0.1`; write `server.json` (port, pid, version, start time, no secrets); check for a daily backup now and hourly. **Quit** (`stop()`): close the port, cancel queued runs and stop running ones, write the tracker once more, close the database, remove `server.json`.
 
-## What the launcher plugs in
+## The MCP endpoint
 
-`startServer.ts` has two marked plug-in points and `http/app.ts` two marked mount points. Nothing else in this package changes when the launcher and the MCP endpoint arrive.
+`POST /mcp` (`src/mcp/endpoint.ts`) is the only door a Claude Code run has into Jobgoblin. It speaks Streamable HTTP in stateless mode with plain JSON replies: every request gets a fresh `McpServer` and transport (`runServer.ts`) that are thrown away when the answer is sent. GET and DELETE answer 405.
 
-1. **Recovery** (start-up): replace `recoverInterruptedRuns(ctx)` with the runner's `recoverLeftoverRuns(...)` (it also stops a leftover Claude process). The default only marks `running` runs interrupted, with "This run was interrupted". `waiting` runs have no process and are never touched.
-2. **The launcher** (start-up): `ctx.launcher = createLauncher(ctx)` before the server listens. It implements `Launcher = { wake(): void; cancel(runId): Promise<void> }`. `wake()` claims the oldest `queued` run; `cancel` stops the process and records `cancelled`.
-3. **`/api/claude`** and **`/mcp`** mount points in `http/app.ts`. The `auth` middleware has already checked the token and set `c.get("runId")` on `/mcp`; remove the two `not-available` placeholders below them.
-4. **While a run goes**, the launcher uses what is already here: `ctx.runTokens.issue(runId)` and `.revoke(runId)`; `updateRun` from storage and `announceRun` (`services/changes.ts`) for status, pid, session id and step; `refreshFeeds(ctx)` before a hunt; `listRunTasks` and `tasksLeftPending` at the end; and **after** a hunt or paste run, `admitAfterHuntOrPaste(ctx)`.
-5. **After a tailor run**, the one retry on sonnet is the launcher's: queue `ctx.runs.queueRun({ kind: "tailor", applicationIds, input, model: "sonnet", retryOf })` for the applications whose drafts never passed, raise `tailorAttempts` with `updateApplicationFields`, and when the retry also fails set `tailorError` to "Couldn't tailor this one: <reason>". `admitAfterHuntOrPaste` leaves an application with `tailorAttempts > 0` alone, and `requestTailor` resets it.
-6. **MCP adapters** call the services in the table above and, after each call, set the run's step with `core.stepForTool` and announce the run.
+How one tool call flows:
+
+```
+Claude Code run  --POST /mcp, Bearer <run token>-->  auth middleware      token -> runId (session token: 401)
+  -> endpoint.ts       loads the run; not `running` -> 401
+  -> runServer.ts      registers ONLY RUN_KIND_TOOLS[run.kind]  (anything else: "Tool x not found")
+  -> the SDK           checks the input against the tool's zod schema
+  -> defineTool.ts     sets the run's step (core.stepForTool) and emits run.updated
+  -> the tool file     src/mcp/tools/<area>Tools.ts: one service call, and the `next` hint
+  -> defineTool.ts     removes keys the output schema does not list; ServiceError / unexpected error -> ok:false
+  <- content[0].text   a ToolReply as JSON
+```
+
+Files: `tools/defineTool.ts` (the one helper every tool uses), `tools/toolHelpers.ts` (`succeededWith`, `replyFromOutcome`, `assertRunMayUseApplication`), `tools/*Tools.ts` (profile, job, fit, tailor, answer, ask, task, status), `tools/allTools.ts` (a `Record` over every tool name, so a 22nd tool does not compile until it is listed). A tool is a few lines: name, description, input and output schemas, `readOnly`, and one call to a service.
+
+`next` is the call the run should make next, so a run stays on its playbook (`"Call complete_task for this application with outcome done."`). After a refusal in a tailor or answers run it says to report the application as failed and call `next_task`.
+
+## The launcher
+
+`runner/launcher.ts` is the queue's engine; it only decides which run goes when. One run's launch is `runner/launchRun.ts` (the building blocks, in the order of [runner/README.md](src/runner/README.md)); how it ended is saved by `finishRun.ts`; what follows is `afterRun.ts`.
+
+States of a run as the launcher moves it:
+
+```
+queued --wake()--> running   (claimed at once, before anything slow)
+  hunt only: step "Checking job boards" while the feeds are fetched
+  Claude Code missing or signed out                       --> blocked  (the queue pauses)
+  process ends: done | waiting (a task awaits an answer) | failed | blocked (plan limit, signed out) | cancelled
+```
+
+- **Queue.** `wake()` starts the oldest `queued` runs while fewer than `settings.concurrency` (default 1) are active. A run is claimed (`status: running`) before it launches, and the launcher keeps an in-memory entry per run, so a run is never launched twice.
+- **Blocked.** A run that ends `blocked` pauses the queue. Retrying it (a new queued run whose `retryOf` is a blocked run) or a successful `POST /api/claude/sign-in` (`launcher.resume()`) starts it again.
+- **Cancel.** `cancel(runId)` takes the run's token away, asks the process tree to stop (`taskkill /T`, SIGTERM), forces it after 5 seconds, and resolves once the run is saved as `cancelled`. A cancel that arrives before the process exists is honoured before it is spawned.
+- **Safety.** The `init` line is checked with `checkInitEvent`. A run with a tool it must not have is killed at once, its token is revoked, and it ends `failed`, "This run was stopped for safety".
+- **After a run.** Hunt or paste: `admitAfterHuntOrPaste`. Tailor: an application whose task failed and whose draft never passed gets ONE retry run on sonnet (`tailorAttempts` 0 to 1, `retryOf` the first run); the second failure sets `tailorError` to "Couldn't tailor this one: <reason>". A cancelled or blocked run starts nothing.
+- **Usage limit.** A `Run` has no field for the time a plan limit lifts, so `finishRun` writes it into the sentence: "Your Claude plan limit is reached. It resets at 3:41 PM."
+- **Start-up.** `runner/startRunner.ts` runs `recoverLeftoverRuns` (only `running` runs; it stops a leftover Claude process after checking its program name), then creates the launcher; `startServer.ts` wakes it once the port is bound, because a run's `mcp.json` names the real port. Run folders older than 14 days are removed when the launcher is created.
+
+`/api/claude` (`http/routes/claude.ts`): `GET /status`, `POST /install`, `POST /sign-in`, all through `createClaudeCli` with the start options' commands.
 
 ## How it is tested
 
@@ -166,6 +199,9 @@ Tests sit next to the code and never use the network: they run on temporary app 
 | `http/routes.test.ts` | Every area answers in the shape the dashboard parses; a full journey from review to Applied over HTTP; a multipart upload |
 | `services/*.test.ts` | One file per use case: the demo feeds (4 shown, 2 filtered, 1 repeat), `recordFit` moves, a draft's truth trace returned as values, approve and re-approve, frozen PDF bytes, "I submitted" and a different file, skip and undo, the status route never reaching Applied, the company cap with four roles at one company, questions that re-queue, the queue's refusals, importing the sample resume, restoring a backup |
 | `startServer.test.ts` | A real port; `server.json`; a clean stop; runs left going are marked interrupted |
+| `mcp/endpoint.test.ts` | For every run kind the tool list equals `RUN_KIND_TOOLS`; a tool outside the kind is refused; the session token and a finished run's token are refused; GET and DELETE answer 405; `get_profile` never returns contact, pay or EEO values; `get_job` wraps text and cannot be made to close the wrapper; `submit_resume_draft` returns errors as `ok: false` and keeps a run out of another run's application |
+| `runner/launcher.test.ts` | The real fake claude against a real server: a hunt then an automatic tailor run (Awaiting approval, Long shot, Skipped); an invented bullet fixed by the errors; a question that leaves one application open and a re-queue when answered; one retry on sonnet and then `tailorError`; blocked, failed and safety stops; a paused queue and a retry; cancel with the process gone; recovery at start-up |
+| `http/routes/claude.test.ts` | `/api/claude/status` as connected, signed-out and not-installed; sign-in resumes the queue |
 
 ## Decisions
 
@@ -188,3 +224,10 @@ Places where ARCHITECTURE.md (v2) was ambiguous or silent, and what this package
 15. **Three packages stay outside the bundle and are listed as dependencies of this package.** Typst's native compiler, `pdfjs-dist` and `exceljs` cannot be bundled, and Node looks for them next to `dist/`, where pnpm links only what this package declares. They use the same version ranges as `render` and `storage`, so no new package is installed. `tsup.config.ts` excludes them with a pattern (a name in `noExternal` would otherwise win over `external`) and sets `removeNodeProtocol: false`, because tsup would turn `node:sqlite` into `sqlite`, which does not exist.
 16. **`src/index.ts` exports only `startServer`, `readStartOptions` and the context types**, for tests and e2e helpers that start the server from TypeScript. The program is `main.ts`.
 17. **Logs never hold a request body, query or header.** The request log is method, path, status and time; pino redacts `Authorization` and profile values as a second line of defence.
+18. **A tool's input shape is checked by the MCP SDK, before the adapter runs.** Every tool advertises its zod input schema, so a call with the wrong shape gets the SDK's error text (`isError: true`), not a `ToolReply`. Rules a run can fix (truth trace, banned terms, limits) are always `ToolReply` values. `submit_resume_draft` therefore never reaches the service's own `ResumeBody` check from MCP.
+19. **The run's step is set before the tool runs, not after.** `submit_resume_draft` takes seconds to render, and the card should already say what is happening.
+20. **Every tool reply passes through its output schema**, which drops keys it does not list. A service that returned too much (a contact detail, say) could not leak it. This is also why `get_approved` must use `GetApprovedForRunOutput` (decision 5).
+21. **A hunt run is claimed (`running`) before its feeds are fetched,** so Today shows "Checking job boards" and no second launch can take it. The feeds are fetched before Claude Code is checked, which is the order the task gave; a signed-out Claude therefore costs one wasted (cached, polite) fetch.
+22. **`Launcher` has a third method, `resume()`,** which a successful sign-in calls. Blocked runs pause the queue; a retry of the blocked run (`retryOf`) or `resume()` ends the pause.
+23. **A plan limit's reset time is written into the run's outcome message** ("It resets at 3:41 PM."), in the computer's own time zone and language, because `Run` has no field for it.
+24. **Recovery at start-up touches only `running` runs.** A `waiting` run has no process; it keeps its open question and the person's answer re-queues the work.

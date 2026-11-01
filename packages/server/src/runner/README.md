@@ -1,6 +1,6 @@
 # The runner
 
-Everything that turns a button press into one sealed Claude Code run, and everything that decides how that run ended. These modules are small, pure where they can be, and know nothing about HTTP or the queue. `launcher.ts` (written separately) calls them in the order below. Spec: [ARCHITECTURE.md](../../../../docs/poc/ARCHITECTURE.md) sections 2 (D3, D6, D21), 9, 10 and 14.
+Everything that turns a button press into one sealed Claude Code run, and everything that decides how that run ended. These modules are small, pure where they can be, and know nothing about HTTP or the queue. [launchRun.ts](launchRun.ts) calls them in the order below; [launcher.ts](launcher.ts) decides which run goes when. Spec: [ARCHITECTURE.md](../../../../docs/poc/ARCHITECTURE.md) sections 2 (D3, D6, D21), 9, 10 and 14.
 
 ## How a run is launched and sealed
 
@@ -15,9 +15,9 @@ Everything that turns a button press into one sealed Claude Code run, and everyt
 | 7 | Read the stream | [streamJson.ts](streamJson.ts) | `parseStreamLine` for every line; `checkInitEvent` on the `init` line stops a run that is not sealed. |
 | 8 | Classify the end | [outcome.ts](outcome.ts) | `classifyRunEnd` turns the facts into a status and a plain message. |
 | 9 | Cancel or time out | [processes.ts](processes.ts) `killProcessTree` | `taskkill /T` then `/F` after 5 seconds (Windows), `SIGTERM` then `SIGKILL` elsewhere. |
-| 10 | Recover at start | [recovery.ts](recovery.ts) | Marks leftover `running` and `waiting` runs interrupted, and stops a leftover Claude process only after checking its program name. |
+| 10 | Recover at start | [recovery.ts](recovery.ts), [startRunner.ts](startRunner.ts) | Marks leftover `running` runs interrupted, and stops a leftover Claude process only after checking its program name. A `waiting` run has no process and is left alone. |
 
-### What launcher.ts must call, in order
+### What launchRun.ts calls, in order
 
 ```
 status = await claudeCli.status()                       // not "connected" -> blocked
@@ -72,6 +72,13 @@ The run token is never on the command line or in a file. `mcp.json` holds `Beare
 | [outcome.ts](outcome.ts) | How a run ended |
 | [processes.ts](processes.ts) | The only file that imports `node:child_process` |
 | [recovery.ts](recovery.ts) | Leftover runs after a crash or restart |
+| [launcher.ts](launcher.ts) | The queue: which run goes when, how many at once, pausing after `blocked`, cancel |
+| [launchRun.ts](launchRun.ts) | One run from claim to final status, step by step as above |
+| [finishRun.ts](finishRun.ts) | Saving how a run ended (tasks never reached, status, message, token revoked) |
+| [afterRun.ts](afterRun.ts) | Admit to tailoring after a hunt or paste; the one tailor retry on sonnet |
+| [stopRun.ts](stopRun.ts) | Stop a process tree: politely, then for good after 5 seconds |
+| [startRunner.ts](startRunner.ts) | Start-up: recovery, then the launcher |
+| [runFolderCleanup.ts](runFolderCleanup.ts) | Run folders (and transcripts) older than 14 days are removed |
 | `testSupport.ts`, `stubMcpServer.ts` | Test helpers only |
 
 ## How it is tested
@@ -87,11 +94,13 @@ The run token is never on the command line or in a file. `mcp.json` holds `Beare
 5. **The usage-limit message has no time in it.** `classifyRunEnd` returns `resetsAt` (ISO) next to the constant message; the dashboard formats it in the person's time zone.
 6. **`exitCode` is accepted but does not change the answer.** A success `result` means every result was already saved through tools, so the run is done even if the process was killed afterwards. No `result` is always failed. Any other `is_error` result is failed too, so an error can never become "done".
 7. **Pending tasks count as failed.** `classifyRunEnd` calls a run waiting when at least one task waits; `tasksLeftPending` lists the tasks the launcher must mark failed.
-8. **Recovery interrupts every `running` or `waiting` run,** with or without a saved pid, and clears the pid. It stops a process only when it is alive and its program name matches the Claude command (`node` when the command is node, for the fake). On macOS the native installer may run a versioned binary whose `ps` name is not `claude`; recovery then leaves it alone, which is the safe direction.
+8. **Recovery interrupts every `running` run,** with or without a saved pid, and clears the pid. A `waiting` run is not touched: its process already ended and it waits for the person's answer. It stops a process only when it is alive and its program name matches the Claude command (`node` when the command is node, for the fake). On macOS the native installer may run a versioned binary whose `ps` name is not `claude`; recovery then leaves it alone, which is the safe direction.
 9. **`claudeCommand` must be absolute paths,** all of them, and `createClaudeCli` throws otherwise. Detection never returns `claude.cmd`. Besides PATH and `~/.local/bin`, Windows also looks in `%LOCALAPPDATA%\Microsoft\WinGet\Links`, because winget installs there and the running server's PATH does not know it yet.
 10. **`signIn()` waits up to 5 minutes** for `claude auth login` to end, then returns the status. The dashboard polls `GET /api/claude/status` meanwhile. `authMethod` must be `claude.ai`; other methods count as signed out. Only the login state, the method and the plan are kept; the e-mail address in the JSON is dropped.
 11. **`spawnRun` takes a line callback, not a stream.** The listener exists before any output can arrive, so no line is ever lost.
 12. **Playbook line endings are normalised to `\n`** so line 1 and 2 are the same on every system.
 13. **There is no `index.ts`.** `launcher.ts` and the services import the module they need.
 14. **`playbooks/rubric.md` starts with `<!-- rubric-version: 1 -->`.** The server can read that for `Fit.rubricVersion`.
-15. **Run directory clean-up (transcripts kept 14 days) is not here.** It belongs to the launcher.
+15. **Run directory clean-up (transcripts kept 14 days) is `runFolderCleanup.ts`,** called once when the launcher is created.
+16. **A cancel wins over the safety check.** Cancel takes the run's token away first, so a run cancelled before its `init` line can show the tool server as `failed`; that is recorded as `cancelled`, not as a safety stop.
+17. **A safety stop kills at once** (no polite attempt), and revokes the run's token so the process cannot make more tool calls while it dies.

@@ -50,9 +50,13 @@ export interface RunQueue {
 }
 
 // Set by the run launcher once it exists. Until then `wake` does nothing and a running run cannot be stopped.
+//   wake    start queued runs if there is room (the queue calls it after every change)
+//   cancel  stop a running run's process and record "cancelled"; resolves once the run has ended
+//   resume  start the queue again after a run was blocked (signed out, plan limit); a successful sign-in calls it
 export type Launcher = {
   wake(): void;
   cancel(runId: string): Promise<void>;
+  resume(): void;
 };
 
 export type ServerContext = {

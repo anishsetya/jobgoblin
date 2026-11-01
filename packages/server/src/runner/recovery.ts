@@ -1,7 +1,8 @@
-// Crash recovery at server start. A run left `running` or `waiting` by a crash, a quit or a restart of the computer
-// cannot still be in progress, so it is marked interrupted. If its Claude Code process is somehow still alive it
+// Crash recovery at server start. A run left `running` by a crash, a quit or a restart of the computer cannot
+// still be in progress, so it is marked interrupted. If its Claude Code process is somehow still alive it
 // is stopped first, but only after checking that the process really is Claude Code: a process id can be handed
 // to an unrelated program after a restart, and stopping that would be a serious mistake.
+// A `waiting` run has no process (it ended and is waiting for the person's answer), so it is left as it is.
 // The process functions are passed in, so the decisions can be tested without starting a process.
 // Spec: ARCHITECTURE.md section 10 (Recovery).
 import path from "node:path";
@@ -25,10 +26,10 @@ export type RecoveryInput = {
   now: () => Date;
 };
 
-// Runs that cannot still be going: the server that was running them is gone. Queued runs are left alone;
-// they have not started and simply wait for the queue.
+// Runs that cannot still be going: the server that was running them is gone. Queued runs are left alone (they
+// have not started), and so are waiting runs (their process already ended; they wait for an answer).
 export function findLeftoverRuns(db: Database): Run[] {
-  return listRunsByStatus(db, ["running", "waiting"]);
+  return listRunsByStatus(db, ["running"]);
 }
 
 export async function recoverLeftoverRuns(input: RecoveryInput): Promise<RecoveryReport> {
