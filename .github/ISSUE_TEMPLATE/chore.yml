@@ -1,0 +1,12 @@
+name: Chore
+description: Refactor, tooling, docs or CI
+labels: ["type:chore", "needs-triage"]
+body:
+  - type: textarea
+    id: reason
+    attributes: { label: Reason }
+    validations: { required: true }
+  - type: textarea
+    id: done
+    attributes: { label: Definition of done, value: "- [ ] " }
+    validations: { required: true }
