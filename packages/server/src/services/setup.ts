@@ -42,7 +42,7 @@ export async function importResume(ctx: ServerContext, upload: ResumeUpload): Pr
     throw invalid("file-too-large", "That file is larger than 10 MB.", "Choose a smaller PDF or Word file.");
   }
   const fileName = path.basename(upload.fileName);
-  const text = await readText(upload.bytes, fileName);
+  const text = await readText(ctx, upload.bytes, fileName);
 
   const { redacted, found } = redactContactDetails(text);
   // The original file is never stored: only the text, with contact details already removed.
@@ -60,13 +60,15 @@ export async function importResume(ctx: ServerContext, upload: ResumeUpload): Pr
   return { runId: setupRunFor(ctx) };
 }
 
-async function readText(bytes: Uint8Array, fileName: string): Promise<string> {
+async function readText(ctx: ServerContext, bytes: Uint8Array, fileName: string): Promise<string> {
   let text: string;
   try {
     text = await extractResumeText(bytes, fileName);
   } catch (error) {
-    // ResumeFileError messages are written in plain words to be shown as they are.
+    // ResumeFileError messages are written in plain words to be shown as they are. The underlying cause goes
+    // to the log only (never the file's contents), so a failure like a misconfigured PDF reader can be found.
     if (error instanceof ResumeFileError) {
+      ctx.logger.warn({ code: error.code, cause: String(error.cause) }, "A resume file could not be read.");
       throw invalid(error.code, error.message, "Choose a PDF or a Word (.docx) file.");
     }
     throw error;
