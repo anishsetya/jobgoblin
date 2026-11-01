@@ -8,6 +8,7 @@ Test data shared by unit tests, the fake `claude`, and the Playwright flows. Eve
 | `feeds/recorded/` | Small saved responses in each feed's real format, for parser tests | sources |
 | `feeds/demo/` | The demo job board below, in each feed's real format, served when `JOBGOBLIN_FEED_FIXTURES` points at this folder | sources |
 | `resumes/` | `alex-rivera.pdf` and `alex-rivera.docx`: the demo person's resume | render |
+| `resumes/broken/` | Files Jobgoblin must refuse with an honest message: a password-protected PDF (password `jobgoblin`), the demo PDF and Word file cut in half, text files renamed `.pdf` and `.docx`, and a text file named `.png` | render, server, e2e |
 | `profiles/alex-rivera.json` | The demo person's confirmed Your story, profile sections, targets and rules, for tests that skip setup | fake-claude |
 
 ## The demo person: Alex Rivera

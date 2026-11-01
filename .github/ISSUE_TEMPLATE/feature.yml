@@ -1,0 +1,19 @@
+name: Feature
+description: A new user-facing capability
+labels: ["type:feature", "needs-triage"]
+body:
+  - type: textarea
+    id: goal
+    attributes: { label: User goal, placeholder: "As a job seeker, I want ... so that ..." }
+    validations: { required: true }
+  - type: textarea
+    id: in-scope
+    attributes: { label: In scope }
+    validations: { required: true }
+  - type: textarea
+    id: out-scope
+    attributes: { label: Out of scope }
+  - type: textarea
+    id: acceptance
+    attributes: { label: Acceptance criteria, value: "- [ ] \n- [ ] " }
+    validations: { required: true }

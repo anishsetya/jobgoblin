@@ -20,6 +20,7 @@ const STATUS_OF_KIND: Record<ServiceErrorKind, ContentfulStatusCode> = {
   conflict: 409,
   invalid: 400,
   unavailable: 409,
+  "our-fault": 500,
 };
 
 export function apiError(code: string, message: string, action: string): ApiError {

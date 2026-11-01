@@ -30,7 +30,7 @@ import { announceProfileChange, saveChangesSoon } from "./changes";
 import { voidChangedApprovals } from "./approvalVoiding";
 import { queueRun } from "./runs";
 import { getSettingsResponse } from "./settings";
-import { invalid, unavailable } from "./serviceError";
+import { invalid, ourFault, unavailable, type ServiceError } from "./serviceError";
 
 export const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 const NO_TEXT_MESSAGE = "This file has no readable text. Try a PDF exported from Word or Google Docs.";
@@ -42,7 +42,7 @@ export async function importResume(ctx: ServerContext, upload: ResumeUpload): Pr
     throw invalid("file-too-large", "That file is larger than 10 MB.", "Choose a smaller PDF or Word file.");
   }
   const fileName = path.basename(upload.fileName);
-  const text = await readText(upload.bytes, fileName);
+  const text = await readText(ctx, upload.bytes, fileName);
 
   const { redacted, found } = redactContactDetails(text);
   // The original file is never stored: only the text, with contact details already removed.
@@ -60,19 +60,28 @@ export async function importResume(ctx: ServerContext, upload: ResumeUpload): Pr
   return { runId: setupRunFor(ctx) };
 }
 
-async function readText(bytes: Uint8Array, fileName: string): Promise<string> {
+async function readText(ctx: ServerContext, bytes: Uint8Array, fileName: string): Promise<string> {
   let text: string;
   try {
     text = await extractResumeText(bytes, fileName);
   } catch (error) {
-    // ResumeFileError messages are written in plain words to be shown as they are.
-    if (error instanceof ResumeFileError) {
-      throw invalid(error.code, error.message, "Choose a PDF or a Word (.docx) file.");
-    }
+    if (error instanceof ResumeFileError) throw explainUnreadableFile(ctx, error);
     throw error;
   }
-  if (text.trim() === "") throw invalid("no-readable-text", NO_TEXT_MESSAGE, "Choose another file.");
+  if (text.trim() === "") {
+    ctx.logger.warn({ code: "no-readable-text" }, "A resume file had no readable text.");
+    throw invalid("no-readable-text", NO_TEXT_MESSAGE, "Choose another file.");
+  }
   return text;
+}
+
+// ResumeFileError words are plain and ready to show. The reader's own error goes to the log (its name and
+// text, never the file's contents), so a failure on our side, like the PDF reader not starting inside the
+// desktop app, can be found afterwards. Only "read-failed" is our fault, so only it is a server error (500).
+function explainUnreadableFile(ctx: ServerContext, error: ResumeFileError): ServiceError {
+  ctx.logger.warn({ code: error.code, cause: String(error.cause) }, "A resume file could not be read.");
+  if (error.code === "read-failed") return ourFault(error.code, error.message, error.action);
+  return invalid(error.code, error.message, error.action);
 }
 
 // What the code found in the header of the resume goes into contact fields that are still empty.

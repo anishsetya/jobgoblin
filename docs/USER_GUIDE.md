@@ -66,7 +66,7 @@ Your data lives in two places. The database is in `%APPDATA%\Jobgoblin` and you 
 | 1 Welcome | Read the short intro | |
 | 2 Connect Claude | Click Install or Sign in if needed | The screen shows Connected. Your Claude sign-in stays inside Claude Code; Jobgoblin never sees it. |
 | 3 Your folder | Pick a folder | It creates `Applications`, `Resumes`, `Backups` and the tracker. If you pick a folder with backups, it offers Restore. This is how you move to a new computer. |
-| 4 Your resume | Upload a PDF or Word resume, and optionally a LinkedIn PDF | Your name, email, phone and links are removed by the app first. Claude reads the rest and drafts your Your story items. |
+| 4 Your resume | Drop a PDF or Word resume in the box (or choose it), then choose **Read my resume**. You can add a LinkedIn PDF in the box below first. | Your name, email, phone and links are removed by the app first. Claude reads the rest and drafts your Your story items. **Continue** opens when it is done and says what is missing until then. If a file cannot be read, the message says why (a password, a damaged file, or a type Jobgoblin does not read) and what to do next. |
 | 5 Your story | Confirm, edit or drop each experience, achievement, project, skill and headline | Only confirmed items can ever appear on a resume or count toward a fit score. Add anything the resume left out. |
 | 6 Form answers | Fill in work authorization, notice period, start date, salary and EEO answers | Anything missing is marked. Salary and EEO answers are never shown to Claude; the app fills them in itself. |
 | 7 Targets | Roles you want, regions, the most years of experience a job may ask for, roles to avoid, hard skips, flags | These change the next job search. |

@@ -1,0 +1,16 @@
+name: Enhancement
+description: A small change to existing behavior
+labels: ["type:enhancement", "needs-triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes: { label: Problem, description: "What is wrong or awkward today?" }
+    validations: { required: true }
+  - type: textarea
+    id: change
+    attributes: { label: Proposed change }
+    validations: { required: true }
+  - type: textarea
+    id: acceptance
+    attributes: { label: Acceptance criteria, value: "- [ ] \n- [ ] " }
+    validations: { required: true }

@@ -185,7 +185,12 @@ export function alexRiveraProfile(): Profile {
       location: "Austin, TX",
       github: "github.com/alexrivera-example",
     },
-    workAuthorization: { regions: { US: { authorized: true, requiresSponsorship: false, willingToRelocate: true } } },
+    workAuthorization: {
+      regions: {
+        US: { authorized: true, requiresSponsorship: false, willingToRelocate: true },
+        REMOTE: { authorized: true, requiresSponsorship: false, willingToRelocate: true },
+      },
+    },
     employment: {
       currentEmployer: "Northwind Logistics",
       currentTitle: "Software Engineer",

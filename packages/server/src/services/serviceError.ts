@@ -9,7 +9,8 @@ import type { ToolError } from "@jobgoblin/schemas";
 // conflict     it exists, but is in the wrong state for this (409)
 // invalid      what was asked for is not acceptable (400)
 // unavailable  something this needs is not set up yet (409)
-export type ServiceErrorKind = "not-found" | "conflict" | "invalid" | "unavailable";
+// our-fault    Jobgoblin itself failed, and the person did nothing wrong (500)
+export type ServiceErrorKind = "not-found" | "conflict" | "invalid" | "unavailable" | "our-fault";
 
 export class ServiceError extends Error {
   readonly kind: ServiceErrorKind;
@@ -39,6 +40,11 @@ export function invalid(code: string, message: string, action: string): ServiceE
 
 export function unavailable(code: string, message: string, action: string): ServiceError {
   return new ServiceError("unavailable", code, message, action);
+}
+
+// For a failure we understand well enough to say so in plain words, but that is not the person's doing.
+export function ourFault(code: string, message: string, action: string): ServiceError {
+  return new ServiceError("our-fault", code, message, action);
 }
 
 // The result of a service a Claude run calls, when the run can fix the problem and try again.

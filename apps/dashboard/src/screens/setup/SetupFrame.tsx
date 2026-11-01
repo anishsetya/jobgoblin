@@ -10,6 +10,8 @@ import { useFocusOnNavigation } from "@/lib/focusOnNavigation";
 import { usePageTitle } from "@/lib/pageTitle";
 import { SETUP_STEP_COUNT, useSetupNavigation } from "./setupSteps";
 
+const CONTINUE_HINT_ID = "setup-continue-hint";
+
 type SetupFrameProps = {
   step: number;
   title: string;
@@ -18,6 +20,8 @@ type SetupFrameProps = {
   // Steps with their own "Save and continue" button hide the frame's Continue button.
   hideContinue?: boolean;
   canContinue?: boolean;
+  // Shown under Continue while it is disabled, so nobody is left wondering what is missing.
+  continueHint?: string;
   continueLabel?: string;
   // What Continue does instead of going to the next step (the last step finishes setup).
   onContinue?: () => void;
@@ -31,6 +35,7 @@ export function SetupFrame({
   children,
   hideContinue = false,
   canContinue = true,
+  continueHint,
   continueLabel,
   onContinue,
   isWorking = false,
@@ -42,6 +47,8 @@ export function SetupFrame({
   usePageTitle(title);
 
   const stepLabel = t("setup:progress", { current: step, total: SETUP_STEP_COUNT });
+  const isContinueDisabled = !canContinue || isWorking;
+  const showHint = isContinueDisabled && continueHint !== undefined && continueHint !== "";
 
   return (
     <div className="px-4 py-8">
@@ -60,12 +67,24 @@ export function SetupFrame({
 
           {children}
 
-          <nav aria-label={t("setup:navLabel")} className="flex items-center justify-between gap-3 border-t border-line pt-6">
+          <nav aria-label={t("setup:navLabel")} className="flex items-start justify-between gap-3 border-t border-line pt-6">
             {step > 1 ? <Button onClick={goBack}>{t("common:actions.back")}</Button> : <span />}
             {!hideContinue && (
-              <Button variant="accent" disabled={!canContinue || isWorking} onClick={onContinue ?? goNext}>
-                {continueLabel ?? t("common:actions.continue")}
-              </Button>
+              <div className="flex flex-col items-end gap-1.5">
+                <Button
+                  variant="accent"
+                  disabled={isContinueDisabled}
+                  aria-describedby={showHint ? CONTINUE_HINT_ID : undefined}
+                  onClick={onContinue ?? goNext}
+                >
+                  {continueLabel ?? t("common:actions.continue")}
+                </Button>
+                {showHint && (
+                  <p id={CONTINUE_HINT_ID} className="max-w-xs text-right text-sm text-muted">
+                    {continueHint}
+                  </p>
+                )}
+              </div>
             )}
           </nav>
         </main>

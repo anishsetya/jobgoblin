@@ -1,0 +1,39 @@
+name: Bug
+description: Something is broken
+labels: ["type:bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: Use fixture or made-up data only. Never paste anything from profile/, applications/ or state/.
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Open ...\n2. Click ...\n3. See ..."
+    validations: { required: true }
+  - type: textarea
+    id: expected
+    attributes: { label: Expected behavior }
+    validations: { required: true }
+  - type: textarea
+    id: actual
+    attributes: { label: Actual behavior, description: Include error text or a screenshot. }
+    validations: { required: true }
+  - type: input
+    id: version
+    attributes: { label: App version or commit, placeholder: "v0.1.0 or 99ef5f3" }
+  - type: input
+    id: os
+    attributes: { label: Windows version, placeholder: "Windows 11 23H2" }
+  - type: input
+    id: where
+    attributes: { label: Screen or package, placeholder: "Setup step 6 / packages/server" }
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority (your guess)
+      options:
+        - "p0: app won't start, data lost, or wrong submission"
+        - "p1: a main flow is broken"
+        - "p2: minor"
+    validations: { required: true }

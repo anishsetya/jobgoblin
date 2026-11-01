@@ -7,12 +7,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import { Company, type FeedPosting, type Job } from "@jobgoblin/schemas";
-import { classifyRegion, codeFilter, dedupeKey } from "@jobgoblin/core";
+import { classifyRegion, codeFilter, codeFilterTargetsFor, dedupeKey } from "@jobgoblin/core";
 import { fetchFeeds, type FeedFailure } from "@jobgoblin/sources";
 import {
   deleteFeedCacheEntriesBefore,
   getJob,
-  getProfileSection,
+  getProfile,
   insertCompanyIfMissing,
   insertJobIfNew,
   listCompanies,
@@ -59,7 +59,7 @@ export async function refreshFeeds(ctx: ServerContext): Promise<RefreshFeedsRepo
 type Counts = Omit<RefreshFeedsReport, "failures">;
 
 function storeNewPostings(ctx: ServerContext, postings: FeedPosting[]): Counts {
-  const targets = getProfileSection(ctx.db, "targets");
+  const targets = codeFilterTargetsFor(getProfile(ctx.db));
   const now = ctx.now().toISOString();
   const counts: Counts = { added: 0, filtered: 0, duplicates: 0 };
 

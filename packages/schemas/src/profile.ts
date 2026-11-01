@@ -39,7 +39,8 @@ export const ContactSection = z.object({
 export type ContactSection = z.infer<typeof ContactSection>;
 
 // One answer set per region the person applies in, keyed by region code ("US", "IN", "REMOTE", ...).
-// A data sheet reads the job's region, and falls back to "US" when the person has no answers for it.
+// A data sheet reads the job's region. A region with no answers stays TODO: the person's answers for one
+// place are never assumed to hold for another.
 export const RegionAuthorization = z.object({
   authorized: YesNoOrTodo,
   requiresSponsorship: YesNoOrTodo,
@@ -62,8 +63,12 @@ export const EmploymentSection = z.object({
 export type EmploymentSection = z.infer<typeof EmploymentSection>;
 
 // Personal.
+//   byRegion      expected yearly pay for each region the person applies in, keyed by region code ("US", "IN"...).
+//                Pay differs a lot between places, so a data sheet reads the job's region first.
+//   expectedBase  an older single answer, used only for a region that has no answer of its own.
 export const CompensationSection = z.object({
   expectedBase: TextOrTodo,
+  byRegion: z.record(z.string(), z.string()).default({}),
 });
 export type CompensationSection = z.infer<typeof CompensationSection>;
 
@@ -86,13 +91,19 @@ export const DEFAULT_HARD_SKIPS: readonly string[] = ["An active security cleara
 export const DEFAULT_FLAGS: readonly string[] = ["Relocation required", "Graduation-year window"];
 
 // Which jobs to look for, and what to do about the risks in them.
-//   maxYearsRequired  the highest "years of experience required" that still passes the code filter.
+//   regions           the regions the person applies in. Chosen once, on the Form answers screen, because
+//                     work authorization and pay are asked for each of them.
+//   cities            cities the person can work from, for someone who cannot move (a family, say). Empty means
+//                     anywhere in the regions. A remote job always counts.
+//   maxYearsRequired  the highest "years of experience required" that still passes the code filter. Not asked
+//                     for: it follows the person's years of experience (see maxYearsRequiredFor in core).
 //   rolesToAvoid      title words that drop a posting before any run reads it (such as "QA").
 //   hardSkips         reasons a run must skip a job whatever its score (FitInput.hardSkip).
 //   flags             risks a run reports in a fit, for the person to weigh; they never skip a job.
 export const TargetsSection = z.object({
   roles: z.array(z.string()).default([]),
   regions: z.array(z.string()).default([]),
+  cities: z.array(z.string()).default([]),
   tracks: z.array(z.string()).default([]),
   maxYearsRequired: z.number().int().nonnegative().default(4),
   rolesToAvoid: z.array(z.string()).default([]),
