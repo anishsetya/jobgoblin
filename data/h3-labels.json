@@ -1,0 +1,9 @@
+{
+  "formPayLabel": "Expected yearly pay",
+  "serverLabels": [
+    "Where you want to work",
+    "Notice period",
+    "Earliest start date"
+  ],
+  "dataSheetLabel": "Expected base salary (packages/core/src/dataSheet.ts:63)"
+}

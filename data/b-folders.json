@@ -1,0 +1,96 @@
+{
+  "denyWorked": true,
+  "nonexistent": {
+    "typed": "<home>\\AppData\\Local\\Temp\\jobgoblin-audit2-folders-A21hX5\\not-yet\\Jobgoblin files",
+    "expected": "ok",
+    "alerts": [],
+    "current": "Your files are kept in <home>\\AppData\\Local\\Temp\\jobgoblin-audit2-folders-A21hX5\\not-yet\\Jobgoblin files",
+    "existsOnDisk": true
+  },
+  "a-file": {
+    "typed": "<home>\\AppData\\Local\\Temp\\jobgoblin-audit2-folders-A21hX5\\a-file.txt",
+    "expected": "refused",
+    "alerts": [
+      "Jobgoblin can't use that folder. Choose another one, such as a folder in Documents."
+    ],
+    "current": "Your files are kept in <home>\\AppData\\Local\\Temp\\jobgoblin-audit2-folders-A21hX5\\not-yet\\Jobgoblin files",
+    "existsOnDisk": true
+  },
+  "relative": {
+    "typed": "Documents\\Jobgoblin",
+    "expected": "refused",
+    "alerts": [
+      "Choose a folder by its full path. Use the Choose folder button, or type the whole path."
+    ],
+    "current": "Your files are kept in <home>\\AppData\\Local\\Temp\\jobgoblin-audit2-folders-A21hX5\\not-yet\\Jobgoblin files",
+    "existsOnDisk": false
+  },
+  "quoted-as-copied-from-explorer": {
+    "typed": "\"<home>\\AppData\\Local\\Temp\\jobgoblin-audit2-folders-A21hX5\\quoted folder\"",
+    "expected": "ok",
+    "alerts": [
+      "Choose a folder by its full path. Use the Choose folder button, or type the whole path."
+    ],
+    "current": "Your files are kept in <home>\\AppData\\Local\\Temp\\jobgoblin-audit2-folders-A21hX5\\not-yet\\Jobgoblin files",
+    "existsOnDisk": false
+  },
+  "spaces-and-non-english": {
+    "typed": "<home>\\AppData\\Local\\Temp\\jobgoblin-audit2-folders-A21hX5\\María José 日本語 ñandú folder",
+    "expected": "ok",
+    "alerts": [],
+    "current": "Your files are kept in <home>\\AppData\\Local\\Temp\\jobgoblin-audit2-folders-A21hX5\\María José 日本語 ñandú folder",
+    "existsOnDisk": true
+  },
+  "invalid-characters": {
+    "typed": "<home>\\AppData\\Local\\Temp\\jobgoblin-audit2-folders-A21hX5\\bad<>|name",
+    "expected": "refused",
+    "alerts": [
+      "Jobgoblin can't use that folder. Choose another one, such as a folder in Documents."
+    ],
+    "current": "Your files are kept in <home>\\AppData\\Local\\Temp\\jobgoblin-audit2-folders-A21hX5\\María José 日本語 ñandú folder",
+    "existsOnDisk": false
+  },
+  "app-data-folder": {
+    "typed": "<home>\\AppData\\Local\\Temp\\jobgoblin-e2e-xGMd9P\\app-data",
+    "expected": "refused",
+    "alerts": [
+      "That folder is where Jobgoblin keeps its own working files. Choose a different folder, such as one in Documents."
+    ],
+    "current": "Your files are kept in <home>\\AppData\\Local\\Temp\\jobgoblin-audit2-folders-A21hX5\\María José 日本語 ñandú folder",
+    "existsOnDisk": true
+  },
+  "inside-app-data-folder": {
+    "typed": "<home>\\AppData\\Local\\Temp\\jobgoblin-e2e-xGMd9P\\app-data\\mine",
+    "expected": "refused",
+    "alerts": [
+      "That folder is where Jobgoblin keeps its own working files. Choose a different folder, such as one in Documents."
+    ],
+    "current": "Your files are kept in <home>\\AppData\\Local\\Temp\\jobgoblin-audit2-folders-A21hX5\\María José 日本語 ñandú folder",
+    "existsOnDisk": false
+  },
+  "trailing-spaces": {
+    "typed": "<home>\\AppData\\Local\\Temp\\jobgoblin-audit2-folders-A21hX5\\trailing   ",
+    "expected": "ok",
+    "alerts": [],
+    "current": "Your files are kept in <home>\\AppData\\Local\\Temp\\jobgoblin-audit2-folders-A21hX5\\trailing",
+    "existsOnDisk": true
+  },
+  "read-only": {
+    "typed": "<home>\\AppData\\Local\\Temp\\jobgoblin-audit2-folders-A21hX5\\read-only\\inside",
+    "expected": "refused",
+    "alerts": [
+      "Jobgoblin can't use that folder. Choose another one, such as a folder in Documents."
+    ],
+    "current": "Your files are kept in <home>\\AppData\\Local\\Temp\\jobgoblin-audit2-folders-A21hX5\\trailing",
+    "existsOnDisk": false
+  },
+  "read-only-itself": {
+    "typed": "<home>\\AppData\\Local\\Temp\\jobgoblin-audit2-folders-A21hX5\\read-only",
+    "expected": "refused",
+    "alerts": [
+      "Jobgoblin can't use that folder. Choose another one, such as a folder in Documents."
+    ],
+    "current": "Your files are kept in <home>\\AppData\\Local\\Temp\\jobgoblin-audit2-folders-A21hX5\\trailing",
+    "existsOnDisk": true
+  }
+}

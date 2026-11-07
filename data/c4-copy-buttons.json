@@ -1,0 +1,122 @@
+{
+  "Full name": {
+    "expected": "Alex Rivera",
+    "clipboard": "Alex Rivera",
+    "same": true
+  },
+  "First name": {
+    "expected": "Alex",
+    "clipboard": "Alex",
+    "same": true
+  },
+  "Last name": {
+    "expected": "Rivera",
+    "clipboard": "Rivera",
+    "same": true
+  },
+  "Email address": {
+    "expected": "alex.rivera@example.com",
+    "clipboard": "alex.rivera@example.com",
+    "same": true
+  },
+  "Phone number": {
+    "expected": "+1 555 0100",
+    "clipboard": "+1 555 0100",
+    "same": true
+  },
+  "Location": {
+    "expected": "Austin, TX",
+    "clipboard": "Austin, TX",
+    "same": true
+  },
+  "LinkedIn profile": "no copy button",
+  "GitHub profile": {
+    "expected": "github.com/alexrivera-example",
+    "clipboard": "github.com/alexrivera-example",
+    "same": true
+  },
+  "Portfolio or website": "no copy button",
+  "Authorized to work here": {
+    "expected": "Yes",
+    "clipboard": "Yes",
+    "same": true
+  },
+  "Needs visa sponsorship": {
+    "expected": "No",
+    "clipboard": "No",
+    "same": true
+  },
+  "Willing to relocate": {
+    "expected": "Yes",
+    "clipboard": "Yes",
+    "same": true
+  },
+  "Notice period": {
+    "expected": "2 weeks",
+    "clipboard": "2 weeks",
+    "same": true
+  },
+  "Earliest start date": {
+    "expected": "2026-12-01",
+    "clipboard": "2026-12-01",
+    "same": true
+  },
+  "Years of experience": {
+    "expected": "2",
+    "clipboard": "2",
+    "same": true
+  },
+  "Current employer": {
+    "expected": "Northwind Logistics",
+    "clipboard": "Northwind Logistics",
+    "same": true
+  },
+  "Current job title": {
+    "expected": "Software Engineer",
+    "clipboard": "Software Engineer",
+    "same": true
+  },
+  "Expected base salary": {
+    "expected": "187500",
+    "clipboard": "187500",
+    "same": true
+  },
+  "Gender": {
+    "expected": "EEOGENDERZ91",
+    "clipboard": "EEOGENDERZ91",
+    "same": true
+  },
+  "Race or ethnicity": {
+    "expected": "EEORACEZ92",
+    "clipboard": "EEORACEZ92",
+    "same": true
+  },
+  "Veteran status": {
+    "expected": "EEOVETERANZ93",
+    "clipboard": "EEOVETERANZ93",
+    "same": true
+  },
+  "Disability status": {
+    "expected": "EEODISABLEDZ94",
+    "clipboard": "EEODISABLEDZ94",
+    "same": true
+  },
+  "Resume file name": {
+    "expected": "Alex Rivera - Resume.pdf",
+    "clipboard": "Alex Rivera - Resume.pdf",
+    "same": true
+  },
+  "Resume version": {
+    "expected": "r-cec9e138",
+    "clipboard": "r-cec9e138",
+    "same": true
+  },
+  "answer: Why are you interested in this role?": {
+    "same": true
+  },
+  "summary": {
+    "fields": 24,
+    "copyButtons": 23,
+    "mismatches": 0
+  }
+}

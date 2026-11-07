@@ -1,0 +1,149 @@
+{
+  "blocked": {
+    "cards": [
+      {
+        "title": "Finding jobs",
+        "status": "Finished",
+        "buttons": [
+          "Dismiss: Finding jobs"
+        ]
+      },
+      {
+        "title": "Tailoring resumes",
+        "status": "Your Claude plan limit is reached. It resets at 10:00 pm.",
+        "buttons": [
+          "Try again: Tailoring resumes",
+          "Dismiss: Tailoring resumes"
+        ]
+      }
+    ],
+    "needsYou": [
+      "Needs attention Making resumes Your Claude plan limit is reached. It resets at 10:00 pm. Check settings",
+      "Long shot Software Engineer, Applied AI at Copperleaf AI A long shot (fit 55). Make a resume if you want to try it. See details"
+    ],
+    "alerts": [],
+    "findJobsEnabled": true
+  },
+  "pipelineWhileBlocked": [
+    {
+      "id": "40c9b0e4-d4f2-411d-ae6f-7a89cf0be209",
+      "jobId": "greenhouse:acmecloud:4012345",
+      "company": "Acme Cloud",
+      "title": "Backend Engineer",
+      "status": "Scored",
+      "fitScore": 86,
+      "band": "apply",
+      "resumeVersion": null,
+      "submitMode": "manual",
+      "folder": null,
+      "appliedAt": null,
+      "followUpOn": null,
+      "tailorAttempts": 0,
+      "tailorError": null,
+      "createdAt": "2026-11-06T15:30:57.005Z",
+      "updatedAt": "2026-11-06T15:30:57.082Z",
+      "overdue": false,
+      "location": "Remote - US",
+      "region": "US"
+    },
+    {
+      "id": "ba5ce694-c4cd-4d82-85b9-9ead1694b066",
+      "jobId": "lever:brightpath:7c1d0e02-3f4a-4b5c-8d6e-0000000b0002",
+      "company": "Brightpath",
+      "title": "Platform Engineer",
+      "status": "Scored",
+      "fitScore": 68,
+      "band": "stretch",
+      "resumeVersion": null,
+      "submitMode": "manual",
+      "folder": null,
+      "appliedAt": null,
+      "followUpOn": null,
+      "tailorAttempts": 0,
+      "tailorError": null,
+      "createdAt": "2026-11-06T15:30:57.016Z",
+      "updatedAt": "2026-11-06T15:30:57.082Z",
+      "overdue": false,
+      "location": "New York, NY",
+      "region": "US"
+    },
+    {
+      "id": "37288fcf-0b6a-41b4-8632-0f90ccd7eae3",
+      "jobId": "ashby:copperleaf:9a8b7c03-1d2e-4f3a-8b4c-0000000c0004",
+      "company": "Copperleaf AI",
+      "title": "Data Analyst",
+      "status": "Skipped (low fit)",
+      "fitScore": 20,
+      "band": "skip",
+      "resumeVersion": null,
+      "submitMode": "manual",
+      "folder": null,
+      "appliedAt": null,
+      "followUpOn": null,
+      "tailorAttempts": 0,
+      "tailorError": null,
+      "createdAt": "2026-11-06T15:30:56.992Z",
+      "updatedAt": "2026-11-06T15:30:56.993Z",
+      "overdue": false,
+      "location": "San Francisco, CA",
+      "region": "US"
+    },
+    {
+      "id": "b863b60a-7c62-45ee-9293-ee0814754814",
+      "jobId": "ashby:copperleaf:9a8b7c03-1d2e-4f3a-8b4c-0000000c0003",
+      "company": "Copperleaf AI",
+      "title": "Software Engineer, Applied AI",
+      "status": "Long shot",
+      "fitScore": 55,
+      "band": "long-shot",
+      "resumeVersion": null,
+      "submitMode": "manual",
+      "folder": null,
+      "appliedAt": null,
+      "followUpOn": null,
+      "tailorAttempts": 0,
+      "tailorError": null,
+      "createdAt": "2026-11-06T15:30:56.976Z",
+      "updatedAt": "2026-11-06T15:30:56.981Z",
+      "overdue": false,
+      "location": "San Francisco, CA",
+      "region": "US"
+    }
+  ],
+  "findEnabled": true,
+  "secondHuntWaitedText": "[{\"title\":\"Finding jobs\",\"status\":\"Finished\",\"buttons\":[\"Dismiss: Finding jobs\"]},{\"title\":\"Tailoring resumes\",\"status\":\"Your Claude plan limit is reached. It resets at 10:00 pm.\",\"buttons\":[\"Try again: Tailoring resumes\",\"Dismiss: Tailoring resumes\"]},{\"title\":\"Finding jobs\",\"status\":\"Waiting for its turn\",\"buttons\":[\"Cancel: Finding jobs\"]}]",
+  "secondHuntStuck": true,
+  "after": {
+    "cards": [
+      {
+        "title": "Finding jobs",
+        "status": "Finished",
+        "buttons": [
+          "Dismiss: Finding jobs"
+        ]
+      },
+      {
+        "title": "Finding jobs",
+        "status": "Finished",
+        "buttons": [
+          "Dismiss: Finding jobs"
+        ]
+      },
+      {
+        "title": "Tailoring resumes",
+        "status": "Finished",
+        "buttons": [
+          "Dismiss: Tailoring resumes"
+        ]
+      }
+    ],
+    "needsYou": [
+      "Ready to review Backend Engineer at Acme Cloud Fit 86. Look over the resume, then approve it. Review",
+      "Ready to review Platform Engineer at Brightpath Fit 68. Look over the resume, then approve it. Review",
+      "Long shot Software Engineer, Applied AI at Copperleaf AI A long shot (fit 55). Make a resume if you want to try it. See details"
+    ],
+    "alerts": [],
+    "findJobsEnabled": true
+  },
+  "invocations": "2026-11-06T15:30:56.300Z --version  kind=none mode=normal\n2026-11-06T15:30:56.510Z auth status kind=none mode=normal\n2026-11-06T15:30:56.729Z -p --output-format kind=hunt mode=normal\n2026-11-06T15:30:57.166Z --version  kind=none mode=normal\n2026-11-06T15:30:57.340Z auth status kind=none mode=normal\n2026-11-06T15:30:57.511Z -p --output-format kind=tailor mode=usage-limit\n2026-11-06T15:31:04.466Z --version  kind=none mode=normal\n2026-11-06T15:31:04.670Z auth status kind=none mode=normal\n2026-11-06T15:31:04.876Z -p --output-format kind=hunt mode=normal\n2026-11-06T15:31:05.187Z --version  kind=none mode=normal\n2026-11-06T15:31:05.364Z auth status kind=none mode=normal\n2026-11-06T15:31:05.539Z -p --output-format kind=tailor mode=normal\n"
+}

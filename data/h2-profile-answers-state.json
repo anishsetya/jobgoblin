@@ -1,0 +1,28 @@
+{
+  "summary": "3 answers are still needed: Authorized to work (REMOTE), Needs visa sponsorship (REMOTE), Willing to relocate (REMOTE).",
+  "marked": 3,
+  "groups": [
+    "United States",
+    "India"
+  ],
+  "payLabel": [
+    "Expected yearly pay"
+  ],
+  "apiMissing": [
+    {
+      "section": "workAuthorization",
+      "key": "regions.REMOTE.authorized",
+      "label": "Authorized to work (REMOTE)"
+    },
+    {
+      "section": "workAuthorization",
+      "key": "regions.REMOTE.requiresSponsorship",
+      "label": "Needs visa sponsorship (REMOTE)"
+    },
+    {
+      "section": "workAuthorization",
+      "key": "regions.REMOTE.willingToRelocate",
+      "label": "Willing to relocate (REMOTE)"
+    }
+  ]
+}

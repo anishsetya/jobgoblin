@@ -1,0 +1,39 @@
+{
+  "pipeline": [
+    "Brightpath/Platform Engineer/Awaiting approval",
+    "Acme Cloud/Backend Engineer/Awaiting approval",
+    "Copperleaf AI/Data Analyst/Skipped (low fit)",
+    "Copperleaf AI/Software Engineer, Applied AI/Long shot",
+    "Haskellco/Backend Engineer/Long shot"
+  ],
+  "unconfirmedLeaks": [],
+  "looked": [
+    "Brightpath/Platform Engineer: fit=yes resume=yes",
+    "Acme Cloud/Backend Engineer: fit=yes resume=yes",
+    "Copperleaf AI/Data Analyst: fit=yes resume=no",
+    "Copperleaf AI/Software Engineer, Applied AI: fit=yes resume=no",
+    "Haskellco/Backend Engineer: fit=yes resume=no"
+  ],
+  "approveWithBannedWordInResume": {
+    "word": "PostgreSQL",
+    "answer": {
+      "status": 400,
+      "body": {
+        "code": "banned-in-resume",
+        "message": "The resume file contains \"PostgreSQL\", which is on your banned words list. Reword the line that uses it.",
+        "action": "Ask for an edit that rewords it."
+      }
+    }
+  },
+  "statusAfterBannedResume": "Awaiting approval",
+  "saveNameWithBannedWord": 200,
+  "approveWithBannedWordInSheet": {
+    "status": 400,
+    "body": {
+      "code": "banned-in-data-sheet",
+      "message": "\"ninja\" is on your banned words list. Reword this text without it.",
+      "action": "Change that value under Profile."
+    }
+  },
+  "statusAfterBannedSheet": "Awaiting approval"
+}

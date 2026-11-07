@@ -1,0 +1,56 @@
+{
+  "message": "Your Claude plan limit is reached. It resets at 10:00 pm.",
+  "buttons": [
+    "Try again: Finding jobs",
+    "Dismiss: Finding jobs"
+  ],
+  "needsYou": [
+    "Needs attention Finding jobs Your Claude plan limit is reached. It resets at 10:00 pm. Check settings"
+  ],
+  "alerts": [],
+  "afterReload": {
+    "cards": [
+      {
+        "title": "Finding jobs",
+        "status": "Your Claude plan limit is reached. It resets at 10:00 pm.",
+        "buttons": [
+          "Try again: Finding jobs",
+          "Dismiss: Finding jobs"
+        ]
+      }
+    ],
+    "needsYou": [
+      "Needs attention Finding jobs Your Claude plan limit is reached. It resets at 10:00 pm. Check settings"
+    ],
+    "alerts": [],
+    "findJobsEnabled": true
+  },
+  "retryOffered": true,
+  "recovered": true,
+  "afterRetry": {
+    "cards": [
+      {
+        "title": "Finding jobs",
+        "status": "Finished",
+        "buttons": [
+          "Dismiss: Finding jobs"
+        ]
+      },
+      {
+        "title": "Tailoring resumes",
+        "status": "Finished",
+        "buttons": [
+          "Dismiss: Tailoring resumes"
+        ]
+      }
+    ],
+    "needsYou": [
+      "Ready to review Backend Engineer at Acme Cloud Fit 86. Look over the resume, then approve it. Review",
+      "Ready to review Platform Engineer at Brightpath Fit 68. Look over the resume, then approve it. Review",
+      "Long shot Software Engineer, Applied AI at Copperleaf AI A long shot (fit 55). Make a resume if you want to try it. See details"
+    ],
+    "alerts": [],
+    "findJobsEnabled": true
+  },
+  "invocations": "2026-11-06T15:30:22.838Z --version  kind=none mode=normal\n2026-11-06T15:30:23.036Z auth status kind=none mode=normal\n2026-11-06T15:30:23.259Z -p --output-format kind=hunt mode=usage-limit\n2026-11-06T15:30:24.035Z --version  kind=none mode=normal\n2026-11-06T15:30:24.240Z auth status kind=none mode=normal\n2026-11-06T15:30:24.470Z -p --output-format kind=hunt mode=normal\n2026-11-06T15:30:24.894Z --version  kind=none mode=normal\n2026-11-06T15:30:25.069Z auth status kind=none mode=normal\n2026-11-06T15:30:25.250Z -p --output-format kind=tailor mode=normal\n"
+}

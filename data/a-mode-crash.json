@@ -1,0 +1,56 @@
+{
+  "message": "This run stopped before finishing",
+  "buttons": [
+    "Try again: Finding jobs",
+    "Dismiss: Finding jobs"
+  ],
+  "needsYou": [
+    "Needs attention Finding jobs This run stopped before finishing Check settings"
+  ],
+  "alerts": [],
+  "afterReload": {
+    "cards": [
+      {
+        "title": "Finding jobs",
+        "status": "This run stopped before finishing",
+        "buttons": [
+          "Try again: Finding jobs",
+          "Dismiss: Finding jobs"
+        ]
+      }
+    ],
+    "needsYou": [
+      "Needs attention Finding jobs This run stopped before finishing Check settings"
+    ],
+    "alerts": [],
+    "findJobsEnabled": true
+  },
+  "retryOffered": true,
+  "recovered": true,
+  "afterRetry": {
+    "cards": [
+      {
+        "title": "Finding jobs",
+        "status": "Finished",
+        "buttons": [
+          "Dismiss: Finding jobs"
+        ]
+      },
+      {
+        "title": "Tailoring resumes",
+        "status": "Finished",
+        "buttons": [
+          "Dismiss: Tailoring resumes"
+        ]
+      }
+    ],
+    "needsYou": [
+      "Ready to review Backend Engineer at Acme Cloud Fit 86. Look over the resume, then approve it. Review",
+      "Ready to review Platform Engineer at Brightpath Fit 68. Look over the resume, then approve it. Review",
+      "Long shot Software Engineer, Applied AI at Copperleaf AI A long shot (fit 55). Make a resume if you want to try it. See details"
+    ],
+    "alerts": [],
+    "findJobsEnabled": true
+  },
+  "invocations": "2026-11-06T15:30:35.666Z --version  kind=none mode=normal\n2026-11-06T15:30:35.863Z auth status kind=none mode=normal\n2026-11-06T15:30:36.090Z -p --output-format kind=hunt mode=crash\n2026-11-06T15:30:36.835Z --version  kind=none mode=normal\n2026-11-06T15:30:37.052Z auth status kind=none mode=normal\n2026-11-06T15:30:37.278Z -p --output-format kind=hunt mode=normal\n2026-11-06T15:30:37.709Z --version  kind=none mode=normal\n2026-11-06T15:30:37.872Z auth status kind=none mode=normal\n2026-11-06T15:30:38.060Z -p --output-format kind=tailor mode=normal\n"
+}

@@ -1,0 +1,16 @@
+{
+    "envSetForServer":  {
+                            "APPDATA":  "\u003chome\u003e\\AppData\\Local\\Temp\\jobgoblin-audit2-h5-wpLLpC\\Roaming",
+                            "JOBGOBLIN_APP_DATA":  "(not set)"
+                        },
+    "folderTheServerUsed":  "\u003chome\u003e\\AppData\\Local\\Temp\\jobgoblin-audit2-h5-wpLLpC\\Roaming\\Jobgoblin",
+    "filesThere":  [
+                       "jobgoblin.db",
+                       "jobgoblin.db-shm",
+                       "jobgoblin.db-wal",
+                       "logs",
+                       "server.json"
+                   ],
+    "dbLandedInRoaming":  true,
+    "note":  "The server\u0027s default is %APPDATA%\\Jobgoblin (packages/server/src/startOptions.ts:79-83). A person who runs the README demo command on a machine that already has real data would open the real database. The Electron app resolves appData from the operating system, not from the APPDATA variable, so it was NOT started this way."
+}

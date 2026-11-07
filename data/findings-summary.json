@@ -1,0 +1,1548 @@
+[
+  {
+    "kind": "finding",
+    "id": "J4-2",
+    "severity": "P0",
+    "title": "A story item the person dropped can still be approved into a resume",
+    "persona": "Both",
+    "area": "Review / approval",
+    "prd": "P2 ('only what I confirmed is ever used'), T1, truthfulness rule",
+    "expected": "Approve is refused, or the resume is re-made without the dropped item.",
+    "actual": "After dropping 'Built a shipment-tracking API...' (story status rejected), the Brightpath draft still showed it (true), Review warned: false, and Approve moved it to Approved. Approved resume body still holds the item: true.",
+    "steps": "Wizard; Find jobs; Profile > Your story > Drop that achievement; open Brightpath review; Approve.",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j4-evidence.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j4\\03-review-after-drop.png",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j4\\05b-after-approve-with-dropped-item.png"
+    ],
+    "suspectedFile": "packages/server/src/services/approvals.ts (approve does not re-check the resume against the confirmed story)",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:12:49.559Z",
+    "test": "J4: changing my facts",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "A-install-failure-silent",
+    "severity": "P1",
+    "title": "When Install fails, nothing tells the person it failed; the card just returns to 'Not installed'",
+    "persona": "Maya",
+    "area": "Settings / Connect Claude",
+    "prd": "S2, 'errors say what happened and what to do'",
+    "expected": "A plain message that the install did not work and what to do (install by hand, try again)",
+    "actual": "{\"text\":\"Claude connection Jobgoblin uses your own Claude plan for the thinking. Not installed Jobgoblin needs Claude Code on this computer. One button installs it for you. Install Claude Code Check again See exactly what this does\",\"alerts\":[],\"stubCalls\":[\"2026-11-06T15:32:27.314Z install stub 'fail' was run\"],\"stateNow\":\"not-installed\"}",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\a-claude-not-installed.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\a\\noclaude-4-after-failed-install.png"
+    ],
+    "suspectedFile": "packages/server/src/runner/claudeCli.ts:102-105 (install ignores the command's result); apps/dashboard/src/components/ClaudeConnection.tsx:74",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:32:29.423Z",
+    "test": "A not installed: Settings, wizard and Find jobs say so; Install fails silently?; Install succeeds",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "B-answers-banned-contact",
+    "severity": "P1",
+    "title": "A banned word typed into the name field is saved with no warning (it would reach every application)",
+    "persona": "Maya",
+    "area": "Profile > Form answers",
+    "prd": "P5",
+    "expected": "Refused at save with the word named (the rules say banned words must never appear in form details)",
+    "actual": "{\"alerts\":[],\"fieldErrors\":[],\"saved\":1,\"storedContact\":{\"fullName\":\"Alex Rockstar Rivera\",\"email\":\"not-an-email\",\"phone\":\"+1 555 0100\",\"location\":\"Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin,\",\"github\":\"github.com/alexrivera-example\"}}",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\b-answers.json"
+    ],
+    "suspectedFile": "packages/server/src/services/profile.ts (updateProfileSection has no banned-term check); refused only at Approve (approvals.ts:107-112)",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:34:00.187Z",
+    "test": "B answers: invalid email, emoji, very long values, a banned word in a contact field",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "B-wizard-zero-story",
+    "severity": "P1",
+    "title": "A person who skips Your story by address can finish setup with nothing confirmed, run Find jobs, and be handed a 'Ready to review' resume with no experience on it",
+    "persona": "Maya",
+    "area": "Setup (server does not require a confirmed story) / Review",
+    "prd": "S1, P2, T1",
+    "expected": "Finish (or Find jobs) is refused until at least something is confirmed, or Today says there is nothing to build a resume from",
+    "actual": "pipeline Awaiting approval,Awaiting approval,Skipped (low fit),Skipped (low fit),Long shot; {\"status\":\"Awaiting approval\",\"confirmedItems\":0,\"resumeTextStart\":\"Alex Rivera Austin, TX | alex.rivera@example.com | +1 555 0100 | github.com/alexrivera-example \",\"pages\":1,\"canApprove\":true,\"fit\":86}; Today: Today Find jobs Add a job Needs you Ready to review Backend Engineer at Acme Cloud Fit 86. Look over the resume, then approve it. Review Ready to review Platform Engineer at Brightpath Fit 68. Look over the resume, then approve it. Review Long shot Software Engineer, Applied AI at Copperleaf AI A lo",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\b-wizard-empty-and-back.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\b\\wizard-zero-confirmed-review.png"
+    ],
+    "suspectedFile": "packages/server/src/services/setup.ts (finishSetup checks only the folder); services/tailoring.ts",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:33:49.905Z",
+    "test": "B wizard: zero confirmed story items and empty targets, then Find jobs; reload and Back on every step",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "H2a",
+    "severity": "P1",
+    "title": "Remote is a chosen region but Form answers has no Remote group, yet the summary says answers for (REMOTE) are still needed",
+    "persona": "Maya",
+    "area": "Form answers (Profile and wizard) / Finish",
+    "prd": "P3, A1",
+    "expected": "Every item the summary asks for can be answered on the screen; labels are plain words ('Remote'), not region codes.",
+    "actual": "Region groups shown: United States, India; summary: \"3 answers are still needed: Authorized to work (REMOTE), Needs visa sponsorship (REMOTE), Willing to relocate (REMOTE).\"; server missing: [\"Authorized to work (REMOTE)\",\"Needs visa sponsorship (REMOTE)\",\"Willing to relocate (REMOTE)\"]. Remote group shown: false.",
+    "steps": "Targets: United States + Remote chosen and saved; open Profile > Form answers.",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\h2-profile-answers-state.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\h\\h2-profile-answers.png"
+    ],
+    "suspectedFile": "apps/dashboard/src/lib/answersDraft.ts:25,53 (regions = DEFAULT_REGIONS + saved ones; targets.regions ignored) vs packages/server/src/services/missingValues.ts:28-30,46-59 (regionsOf includes targets.regions)",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:10:57.763Z",
+    "test": "H2: a person who chose Remote cannot answer Remote work authorization, and the summary uses a code word",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "H5",
+    "severity": "P1",
+    "title": "The README and guide demo commands do not set JOBGOBLIN_APP_DATA, so demo mode opens (and writes to) the real %APPDATA%\\Jobgoblin database",
+    "persona": "Both",
+    "area": "README 'Run it' / USER_GUIDE 'Demo mode' / startOptions",
+    "prd": "Privacy / data loss (demo data mixing with real data)",
+    "expected": "Demo mode uses its own data folder, or the docs say to set JOBGOBLIN_APP_DATA",
+    "actual": "With APPDATA=<temp> and JOBGOBLIN_APP_DATA unset the server created <home>\\AppData\\Local\\Temp\\jobgoblin-audit2-h5-wpLLpC\\Roaming\\Jobgoblin\\jobgoblin.db. With the real APPDATA that is the owner's real database (docs/USER_GUIDE.md:60 even says so). The real database files were not touched by this test (unchanged: true).",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\h5-demo-command-data-location.json"
+    ],
+    "suspectedFile": "packages/server/src/startOptions.ts:20,79-83; README.md 'Run it'; docs/USER_GUIDE.md:51-60",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:37:54.941Z",
+    "test": "H5: the README's demo command, with no JOBGOBLIN_APP_DATA, puts the database in %APPDATA%\\Jobgoblin",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "J1-1",
+    "severity": "P1",
+    "title": "Choosing Remote on Targets finds none of the demo's Remote-US jobs, and Today does not say why",
+    "persona": "Maya",
+    "area": "Targets / Find jobs / Today",
+    "prd": "D1, P4 (targets change the next search)",
+    "expected": "A person who picks Remote sees remote jobs, or is told that Remote means 'no country named' and what to pick instead.",
+    "actual": "After picking only Remote, Find jobs ended with the Acme Cloud 'Remote - US' job absent from Needs you. Pipeline rows: []. Today text: see j1-today-after-remote-find.txt",
+    "steps": "Empty app; wizard; Targets: tick only Remote; Finish; Find jobs.",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j1-today-after-remote-find.txt",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j1-pipeline-after-remote-find.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1"
+    ],
+    "suspectedFile": "packages/core/src/jobFilters.ts:45-52 (classifyRegion puts 'Remote - US' in US) and :203-207 (isOutsideTargetRegions)",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:15:44.850Z",
+    "test": "J1: an empty app to Applied to Accepted to export, UI only (Maya)",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "J1-2",
+    "severity": "P1",
+    "title": "After widening Targets (adding United States), the next Find jobs still shows nothing, and does not say why",
+    "persona": "Maya",
+    "area": "Find jobs / Targets",
+    "prd": "D3, P4 ('done when': a change to targets changes the next search)",
+    "expected": "Jobs the old targets ruled out are looked at again, or Today says 'nothing new' and how to see the jobs that were ruled out.",
+    "actual": "Second Find jobs (US + Remote chosen) ended with 'Jobs found 0' and 'Nothing needs you right now.' Pipeline rows: 0. The Acme Remote-US job stayed out.",
+    "steps": "Empty app; Targets Remote only; Find jobs (0 found); Profile > Targets add United States; Today > Find jobs.",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j1-today-after-us-find.txt",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j1-pipeline-after-us-find.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1"
+    ],
+    "suspectedFile": "packages/server/src/services/feeds.ts:71-79 (a posting the filter rejected is stored with filteredReason and insertJobIfNew never re-evaluates it)",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:15:47.203Z",
+    "test": "J1: an empty app to Applied to Accepted to export, UI only (Maya)",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "J4-1",
+    "severity": "P1",
+    "title": "Changing Targets does not change the next search: jobs ruled out by the old targets never come back",
+    "persona": "Both",
+    "area": "Targets / Find jobs",
+    "prd": "P4 ('done when': a change to targets changes the next search), D3",
+    "expected": "After India -> United States, Find jobs shows the US jobs.",
+    "actual": "Pipeline rows after India-only search: 0; after switching to United States and searching again: 0. Today: Today Find jobs Add a job Needs you Nothing needs you right now. Running Reading your resume Finished Dismiss Finding jobs Finished Dismiss Finding jobs Finished Dismiss Done today Jobs found 0 Resumes tailored 0 Approved 0 Applied 0",
+    "steps": "Wizard with India only; Find jobs; Profile > Targets: untick India, tick United States; Find jobs.",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j4-evidence.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j4\\01-after-switching-targets-to-us.png"
+    ],
+    "suspectedFile": "packages/server/src/services/feeds.ts:71-79 (insertJobIfNew keeps the old filteredReason; the filter is never re-run for stored jobs)",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:12:36.976Z",
+    "test": "J4: changing my facts",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "A-cancel-tailor-no-way-back",
+    "severity": "P2",
+    "title": "After Cancel on a tailoring run, the strong matches that had no resume yet vanish from Today and the cancelled card has no Try again; the only way back is Pipeline, the application page, Tailor a resume (one job at a time)",
+    "persona": "Maya",
+    "area": "Today / run card / Application",
+    "prd": "R4, T1, 'nothing is lost'",
+    "expected": "Try again on the cancelled card, or the jobs listed on Today as 'Not tailored' with a button",
+    "actual": "no-resume strong rows Brightpath, Acme Cloud; on Today: [\"Long shot Software Engineer, Applied AI at Copperleaf AI A long shot (fit 55). Make a resume if you want to try it. See details\"]; card buttons [[\"Dismiss: Finding jobs\"],[\"Dismiss: Tailoring resumes\"]]; Acme application page buttons (does offer a way): [\"Open posting\",\"Tailor a resume\",\"Withdraw\",\"Ask\"]; acmeCanTailor=true",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\a-runs-cancel-reload.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\a\\runs-cancel-tailoring.png"
+    ],
+    "suspectedFile": "apps/dashboard/src/components/RunCard.tsx:11 (RETRYABLE_STATUSES omits cancelled while services/runLifecycle.ts:14 allows it); services/today.ts (no 'not-tailored' item for Scored apply/stretch)",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:31:14.580Z",
+    "test": "A runs: reload during a run, cancel during tailoring, Find jobs while active",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "A-crash-check-settings",
+    "severity": "P2",
+    "title": "For \"crash\" the Needs you item says 'Check settings', which cannot fix it; Try again is only on the Running card further down",
+    "persona": "Maya",
+    "area": "Today / Needs you (run attention)",
+    "prd": "R4 (next action)",
+    "expected": "A button that matches the cause (Try again, or 'See when it resets')",
+    "actual": "This run stopped before finishing -> Needs attention Finding jobs This run stopped before finishing Check settings",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\a-mode-crash.json"
+    ],
+    "suspectedFile": "apps/dashboard/src/components/NeedsYouList.tsx:17-23 (every run-attention item links to /settings); apps/dashboard/src/i18n/en/today.json:46",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:30:39.773Z",
+    "test": "A fake mode crash: Claude process crashed",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "A-dbl-approve",
+    "severity": "P2",
+    "title": "Double-clicking Approve shows an error to the person",
+    "persona": "Both",
+    "area": "Review",
+    "prd": "A2",
+    "expected": "No error; one approval",
+    "actual": "{\"url\":\"http://127.0.0.1:59214/review/5f645f7b-af7a-4c2b-8829-0ed14f9dd878\",\"alerts\":[\"Something went wrong inside Jobgoblin. Try again. If it keeps happening, restart Jobgoblin.\"],\"serverOutputTail\":[\"JOBGOBLIN_READY {\\\"port\\\":59214,\\\"url\\\":\\\"http://127.0.0.1:59214/#token=<redacted>\\\"}\"]}",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\a-double-clicks.json"
+    ],
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:31:22.595Z",
+    "test": "A double clicks: Find jobs twice quickly, Approve twice, I submitted twice, Restore twice",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "A-dbl-submitted",
+    "severity": "P2",
+    "title": "Double-clicking the I submitted confirm button errors or does not end at Applied",
+    "persona": "Both",
+    "area": "Open application",
+    "prd": "U4",
+    "expected": "One submission, Applied",
+    "actual": "{\"status\":\"Applied\",\"url\":\"http://127.0.0.1:59214/apply/5f645f7b-af7a-4c2b-8829-0ed14f9dd878\",\"alerts\":[\"This application is \\\"Applied\\\", so it can't be marked as submitted. Open it from Pipeline.\"]}",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\a-double-clicks.json"
+    ],
+    "wrong": "unclear",
+    "run": "2",
+    "at": "2026-11-06T15:31:30.111Z",
+    "test": "A double clicks: Find jobs twice quickly, Approve twice, I submitted twice, Restore twice",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "A-extra-tools-check-settings",
+    "severity": "P2",
+    "title": "For \"extra-tools\" the Needs you item says 'Check settings', which cannot fix it; Try again is only on the Running card further down",
+    "persona": "Maya",
+    "area": "Today / Needs you (run attention)",
+    "prd": "R4 (next action)",
+    "expected": "A button that matches the cause (Try again, or 'See when it resets')",
+    "actual": "This run was stopped for safety -> Needs attention Finding jobs This run was stopped for safety Check settings",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\a-mode-extra-tools.json"
+    ],
+    "suspectedFile": "apps/dashboard/src/components/NeedsYouList.tsx:17-23 (every run-attention item links to /settings); apps/dashboard/src/i18n/en/today.json:46",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:30:53.724Z",
+    "test": "A fake mode extra-tools: Claude had a tool it must not have",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "A-feed-failures-silent",
+    "severity": "P2",
+    "title": "When job boards cannot be read, Find jobs ends 'Finished' with a smaller count and never mentions that boards failed",
+    "persona": "Maya",
+    "area": "Today (Find jobs result)",
+    "prd": "D1, R4",
+    "expected": "Today says some boards could not be read and that results may be incomplete",
+    "actual": "Today Find jobs Add a job Needs you Ready to review Backend Engineer at Acme Cloud Fit 86. Look over the resume, then approve it. Review Running Finding jobs Finished Dismiss Tailoring resumes Finished Dismiss Done today Jobs found 1 Resumes tailored 1 Approved 0 Applied 0",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\a-feeds.json"
+    ],
+    "suspectedFile": "packages/server/src/services/feeds.ts:49,108-110 (failures are only logged); RefreshFeedsReport.failures is not shown",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:31:41.425Z",
+    "test": "A feeds: empty folder, zero companies, corrupt board",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "A-max-turns-check-settings",
+    "severity": "P2",
+    "title": "For \"max-turns\" the Needs you item says 'Check settings', which cannot fix it; Try again is only on the Running card further down",
+    "persona": "Maya",
+    "area": "Today / Needs you (run attention)",
+    "prd": "R4 (next action)",
+    "expected": "A button that matches the cause (Try again, or 'See when it resets')",
+    "actual": "This run stopped before finishing -> Needs attention Finding jobs This run stopped before finishing Check settings",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\a-mode-max-turns.json"
+    ],
+    "suspectedFile": "apps/dashboard/src/components/NeedsYouList.tsx:17-23 (every run-attention item links to /settings); apps/dashboard/src/i18n/en/today.json:46",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:30:46.494Z",
+    "test": "A fake mode max-turns: Claude ran out of turns",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "A-queue-stuck",
+    "severity": "P2",
+    "title": "While a run is blocked by the plan limit, a second Find jobs sits in 'Waiting for its turn' with no explanation",
+    "persona": "Maya",
+    "area": "Today / queue",
+    "prd": "R4, R1",
+    "expected": "Find jobs is unavailable with a reason, or the card says the queue is paused because of the limit",
+    "actual": "Find jobs enabled while blocked: true; hunt cards: [{\"title\":\"Finding jobs\",\"status\":\"Finished\",\"buttons\":[\"Dismiss: Finding jobs\"]},{\"title\":\"Finding jobs\",\"status\":\"Waiting for its turn\",\"buttons\":[\"Cancel: Finding jobs\"]}]",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\a-queue-usage-limit.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\a\\queue-2-second-find-jobs.png"
+    ],
+    "suspectedFile": "packages/server/src/runner/launcher.ts:57-75 (isPaused cleared only by a retry of the blocked run); apps/dashboard/src/screens/TodayScreen.tsx:55 (only hunt runs disable Find jobs)",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:31:07.040Z",
+    "test": "A queue: plan limit hits the tailoring run after a good hunt; a second Find jobs; then Try again",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "A-server-dead-navigate",
+    "severity": "P2",
+    "title": "After Jobgoblin stops, opening another screen shows 'Something went wrong on this screen' with no navigation and no hint that Jobgoblin is not running",
+    "persona": "Maya",
+    "area": "Route error screen",
+    "prd": "R4 ('errors say what happened and what to do')",
+    "expected": "The 'Jobgoblin could not be reached. Check that Jobgoblin is still open' message and the sidebar",
+    "actual": "{\"headings\":[\"This screen could not open\"],\"alerts\":[\"Something went wrong on this screen. Try again. Your information is safe. Try again\"],\"text\":\"This screen could not open Something went wrong on this screen. Try again. Your information is safe. Try again\",\"sidebarStillThere\":false}",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\a-connection.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\a\\conn-server-dead-navigate.png"
+    ],
+    "suspectedFile": "apps/dashboard/src/components/RouteErrorScreen.tsx (shows the generic message for a failed lazy screen load)",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:32:21.820Z",
+    "test": "A connection: server dies with the dashboard open; browser offline then online",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "A-server-dead-silent",
+    "severity": "P2",
+    "title": "When Jobgoblin stops while a screen is open, the screen shows nothing until the person clicks something",
+    "persona": "Maya",
+    "area": "AppShell / live updates",
+    "prd": "R4",
+    "expected": "A visible 'Jobgoblin is not running' banner with what to do",
+    "actual": "{\"alerts\":[],\"text\":\"Skip to the main content\\n\\nJobgoblin\\n\\nToday\\nPipeline\\nProfile\\nSettings\\nToday\\nFind jobs\\nAdd a job\\nNeeds you\\nReady to review\\nBackend Engineer at Acme Cloud\\n\\nFit 86. Look over the resume, then approve it.\\n\\nReview\\nReady to review\\nPlatform Engineer at Brightpath\\n\\nFit 68. Look over the resume, then approve it.\\n\\nReview\\nLong shot\\nSoftware Engineer, Applied AI at Copperleaf AI\\n\\nA long shot (fit 55). Make a r\"}",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\a-connection.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\a\\conn-server-dead-idle.png"
+    ],
+    "suspectedFile": "apps/dashboard/src/api/liveUpdates.ts; apps/dashboard/src/components/AppShell.tsx",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:32:21.818Z",
+    "test": "A connection: server dies with the dashboard open; browser offline then online",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "A-usage-limit-check-settings",
+    "severity": "P2",
+    "title": "For \"usage-limit\" the Needs you item says 'Check settings', which cannot fix it; Try again is only on the Running card further down",
+    "persona": "Maya",
+    "area": "Today / Needs you (run attention)",
+    "prd": "R4 (next action)",
+    "expected": "A button that matches the cause (Try again, or 'See when it resets')",
+    "actual": "Your Claude plan limit is reached. It resets at 10:00 pm. -> Needs attention Finding jobs Your Claude plan limit is reached. It resets at 10:00 pm. Check settings",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\a-mode-usage-limit.json"
+    ],
+    "suspectedFile": "apps/dashboard/src/components/NeedsYouList.tsx:17-23 (every run-attention item links to /settings); apps/dashboard/src/i18n/en/today.json:46",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:30:27.047Z",
+    "test": "A fake mode usage-limit: Claude plan limit reached",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "B-answers-email",
+    "severity": "P2",
+    "title": "An email address that is not an email is saved without any warning",
+    "persona": "Maya",
+    "area": "Profile > Form answers",
+    "prd": "P3",
+    "expected": "The form explains the email looks wrong before it can be sent on an application",
+    "actual": "{\"alerts\":[],\"fieldErrors\":[],\"saved\":1,\"storedContact\":{\"fullName\":\"Alex Rivera\",\"email\":\"not-an-email\",\"phone\":\"+1 555 0100\",\"location\":\"Austin, TX\",\"github\":\"github.com/alexrivera-example\"}}",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\b-answers.json"
+    ],
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:34:00.183Z",
+    "test": "B answers: invalid email, emoji, very long values, a banned word in a contact field",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "B-longname-overflow-application",
+    "severity": "P2",
+    "title": "A very long company or title makes application scroll sideways",
+    "persona": "Both",
+    "area": "application",
+    "prd": "Layout",
+    "expected": "Long names wrap or are cut with an ellipsis",
+    "actual": "{\"overflow\":true,\"scrollWidth\":1443,\"clientWidth\":1280}",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\b-display.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\b\\longnames-application.png"
+    ],
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:34:21.066Z",
+    "test": "B display: very long company and title names on every screen; unknown routes; a deep link without the key",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "B-longname-overflow-review",
+    "severity": "P2",
+    "title": "A very long company or title makes review scroll sideways",
+    "persona": "Both",
+    "area": "review",
+    "prd": "Layout",
+    "expected": "Long names wrap or are cut with an ellipsis",
+    "actual": "{\"overflow\":true,\"scrollWidth\":1443,\"clientWidth\":1280}",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\b-display.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\b\\longnames-review.png"
+    ],
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:34:21.068Z",
+    "test": "B display: very long company and title names on every screen; unknown routes; a deep link without the key",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "B-longname-overflow-today",
+    "severity": "P2",
+    "title": "A very long company or title makes today scroll sideways",
+    "persona": "Both",
+    "area": "today",
+    "prd": "Layout",
+    "expected": "Long names wrap or are cut with an ellipsis",
+    "actual": "{\"overflow\":true,\"scrollWidth\":1493,\"clientWidth\":1280}",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\b-display.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\b\\longnames-today.png"
+    ],
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:34:21.058Z",
+    "test": "B display: very long company and title names on every screen; unknown routes; a deep link without the key",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "E-guide-needs-you",
+    "severity": "P2",
+    "title": "The guide names Needs-you items that do not exist under those names on screen",
+    "persona": "Alex",
+    "area": "docs/USER_GUIDE.md:79-86",
+    "prd": "-",
+    "expected": "The guide uses the words on the screen",
+    "actual": "Guide: Ready to submit; Follow-up due; Couldn't tailor; Run attention. Screens: Ready to review; Question; Ready to send; Long shot; Not tailored; Follow up; Needs attention",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\e-doc-checks.json"
+    ],
+    "suspectedFile": "docs/USER_GUIDE.md:79-86 vs apps/dashboard/src/i18n/en/today.json:27-47",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:37:59.659Z",
+    "test": "H6 and docs: versions, branch, counts, and the words in the guide against the screens",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "H1",
+    "severity": "P2",
+    "title": "Form answers step shows US and India before the person chose regions, and its summary names 'Where you want to work', which is not on that screen",
+    "persona": "Maya",
+    "area": "Setup wizard step 6 vs 7",
+    "prd": "S/P3 ('Every TODO is visible on one screen'), P4",
+    "expected": "The summary counts and names exactly the fields marked, and every named item can be answered on that screen; regions come before region-specific questions.",
+    "actual": "Summary: \"3 answers are still needed: Where you want to work, Notice period, Earliest start date.\" (counts 3); fields marked 'Needs your answer': 9; region groups shown: United States, India; 'Where you want to work' field on screen: false; pay label: Expected yearly pay; pay named in summary: false. Server missing keys: regions, noticePeriod, earliestStartDate",
+    "steps": "Wizard step 6 with no regions chosen yet.",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\h1-step6-state.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\h\\h1-step6.png"
+    ],
+    "suspectedFile": "apps/dashboard/src/lib/answersDraft.ts:25 (DEFAULT_REGIONS US, IN) and packages/server/src/services/missingValues.ts:77-80; apps/dashboard/src/screens/setup/steps (order 6 before 7)",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:10:52.761Z",
+    "test": "H1/H3: the wizard asks for work authorization and pay before it knows the regions, and names pay two ways",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "H2b",
+    "severity": "P2",
+    "title": "A Remote job can be approved with 'Authorized to work here' Missing, with no warning, and there is no screen to fix it",
+    "persona": "Maya",
+    "area": "Review (data sheet)",
+    "prd": "A1, A3 ('every approval is informed')",
+    "expected": "Either Approve waits until work authorization for this region is answered, or Review says what is missing and links to where it can be answered.",
+    "actual": "Approve enabled: true. Decision panel text: \"Approve Request edit Skip  Keys: A approve, E request an edit, S skip, J next, K previous.\". Missing rows: [\"LinkedIn profile\\tMissing\",\"Portfolio or website\\tMissing\",\"Authorized to work here\\tMissing\",\"Needs visa sponsorship\\tMissing\",\"Willing to relocate\\tMissing\"]",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\h2-review-remote-job.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\h\\h2-review-remote-job.png"
+    ],
+    "suspectedFile": "packages/core/src/dataSheet.ts:55-57 (work authorization fields required:false) and apps/dashboard/src/screens/review/ReviewContent.tsx:43,109-116 (only required fields are warned about)",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:11:00.732Z",
+    "test": "H2: a person who chose Remote cannot answer Remote work authorization, and the summary uses a code word",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "H3",
+    "severity": "P2",
+    "title": "Pay is called 'Expected yearly pay' on the form but 'Expected base salary' elsewhere, and the form's single pay box is not what the server asks for per region",
+    "persona": "Maya",
+    "area": "Form answers / data sheet / missing-values summary",
+    "prd": "P3 (every TODO visible on one screen)",
+    "expected": "One name for one thing; the summary counts what the form marks; one pay box per region if pay is asked per region.",
+    "actual": "Form label: \"Expected yearly pay\"; data sheet label: \"Expected base salary\"; summary: \"\"; server missing: []; pay box marked 'Needs your answer': true; pay named in summary: false; one pay box on form: true. e2e/tests/setup-wizard.spec.ts:96,243 and review-approve-apply.spec.ts:62 expect 'Expected base salary' in the summary.",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\h3-profile-answers-state.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\h\\h3-profile-answers.png",
+      "baseline: setup-wizard.spec.ts:96 and :243 fail"
+    ],
+    "suspectedFile": "packages/server/src/services/missingValues.ts:61-73 (isStillToDo(undefined) is false, so a region with no pay entry is never reported) and apps/dashboard/src/lib/answersDraft.ts:123 (typecheck: byRegion missing); label en/profile.json answers.fields.compensation.expectedBase",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:10:55.269Z",
+    "test": "H3: after regions are chosen, the pay gap is counted in the summary under another name than the field",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "H4",
+    "severity": "P2",
+    "title": "One key press (A) approves at once with no confirmation, and there is no way to un-approve",
+    "persona": "Both",
+    "area": "Review",
+    "prd": "A1-A3, 'the person decides', 'every approval is informed'",
+    "expected": "Approval is deliberate (confirmation or an Undo for a few seconds), or can be taken back before anything is sent.",
+    "actual": "After pressing A once: status Approved, a live approval exists: true, dialogs shown: 0, next application opened immediately. Buttons on the application page: [\"Open posting\",\"Withdraw\",\"Download PDF\",\"Copy\",\"Ask\"]; on Review: []. Un-approve controls found: 0.",
+    "steps": "Review the Acme job; click the page; press a.",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\h4-after-a.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\h4-ways-back.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\h\\h4-application-after-A.png"
+    ],
+    "suspectedFile": "apps/dashboard/src/screens/review/ReviewContent.tsx:46-49,69-72; packages/server/src/services/applicationActions.ts:18-24 (no 'unapprove' action)",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:11:06.680Z",
+    "test": "H4: pressing A approves immediately with no confirmation, and nothing in the app un-approves it",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "J1-3",
+    "severity": "P2",
+    "title": "Confirming the 22 items of her story took 16 clicks: 'Confirm all' exists only per group, and some items have no group button",
+    "persona": "Maya",
+    "area": "Setup step 5, Your story",
+    "prd": "P2, S (setup in a few minutes)",
+    "expected": "One 'Confirm everything that is right' action, with Edit and Drop still available per item.",
+    "actual": "16 clicks in this stage (3 'Confirm all' group buttons, the rest one by one).",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j1-metrics.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1"
+    ],
+    "suspectedFile": "apps/dashboard/src/components/StoryGroupCard.tsx, StoryList.tsx",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:15:41.241Z",
+    "test": "J1: an empty app to Applied to Accepted to export, UI only (Maya)",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "J2-3",
+    "severity": "P2",
+    "title": "A second Find jobs with nothing new does not say 'nothing new'",
+    "persona": "Maya",
+    "area": "Today / run card",
+    "prd": "D3, R1",
+    "expected": "A sentence like 'No new jobs since last time' so she knows the search ran and found nothing.",
+    "actual": "No duplicates added (pipeline 4 -> 4). Today text after the run: \"Today Find jobs Add a job Needs you Ready to review Platform Engineer at Brightpath Fit 68. Look over the resume, then approve it. Review Follow up Backend Engineer at Acme Cloud You planned to follow up on 2026-11-04. Update status Long shot Software Engineer, Applied AI at Copperleaf AI A long shot (fit 55). Make a resume if you want to try it. See details Running Finding jobs Finished Dismiss Tailoring resumes Finished Dismiss Writing answers Finished Dismiss Finding jobs Finished Dismiss Done today Jobs found 4 Resumes tailored 2 Approved 1 Applied 1\". Run card texts: [\"Finding jobs Finished Dismiss\",\"Tailoring resumes Finished Dismiss\",\"Writing answers Finished Dismiss\"]. Says nothing new: false",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j2-second-find.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j2\\05-second-find-jobs.png"
+    ],
+    "suspectedFile": "apps/dashboard/src/screens/TodayScreen.tsx / RunCard.tsx; the hunt result summary",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:11:44.800Z",
+    "test": "J2: restart on the same data, then Find jobs again",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "J3-1",
+    "severity": "P2",
+    "title": "An approval cannot be taken back; the only exit after an accidental A is Withdraw, which closes the application",
+    "persona": "Both",
+    "area": "Application page",
+    "prd": "A1-A3",
+    "expected": "A way to un-approve while nothing has been sent.",
+    "actual": "Page after accidental approve: buttons [\"Open posting\",\"Withdraw\",\"Download PDF\",\"Copy\",\"Ask\"].",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j3-evidence.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j3\\c1-approved-by-accident.png"
+    ],
+    "suspectedFile": "apps/dashboard/src/screens/application/ApplicationActionBar.tsx; packages/server/src/services/applicationActions.ts (same root cause as H4)",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:12:25.910Z",
+    "test": "J3: changing my mind",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "J3-2",
+    "severity": "P2",
+    "title": "'I submitted' recorded by mistake cannot be undone; Applied only moves forward (assessment, phone, interview, rejected, no reply) or Withdraw",
+    "persona": "Both",
+    "area": "Application page / I submitted",
+    "prd": "A4, U4, K1 ('Applied means the confirmation was seen')",
+    "expected": "A way to say 'I did not actually apply' so Applied keeps meaning applied.",
+    "actual": "After a wrong 'I submitted': offered moves [\"Online assessment\",\"Phone screen\",\"Interview round\",\"Rejected\",\"No reply\"]; buttons [\"Open posting\",\"Withdraw\",\"Download PDF\",\"Copy\",\"Change status\",\"Ask\"].",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j3-evidence.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j3\\d2-after-wrong-submitted.png"
+    ],
+    "suspectedFile": "packages/core (status transitions: Applied has no way back), apps/dashboard/src/screens/application/StatusChangeCard.tsx",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:12:25.910Z",
+    "test": "J3: changing my mind",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "J5-1",
+    "severity": "P2",
+    "title": "A job she pasted herself ends up Skipped (low fit) and nothing on Today says so; it just never appears under Needs you",
+    "persona": "Maya",
+    "area": "Add a job / Today",
+    "prd": "D2",
+    "expected": "A line such as 'Senior Staff Engineer at Brightpath scored 20, a low fit. Tailor a resume anyway?' on Today.",
+    "actual": "After 'Added. Jobgoblin is scoring it now.' the row became Senior Staff Engineer (8+ years) at Brightpath: Skipped (low fit). Needs-you area of Today: \"Today Find jobs Add a job Added. Jobgoblin is scoring it now. Needs you Ready to review Backend Engineer at Gridline Energy Fit 78. Look over the resume, then approve it. Review \"",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j5-evidence.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j5\\2-lever.png"
+    ],
+    "suspectedFile": "packages/server/src/services/today.ts (needs-you kinds have no entry for a skipped pasted job)",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:13:27.898Z",
+    "test": "J5: paste a job",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "R-1",
+    "severity": "P2",
+    "title": "A job with no screening questions leaves Open application saying 'Your answers are still being written' for ever",
+    "persona": "Maya",
+    "area": "Open application (Apply screen)",
+    "prd": "A5, R1 (a state that says what is happening)",
+    "expected": "When the answers run finds no questions it says so and finishes; the screen says there is nothing to write.",
+    "actual": "The real answers run (b9540a51) found zero questions, saved nothing and finished with note 'No screening questions'. Today then shows 'Ready to send', but Open application shows 'Your answers are still being written. They will appear here by themselves.' more than 60 s after the run ended. The fake always writes an answer, so no test sees this.",
+    "steps": "Real Claude journey on the demo board (spec e2e/audit/real.audit.spec.ts, seen once, real runs are costly so not repeated)",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\real\\screens\\FAILED-open-application-answers.png",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\real\\run-folders\\b9540a51-acf8-4516-9ad7-aa326fcc7830\\transcript.jsonl"
+    ],
+    "suspectedFile": "apps/dashboard/src/screens/apply/ApplyContent.tsx:109-110 (answers.length === 0 means still writing); apps/dashboard/src/i18n/en/apply.json:23; playbooks/answers.md:32",
+    "wrong": "product",
+    "run": "real",
+    "at": "2026-11-07T07:27:48.3057137Z",
+    "test": "real.audit.spec.ts",
+    "runs": [
+      "real"
+    ],
+    "status": "suspected"
+  },
+  {
+    "kind": "finding",
+    "id": "R-2",
+    "severity": "P2",
+    "title": "A request edit that cannot be fully met is met in part with no explanation on screen, and the cut removed a line the fit matched",
+    "persona": "Maya",
+    "area": "Review after Request edit",
+    "prd": "A2, T1 (the person decides with full information)",
+    "expected": "If a request cannot be met (add Rust, which is not in Your story), the Review screen says so next to the new version.",
+    "actual": "Request: lead with Kubernetes, keep three strongest bullets per job, add my Rust experience. The run did the first two, correctly left Rust out and explained that only in its complete_task note and final message. Review shows only 'Lines left out'; the person sees no reason. The cut also dropped the on-call runbooks bullet, which was one of Brightpath's must-haves (on-call), and 'From your story' still lists it.",
+    "steps": "Real Claude journey on the demo board (spec e2e/audit/real.audit.spec.ts, seen once, real runs are costly so not repeated)",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\real\\edit-note.txt",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\real\\text\\review-brightpath-after-edit.txt",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\real\\edit-after-detail.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\real\\run-folders\\87c38a8e-968f-4f18-b967-d922cc4cdd95\\transcript.jsonl"
+    ],
+    "suspectedFile": "packages/server/src/services/runTasks.ts:35-47 (the note is stored but not shown); apps/dashboard/src/screens/review/ReviewContent.tsx; playbooks/tailor.md:48-49",
+    "wrong": "product",
+    "run": "real",
+    "at": "2026-11-07T07:27:48.3592154Z",
+    "test": "real.audit.spec.ts",
+    "runs": [
+      "real"
+    ],
+    "status": "suspected"
+  },
+  {
+    "kind": "finding",
+    "id": "R-3",
+    "severity": "P2",
+    "title": "Haiku's first submit_resume_draft is malformed JSON for 3 of 5 applications; Acme took 5 identical failed retries and 41 s of an unchanged progress step",
+    "persona": "Maya",
+    "area": "Tailoring (Today run card)",
+    "prd": "R1, T3",
+    "expected": "At most 3 submits per application (playbook), a draft within seconds, the card keeps changing.",
+    "actual": "6 submit calls for Acme (5 rejected by Claude Code as unparsable JSON, an extra closing brace), 2 calls each for the edit and paste applications (1 rejected). The rejected calls never reach the server, so its 3-try limit cannot count them. The card sat on 'Getting the job and Your story ready for a resume' from 31.8 s to 72.7 s. The server's truth check never refused anything, so it was not exercised by real Claude.",
+    "steps": "Real Claude journey on the demo board (spec e2e/audit/real.audit.spec.ts, seen once, real runs are costly so not repeated)",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\real\\tailor1-trace.txt",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\real\\watch-hunt.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\real\\runs-table.json"
+    ],
+    "suspectedFile": "playbooks/tailor.md:37-43; packages/schemas/src/run.ts (tailor model haiku); packages/server/src/mcp/tools/tailorTools.ts",
+    "wrong": "product",
+    "run": "real",
+    "at": "2026-11-07T07:27:48.3782946Z",
+    "test": "real.audit.spec.ts",
+    "runs": [
+      "real"
+    ],
+    "status": "suspected"
+  },
+  {
+    "kind": "finding",
+    "id": "R-4",
+    "severity": "P2",
+    "title": "Jobs the hunt screens out leave no trace: 5 jobs looked at, 3 recorded; the Data Analyst and QA roles are not in the Pipeline and nothing says why",
+    "persona": "Maya",
+    "area": "Today / Pipeline after Find jobs",
+    "prd": "D1, lean inclusive (CLAUDE.md), PRD trust",
+    "expected": "A set-aside job is listed as Skipped (low fit) with its reason, or the final count says 'set aside 2' on Today.",
+    "actual": "Hunt result: 'looked at 5, screened out 2, recorded 3'. Pipeline holds 3 rows. The e2e suite with the fake counts 4 rows after Find jobs, so the fake records one more. The person cannot see what was ruled out. Suspected, seen once, the fake comparison comes from e2e/tests/pipeline-and-status.spec.ts:154.",
+    "steps": "Real Claude journey on the demo board (spec e2e/audit/real.audit.spec.ts, seen once, real runs are costly so not repeated)",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\real\\run-folders\\6f70eeda-3ac7-47b9-aa44-9639a4b4deb6\\transcript.jsonl",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\real\\pipeline-after-hunt.json"
+    ],
+    "suspectedFile": "playbooks/hunt.md:44-48 (screened-out jobs are only marked seen)",
+    "wrong": "product",
+    "run": "real",
+    "at": "2026-11-07T07:27:48.3943122Z",
+    "test": "real.audit.spec.ts",
+    "runs": [
+      "real"
+    ],
+    "status": "suspected"
+  },
+  {
+    "kind": "finding",
+    "id": "A-feed-empty-folder",
+    "severity": "P3",
+    "title": "A demo feed folder without companies.json makes the whole server exit at start-up with a raw ENOENT (dev/demo configuration only)",
+    "persona": "Alex",
+    "area": "Server start (JOBGOBLIN_FEED_FIXTURES)",
+    "prd": "R4",
+    "expected": "A readable message naming the folder and the missing file, or an empty result",
+    "actual": "Error: The server exited with code 1 before it was ready.\n(node:28176) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\nENOENT: no such file or directory, open '<home>\\AppData\\Local\\Temp\\job",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\a-feeds.json"
+    ],
+    "suspectedFile": "packages/server/src/services/feeds.ts:130-136 (readSeedCompanies, unguarded readFileSync)",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:31:41.421Z",
+    "test": "A feeds: empty folder, zero companies, corrupt board",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "A-offline-message",
+    "severity": "P3",
+    "title": "Offline message is not plain or has no next step",
+    "persona": "Maya",
+    "area": "Today",
+    "prd": "R4",
+    "expected": "'could not be reached' + what to do",
+    "actual": "",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\a-connection.json"
+    ],
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:32:21.813Z",
+    "test": "A connection: server dies with the dashboard open; browser offline then online",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "B-answers-phone",
+    "severity": "P3",
+    "title": "A phone number that is not a number is saved without a warning",
+    "persona": "Maya",
+    "area": "Profile > Form answers",
+    "prd": "P3",
+    "expected": "A hint",
+    "actual": "{\"alerts\":[],\"fieldErrors\":[],\"saved\":1,\"storedContact\":{\"fullName\":\"Alex Rockstar Rivera\",\"email\":\"not-an-email\",\"phone\":\"call me maybe\",\"location\":\"Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin, Austin,\",\"github\":\"github.com/alexrivera-example\"}}",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\b-answers.json"
+    ],
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:34:00.190Z",
+    "test": "B answers: invalid email, emoji, very long values, a banned word in a contact field",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "B-answers-very-long",
+    "severity": "P3",
+    "title": "A 7,000-character 'Where you live' is saved without a limit or warning (it goes into every resume header and form)",
+    "persona": "Maya",
+    "area": "Profile > Form answers",
+    "prd": "P3, T1 (one page)",
+    "expected": "A sensible limit or a warning",
+    "actual": "stored length 7199",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\b-answers.json"
+    ],
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:34:00.189Z",
+    "test": "B answers: invalid email, emoji, very long values, a banned word in a contact field",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "B-folder-quoted-as-copied-from-explorer",
+    "severity": "P3",
+    "title": "Folder \"quoted-as-copied-from-explorer\" should be accepted but was refused",
+    "persona": "Maya",
+    "area": "Setup > Choose your folder",
+    "prd": "S4",
+    "expected": "Accepted",
+    "actual": "{\"typed\":\"\\\"C:\\\\Users\\\\<user>\\\\AppData\\\\Local\\\\Temp\\\\jobgoblin-audit2-folders-A21hX5\\\\quoted folder\\\"\",\"expected\":\"ok\",\"alerts\":[\"Choose a folder by its full path. Use the Choose folder button, or type the whole path.\"],\"current\":\"Your files are kept in C:\\\\Users\\\\<user>\\\\AppData\\\\Local\\\\Temp\\\\jobgoblin-audit2-folders-A21hX5\\\\not-yet\\\\Jobgoblin files\",\"existsOnDisk\":false}",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\b-folders.json"
+    ],
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:33:15.694Z",
+    "test": "B folder: missing, a file, relative, quoted, odd characters, app data, read-only",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "D-board-clipped",
+    "severity": "P3",
+    "title": "At 1280x800 the Pipeline board shows only part of its columns; the rest need a sideways scroll that is not signposted",
+    "persona": "Maya",
+    "area": "Pipeline board",
+    "prd": "K1",
+    "expected": "All six columns visible, or a visible scroll hint",
+    "actual": "not visible without scrolling: Interviewing, Offer, Closed",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\d-speed-and-overflow.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\ux\\light\\pipeline-board.png"
+    ],
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:36:54.266Z",
+    "test": "D UX sweep: every screen and state, light and dark",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "D-history-blank-from",
+    "severity": "P3",
+    "title": "The history of an application says 'Jobgoblin moved this from to Found' (the first line has no 'from' status)",
+    "persona": "Maya",
+    "area": "Application long shot, Application applied, Dialog withdraw",
+    "prd": "Voice",
+    "expected": "'added this as Found' or similar",
+    "actual": "moved this from to ...",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\d-word-consistency.json"
+    ],
+    "suspectedFile": "apps/dashboard/src/i18n/en/application.json:61 (status-changed has no case for a missing 'from')",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:37:51.191Z",
+    "test": "D consistency of words across screens",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "D-missing-optional",
+    "severity": "P3",
+    "title": "Review marks optional values (LinkedIn, Portfolio) as 'Missing' in the same amber as a value that would block approval",
+    "persona": "Maya",
+    "area": "Review / Open application data sheet",
+    "prd": "A1",
+    "expected": "Optional values say 'Not provided' or 'Optional'",
+    "actual": "LinkedIn profile: Missing; Portfolio or website: Missing; Approve still enabled",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\d-word-consistency.json"
+    ],
+    "suspectedFile": "apps/dashboard/src/components/DataSheetTable.tsx; apps/dashboard/src/i18n/en/common.json dataSheet.missing",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:37:51.193Z",
+    "test": "D consistency of words across screens",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "D-running-heading-finished",
+    "severity": "P3",
+    "title": "Today's 'Running' section keeps finished runs ('Finished', Dismiss) under the heading 'Running' until the person dismisses them",
+    "persona": "Maya",
+    "area": "Today tailoring running, Today needs you, Today ready to send, Today failure crash",
+    "prd": "Voice / R1",
+    "expected": "Finished runs are not listed as Running",
+    "actual": "Today tailoring running, Today needs you, Today ready to send, Today failure crash",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\d-word-consistency.json"
+    ],
+    "suspectedFile": "apps/dashboard/src/screens/TodayScreen.tsx:110-120; apps/dashboard/src/i18n/en/today.json:49",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:37:51.192Z",
+    "test": "D consistency of words across screens",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "D-submitted-below-fold",
+    "severity": "P3",
+    "title": "On Open application, the one action that finishes the job ('I submitted') sits after 26 field rows, far below the first screen",
+    "persona": "Maya",
+    "area": "Open application",
+    "prd": "U1, U4",
+    "expected": "The next step is visible without a long scroll",
+    "actual": "{\"topPx\":1770,\"pageHeightPx\":1838,\"viewportHeight\":800}",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\d-speed-and-overflow.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\ux\\light\\open-application.png"
+    ],
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:36:54.270Z",
+    "test": "D UX sweep: every screen and state, light and dark",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "D-wizard-step-count",
+    "severity": "P3",
+    "title": "The wizard says 'Step n of 8' but the PRD describes seven screens",
+    "persona": "Maya",
+    "area": "Setup wizard",
+    "prd": "S1 (seven screens), PRD journey",
+    "expected": "The number the PRD promises, or the PRD updated",
+    "actual": "counter reads: Step 1 of 8 | Step 2 of 8 | Step 3 of 8 | Step 4 of 8 | Step 5 of 8 | Step 6 of 8 | Step 6 of 8 | Step 7 of 8",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\d-wizard-progress.json"
+    ],
+    "wrong": "unclear",
+    "run": "2",
+    "at": "2026-11-06T15:37:34.677Z",
+    "test": "D wizard screens, light and dark",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "E-guide-default-folder",
+    "severity": "P3",
+    "title": "The guide says the folder defaults to Documents\\Jobgoblin; the Folder step has no default (an empty box, or the chooser opening in Documents)",
+    "persona": "Maya",
+    "area": "docs/USER_GUIDE.md:60 vs setup step 3",
+    "prd": "S4",
+    "expected": "A real default or no claim",
+    "actual": "no default in the Folder step",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\e-doc-checks.json"
+    ],
+    "suspectedFile": "docs/USER_GUIDE.md:60; apps/dashboard/src/components/FolderChooser.tsx:22",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:37:59.663Z",
+    "test": "H6 and docs: versions, branch, counts, and the words in the guide against the screens",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "E-guide-words",
+    "severity": "P3",
+    "title": "The guide says Retry, OA and Onsite where the screens say Try again, Online assessment and Interview round",
+    "persona": "Alex",
+    "area": "docs/USER_GUIDE.md:86,122 and apps/desktop/src/main.ts:119",
+    "prd": "Voice consistency",
+    "expected": "One set of words",
+    "actual": "{\"statusMismatch\":[\"OA -> Online assessment\",\"Onsite -> Interview round\",\"Ghosted -> No reply\"],\"guideSaysRetry\":true,\"desktopDialogSaysRetry\":true,\"screens\":\"Try again\"}",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\e-doc-checks.json"
+    ],
+    "suspectedFile": "docs/USER_GUIDE.md; apps/desktop/src/main.ts:119",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:37:59.661Z",
+    "test": "H6 and docs: versions, branch, counts, and the words in the guide against the screens",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "F-dialog-says-retry",
+    "severity": "P3",
+    "title": "The 'Jobgoblin stopped' dialog promises a Retry button; the screen's button says Try again",
+    "persona": "Maya",
+    "area": "apps/desktop/src/main.ts:119",
+    "prd": "Voice consistency",
+    "expected": "The button's real name",
+    "actual": "Jobgoblin's background service stopped unexpectedly.\\n\\n\" +\n      \"Open Jobgoblin again to continue. Anything that was running shows as interrupted, with a Retry button.\\n\\n\" +\n      `The log is at:\\n",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\f3-server-died.json"
+    ],
+    "suspectedFile": "apps/desktop/src/main.ts:119",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:38:53.301Z",
+    "test": "F: the desktop app > F3 the server process dies: what the person sees, and what a relaunch finds",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "H6-node",
+    "severity": "P3",
+    "title": "The README asks for Node 24, the guide and package.json engines allow Node 22.13 or later",
+    "persona": "Alex",
+    "area": "README vs docs/USER_GUIDE.md vs package.json",
+    "prd": "-",
+    "expected": "One stated minimum",
+    "actual": "{\"readme\":\"Node 24\",\"guide\":\"Node 22.13\",\"engines\":\">=22.13\",\"ci\":\"24\"}",
+    "evidence": [],
+    "suspectedFile": "README.md:21; docs/USER_GUIDE.md:18; package.json:7",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T15:37:57.178Z",
+    "test": "H6 and docs: versions, branch, counts, and the words in the guide against the screens",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "J1-8",
+    "severity": "P3",
+    "title": "Right after setup Today says 'Nothing needs you right now' and shows a 'Reading your resume: Finished' card; the 'Find your first jobs' welcome never appears",
+    "persona": "Maya",
+    "area": "Today (first visit)",
+    "prd": "S, R1 (empty state invites one action)",
+    "expected": "The first Today explains what Find jobs does (the copy exists as today:fresh).",
+    "actual": "Today text on first visit: \"Today Find jobs Add a job Needs you Nothing needs you right now. Running Reading your resume Finished Dismiss Done today Jobs found 0 Resumes tailored 0 Approved 0 Applied 0\"",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j1-today-fresh-text.txt",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1\\sweep-today-fresh.png"
+    ],
+    "suspectedFile": "apps/dashboard/src/screens/TodayScreen.tsx:56-59 (isFreshStart needs running.length === 0, but the setup run card is still listed)",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:15:42.961Z",
+    "test": "J1: an empty app to Applied to Accepted to export, UI only (Maya)",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "J2-1",
+    "severity": "P3",
+    "title": "After a restart the old tab is stranded on a dead port; whether she is told what to do is below",
+    "persona": "Maya",
+    "area": "Browser tab after restart",
+    "prd": "R4 (crash recovery), 'nothing is lost'",
+    "expected": "An old tab says plainly that Jobgoblin restarted and how to open it again (or reconnects by itself).",
+    "actual": "Port changed: true; token changed: true. Tab text after reload: \"RELOAD FAILED IN THE BROWSER: page.reload: net::ERR_CONNECTION_REFUSED\". Tells her something: true; says how to get back: false.",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j2-old-tab-text.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j2",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j2-restart.json"
+    ],
+    "suspectedFile": "apps/dashboard (api client error handling), packages/server/src/http/listen.ts (port 0). In the desktop app the window loads the new address itself, so this is a browser/dev-mode issue",
+    "wrong": "unclear",
+    "run": "2",
+    "at": "2026-11-06T14:11:42.615Z",
+    "test": "J2: restart on the same data, then Find jobs again",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "J2-4",
+    "severity": "P3",
+    "title": "On day 2 Today lists finished cards under the heading 'Running' (they pile up with every Find jobs), and shows follow-up dates as 2026-11-04",
+    "persona": "Maya",
+    "area": "Today",
+    "prd": "R1, voice rules (plain words)",
+    "expected": "Finished runs are tidy or labelled 'Finished'; dates read like 'Wednesday 4 November'.",
+    "actual": "'Running' section holds only finished cards: true; date seen: 2026-11-04. Cards after one restart and a second Find jobs: 3 distinct.",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j2-second-find.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j2\\05-second-find-jobs.png"
+    ],
+    "suspectedFile": "apps/dashboard/src/screens/TodayScreen.tsx (Running section), packages/server/src/services/today.ts (follow-up message with ISO date)",
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:11:44.806Z",
+    "test": "J2: restart on the same data, then Find jobs again",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "J3-3",
+    "severity": "P3",
+    "title": "A withdrawn application cannot be reopened",
+    "persona": "Both",
+    "area": "Application page",
+    "prd": "K1",
+    "expected": "Either a Reopen button, or the page says how to add the job again.",
+    "actual": "After withdraw: buttons [\"Open posting\",\"Download PDF\",\"Copy\",\"Ask\"], moves [].",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j3-evidence.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j3\\e1-withdrawn.png"
+    ],
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:12:25.911Z",
+    "test": "J3: changing my mind",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "J3-4",
+    "severity": "P3",
+    "title": "After Request edit, the earlier resume version can be downloaded but not made current again",
+    "persona": "Alex",
+    "area": "Application page > Resume versions",
+    "prd": "T2",
+    "expected": "'Use this version' on an older version.",
+    "actual": "Version controls: [\"Download PDF\",\"Download PDF\"]",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j3-evidence.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j3\\b1-versions.png"
+    ],
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:12:25.911Z",
+    "test": "J3: changing my mind",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "J3-5",
+    "severity": "P3",
+    "title": "Skipping gives no 'Undo' on the screen it takes you to; the way back is Pipeline > the card > Undo skip",
+    "persona": "Maya",
+    "area": "Review after S / Skip",
+    "prd": "A2 ('skip is not final')",
+    "expected": "An Undo right after skipping.",
+    "actual": "Right after S the page was http://127.0.0.1:59533/review/adb8cdf7-416e-4d01-9afe-7d06f6377848 and did not mention Undo. Skipped page offers: [\"Open posting\",\"Undo skip\",\"Download PDF\",\"Ask\"]. Today mentions skipped: false; Pipeline shows Skipped: true.",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j3-evidence.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j3\\a1-after-skip.png",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j3\\a2-pipeline-after-skip.png"
+    ],
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:12:25.912Z",
+    "test": "J3: changing my mind",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "J7-4",
+    "severity": "P3",
+    "title": "On Open application, the main action 'I submitted' takes 23 Tab presses to reach, after one Copy button per field",
+    "persona": "Both",
+    "area": "Open application (keyboard)",
+    "prd": "Accessibility, 'Interaction rules'",
+    "expected": "A shortcut or a landmark/skip link to the actions at the bottom of the page.",
+    "actual": "23 Tab presses from the top of the page to I submitted; 'Review' needs 2 Tab presses to reach Approve.",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j7-evidence.json",
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j7\\05-i-submitted-focused.png"
+    ],
+    "wrong": "product",
+    "run": "2",
+    "at": "2026-11-06T14:14:19.170Z",
+    "test": "J7: keyboard only, from Today to I submitted",
+    "runs": [
+      "1",
+      "2"
+    ],
+    "status": "confirmed"
+  },
+  {
+    "kind": "finding",
+    "id": "R-5",
+    "severity": "P3",
+    "title": "The hunt did not use the screener subagent (checklist 5 fails): it screened 5 jobs itself 'because there were only 5'",
+    "persona": "Maya",
+    "area": "Hunt run",
+    "prd": "Cost policy (MODELS.md), checklist 5",
+    "expected": "The Agent/Task tool starts the screener on Haiku for every page.",
+    "actual": "Tool order was get_profile, get_fit_context, search_jobs, record_fit x3, mark_seen, no Task call. The playbook allows self-screening only when the screener reply is not valid JSON. Sonnet therefore spent the scoring work itself (hunt: 67k tokens, about 0.12 USD API-equivalent). Whether this matters at 5 jobs is open; at 20 per page it could.",
+    "steps": "Real Claude journey on the demo board (spec e2e/audit/real.audit.spec.ts, seen once, real runs are costly so not repeated)",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\real\\runs.json"
+    ],
+    "suspectedFile": "playbooks/hunt.md:30-33",
+    "wrong": "product",
+    "run": "real",
+    "at": "2026-11-07T07:27:48.4162231Z",
+    "test": "real.audit.spec.ts",
+    "runs": [
+      "real"
+    ],
+    "status": "suspected"
+  },
+  {
+    "kind": "finding",
+    "id": "R-6",
+    "severity": "P3",
+    "title": "The ask answer tells the person to use 'the submit button on the application screen', but the app has no submit button",
+    "persona": "Maya",
+    "area": "Ask about this application",
+    "prd": "U1, voice rules",
+    "expected": "It says to apply on the company's site, then press I submitted.",
+    "actual": "Ask run answer: 'Use the submit button on the application screen yourself.'",
+    "steps": "Real Claude journey on the demo board (spec e2e/audit/real.audit.spec.ts, seen once, real runs are costly so not repeated)",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\real\\ask-region-text.txt"
+    ],
+    "suspectedFile": "playbooks/ask.md:20-21; services/askReadModels.ts (submit mode manual is passed through as raw data)",
+    "wrong": "product",
+    "run": "real",
+    "at": "2026-11-07T07:27:48.4342354Z",
+    "test": "real.audit.spec.ts",
+    "runs": [
+      "real"
+    ],
+    "status": "suspected"
+  },
+  {
+    "kind": "finding",
+    "id": "R-7",
+    "severity": "P3",
+    "title": "The resume preview shows the 'Reworded line' legend although no line was reworded",
+    "persona": "Maya",
+    "area": "Review (resume preview)",
+    "prd": "voice, clarity",
+    "expected": "A legend appears only when something is marked.",
+    "actual": "Acme review (diff reworded=[]) still shows 'Reworded line / Lines that were reworded for this job.'",
+    "steps": "Real Claude journey on the demo board (spec e2e/audit/real.audit.spec.ts, seen once, real runs are costly so not repeated)",
+    "evidence": [
+      "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\real\\text\\review-acme.txt"
+    ],
+    "suspectedFile": "apps/dashboard/src/i18n/en/common.json:168-169",
+    "wrong": "product",
+    "run": "real",
+    "at": "2026-11-07T07:27:48.5636506Z",
+    "test": "real.audit.spec.ts",
+    "runs": [
+      "real"
+    ],
+    "status": "suspected"
+  }
+]

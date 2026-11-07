@@ -1,0 +1,1 @@
+Lead with the Kubernetes and infrastructure work, keep the three strongest bullets per job, and add my Rust experience.

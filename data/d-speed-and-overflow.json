@@ -1,0 +1,357 @@
+{
+  "speed": {
+    "firstCardMs": 153,
+    "firstStepMs": 173,
+    "note": "Find jobs clicked on Today (second hunt, nothing new); fake claude, no network"
+  },
+  "timings": [
+    {
+      "screen": "Today (first load)",
+      "ms": 174
+    },
+    {
+      "screen": "Pipeline (empty)",
+      "ms": 423
+    },
+    {
+      "screen": "Review",
+      "ms": 416
+    },
+    {
+      "screen": "Application (long shot)",
+      "ms": 404
+    },
+    {
+      "screen": "Open application",
+      "ms": 400
+    },
+    {
+      "screen": "Application (applied)",
+      "ms": 426
+    },
+    {
+      "screen": "Pipeline (board)",
+      "ms": 402
+    },
+    {
+      "screen": "Pipeline (list)",
+      "ms": 412
+    },
+    {
+      "screen": "Profile: Your story",
+      "ms": 401
+    },
+    {
+      "screen": "Profile: Form answers",
+      "ms": 409
+    },
+    {
+      "screen": "Profile: Targets",
+      "ms": 412
+    },
+    {
+      "screen": "Profile: Banned words",
+      "ms": 403
+    },
+    {
+      "screen": "Settings",
+      "ms": 389
+    }
+  ],
+  "overflow": {
+    "1280x800": {
+      "today": {
+        "overflow": false,
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "widest": []
+      },
+      "review": {
+        "overflow": false,
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "widest": []
+      },
+      "apply": {
+        "overflow": false,
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "widest": []
+      },
+      "pipeline-board": {
+        "overflow": false,
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "widest": [
+          "section.w-64 shrink-0 space-y-3",
+          "h2.flex items-center justify-between text-sm font-sem",
+          "span.rounded-full bg-surface-muted px-2 text-xs font-no"
+        ]
+      },
+      "pipeline-list": {
+        "overflow": false,
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "widest": []
+      },
+      "application": {
+        "overflow": false,
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "widest": []
+      },
+      "profile-answers": {
+        "overflow": false,
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "widest": []
+      },
+      "profile-targets": {
+        "overflow": false,
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "widest": []
+      },
+      "settings": {
+        "overflow": false,
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "widest": []
+      },
+      "wizard-welcome": {
+        "overflow": false,
+        "scrollWidth": 1280,
+        "clientWidth": 1280,
+        "widest": []
+      }
+    },
+    "1024x700": {
+      "today": {
+        "overflow": false,
+        "scrollWidth": 1024,
+        "clientWidth": 1024,
+        "widest": []
+      },
+      "review": {
+        "overflow": false,
+        "scrollWidth": 1024,
+        "clientWidth": 1024,
+        "widest": []
+      },
+      "apply": {
+        "overflow": false,
+        "scrollWidth": 1024,
+        "clientWidth": 1024,
+        "widest": []
+      },
+      "pipeline-board": {
+        "overflow": false,
+        "scrollWidth": 1024,
+        "clientWidth": 1024,
+        "widest": [
+          "section.w-64 shrink-0 space-y-3",
+          "h2.flex items-center justify-between text-sm font-sem",
+          "span.rounded-full bg-surface-muted px-2 text-xs font-no"
+        ]
+      },
+      "pipeline-list": {
+        "overflow": false,
+        "scrollWidth": 1024,
+        "clientWidth": 1024,
+        "widest": []
+      },
+      "application": {
+        "overflow": false,
+        "scrollWidth": 1024,
+        "clientWidth": 1024,
+        "widest": []
+      },
+      "profile-answers": {
+        "overflow": false,
+        "scrollWidth": 1024,
+        "clientWidth": 1024,
+        "widest": []
+      },
+      "profile-targets": {
+        "overflow": false,
+        "scrollWidth": 1024,
+        "clientWidth": 1024,
+        "widest": []
+      },
+      "settings": {
+        "overflow": false,
+        "scrollWidth": 1024,
+        "clientWidth": 1024,
+        "widest": []
+      },
+      "wizard-welcome": {
+        "overflow": false,
+        "scrollWidth": 1024,
+        "clientWidth": 1024,
+        "widest": []
+      }
+    },
+    "800x600": {
+      "today": {
+        "overflow": false,
+        "scrollWidth": 800,
+        "clientWidth": 800,
+        "widest": []
+      },
+      "review": {
+        "overflow": false,
+        "scrollWidth": 800,
+        "clientWidth": 800,
+        "widest": []
+      },
+      "apply": {
+        "overflow": false,
+        "scrollWidth": 800,
+        "clientWidth": 800,
+        "widest": []
+      },
+      "pipeline-board": {
+        "overflow": false,
+        "scrollWidth": 800,
+        "clientWidth": 800,
+        "widest": [
+          "section.w-64 shrink-0 space-y-3",
+          "h2.flex items-center justify-between text-sm font-sem",
+          "span.rounded-full bg-surface-muted px-2 text-xs font-no"
+        ]
+      },
+      "pipeline-list": {
+        "overflow": false,
+        "scrollWidth": 800,
+        "clientWidth": 800,
+        "widest": []
+      },
+      "application": {
+        "overflow": false,
+        "scrollWidth": 800,
+        "clientWidth": 800,
+        "widest": []
+      },
+      "profile-answers": {
+        "overflow": false,
+        "scrollWidth": 800,
+        "clientWidth": 800,
+        "widest": []
+      },
+      "profile-targets": {
+        "overflow": false,
+        "scrollWidth": 800,
+        "clientWidth": 800,
+        "widest": []
+      },
+      "settings": {
+        "overflow": false,
+        "scrollWidth": 800,
+        "clientWidth": 800,
+        "widest": []
+      },
+      "wizard-welcome": {
+        "overflow": false,
+        "scrollWidth": 800,
+        "clientWidth": 800,
+        "widest": []
+      }
+    },
+    "640x400": {
+      "today": {
+        "overflow": false,
+        "scrollWidth": 640,
+        "clientWidth": 640,
+        "widest": []
+      },
+      "review": {
+        "overflow": false,
+        "scrollWidth": 640,
+        "clientWidth": 640,
+        "widest": []
+      },
+      "apply": {
+        "overflow": false,
+        "scrollWidth": 640,
+        "clientWidth": 640,
+        "widest": []
+      },
+      "pipeline-board": {
+        "overflow": false,
+        "scrollWidth": 640,
+        "clientWidth": 640,
+        "widest": [
+          "section.w-64 shrink-0 space-y-3",
+          "h2.flex items-center justify-between text-sm font-sem",
+          "span.rounded-full bg-surface-muted px-2 text-xs font-no"
+        ]
+      },
+      "pipeline-list": {
+        "overflow": false,
+        "scrollWidth": 640,
+        "clientWidth": 640,
+        "widest": []
+      },
+      "application": {
+        "overflow": false,
+        "scrollWidth": 640,
+        "clientWidth": 640,
+        "widest": []
+      },
+      "profile-answers": {
+        "overflow": false,
+        "scrollWidth": 640,
+        "clientWidth": 640,
+        "widest": []
+      },
+      "profile-targets": {
+        "overflow": false,
+        "scrollWidth": 640,
+        "clientWidth": 640,
+        "widest": []
+      },
+      "settings": {
+        "overflow": false,
+        "scrollWidth": 640,
+        "clientWidth": 640,
+        "widest": []
+      },
+      "wizard-welcome": {
+        "overflow": false,
+        "scrollWidth": 640,
+        "clientWidth": 640,
+        "widest": []
+      }
+    }
+  },
+  "layoutFacts": {
+    "submittedButtonTopPx": 1770,
+    "openApplicationPageHeightPx": 1838,
+    "boardColumns": [
+      {
+        "name": "To review",
+        "visibleWithoutScrolling": true
+      },
+      {
+        "name": "Ready to apply",
+        "visibleWithoutScrolling": true
+      },
+      {
+        "name": "Applied",
+        "visibleWithoutScrolling": true
+      },
+      {
+        "name": "Interviewing",
+        "visibleWithoutScrolling": false
+      },
+      {
+        "name": "Offer",
+        "visibleWithoutScrolling": false
+      },
+      {
+        "name": "Closed",
+        "visibleWithoutScrolling": false
+      }
+    ]
+  }
+}

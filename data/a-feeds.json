@@ -1,0 +1,83 @@
+{
+  "empty-folder": {
+    "serverStarted": false,
+    "error": "Error: The server exited with code 1 before it was ready.\n(node:28176) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\nENOENT: no such file or directory, open '<home>\\AppData\\Local\\Temp\\jobgoblin-audit2-feed-empty-xTzyxo\\companies.json'\n"
+  },
+  "zero-companies": {
+    "cards": [
+      {
+        "title": "Finding jobs",
+        "status": "Finished",
+        "buttons": [
+          "Dismiss: Finding jobs"
+        ]
+      }
+    ],
+    "needsYou": [],
+    "alerts": [],
+    "findJobsEnabled": true,
+    "body": "Today Find jobs Add a job Needs you Nothing needs you right now. Running Finding jobs Finished Dismiss Done today Jobs found 0 Resumes tailored 0 Approved 0 Applied 0",
+    "serverLog": [
+      "(node:22732) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.",
+      "(Use `node --trace-warnings ...` to show where the warning was created)"
+    ]
+  },
+  "one-corrupt-board": {
+    "cards": [
+      {
+        "title": "Finding jobs",
+        "status": "Finished",
+        "buttons": [
+          "Dismiss: Finding jobs"
+        ]
+      },
+      {
+        "title": "Tailoring resumes",
+        "status": "Finished",
+        "buttons": [
+          "Dismiss: Tailoring resumes"
+        ]
+      }
+    ],
+    "needsYou": [
+      "Ready to review Backend Engineer at Acme Cloud Fit 86. Look over the resume, then approve it. Review",
+      "Ready to review Platform Engineer at Brightpath Fit 68. Look over the resume, then approve it. Review",
+      "Long shot Software Engineer, Applied AI at Copperleaf AI A long shot (fit 55). Make a resume if you want to try it. See details"
+    ],
+    "alerts": [],
+    "findJobsEnabled": true,
+    "body": "Today Find jobs Add a job Needs you Ready to review Backend Engineer at Acme Cloud Fit 86. Look over the resume, then approve it. Review Ready to review Platform Engineer at Brightpath Fit 68. Look over the resume, then approve it. Review Long shot Software Engineer, Applied AI at Copperleaf AI A long shot (fit 55). Make a resume if you want to try it. See details Running Finding jobs Finished Dismiss Tailoring resumes Finished Dismiss Done today Jobs found 4 Resumes tailored 2 Approved 0 Applied 0",
+    "serverLog": [
+      "(node:19504) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.",
+      "(Use `node --trace-warnings ...` to show where the warning was created)"
+    ]
+  },
+  "all-boards-corrupt": {
+    "cards": [
+      {
+        "title": "Finding jobs",
+        "status": "Finished",
+        "buttons": [
+          "Dismiss: Finding jobs"
+        ]
+      },
+      {
+        "title": "Tailoring resumes",
+        "status": "Finished",
+        "buttons": [
+          "Dismiss: Tailoring resumes"
+        ]
+      }
+    ],
+    "needsYou": [
+      "Ready to review Backend Engineer at Acme Cloud Fit 86. Look over the resume, then approve it. Review"
+    ],
+    "alerts": [],
+    "findJobsEnabled": true,
+    "body": "Today Find jobs Add a job Needs you Ready to review Backend Engineer at Acme Cloud Fit 86. Look over the resume, then approve it. Review Running Finding jobs Finished Dismiss Tailoring resumes Finished Dismiss Done today Jobs found 1 Resumes tailored 1 Approved 0 Applied 0",
+    "serverLog": [
+      "(node:25832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.",
+      "(Use `node --trace-warnings ...` to show where the warning was created)"
+    ]
+  }
+}

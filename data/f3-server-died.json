@@ -1,0 +1,52 @@
+{
+  "processes": [
+    {
+      "pid": 7872,
+      "type": "Browser",
+      "name": null,
+      "serviceName": null
+    },
+    {
+      "pid": 27664,
+      "type": "GPU",
+      "name": null,
+      "serviceName": "GPU"
+    },
+    {
+      "pid": 12924,
+      "type": "Utility",
+      "name": "Network Service",
+      "serviceName": "network.mojom.NetworkService"
+    },
+    {
+      "pid": 7624,
+      "type": "Utility",
+      "name": "Jobgoblin server",
+      "serviceName": "node.mojom.NodeService"
+    },
+    {
+      "pid": 11668,
+      "type": "Tab",
+      "name": null,
+      "serviceName": null
+    }
+  ],
+  "appExitCodeAfterServerDied": 1,
+  "desktopLogTail": [
+    "2026-11-06T15:38:48.959Z INFO  server stderr: (node:7624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.",
+    "2026-11-06T15:38:48.959Z INFO  server stderr: (Use `electron --trace-warnings ...` to show where the warning was created)",
+    "2026-11-06T15:38:49.447Z INFO  Server is ready on port 65020.",
+    "2026-11-06T15:38:49.516Z INFO  Jobgoblin is running.",
+    "2026-11-06T15:38:50.625Z INFO  Server exited with code 1.",
+    "2026-11-06T15:38:50.626Z ERROR The server stopped on its own (exit code 1)."
+  ],
+  "dialogWordingInSource": "Jobgoblin's background service stopped unexpectedly.\\n\\n\" +\n      \"Open Jobgoblin again to continue. Anything that was running shows as interrupted, with a Retry button.\\n\\n\" +\n      `The log is at:\\n${config.logFilePath}`,\n  );\n  app.exit(1);\n}\n",
+  "todayAfterRelaunch": {
+    "cards": [
+      "Finding jobs This run was interrupted Try again Dismiss"
+    ],
+    "needsYou": [
+      "Needs attention Finding jobs This run was interrupted Check settings"
+    ]
+  }
+}

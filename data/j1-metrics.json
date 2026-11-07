@@ -1,0 +1,221 @@
+{
+  "journey": "j1",
+  "totalMs": 21135,
+  "totalWaitMs": 7873,
+  "clicks": 53,
+  "fieldsTyped": 7,
+  "optionsChosen": 5,
+  "filesChosen": 1,
+  "keyPresses": 0,
+  "stages": [
+    {
+      "name": "Open the app for the first time",
+      "ms": 1048,
+      "waitMs": 0,
+      "clicks": 1,
+      "fieldsTyped": 0,
+      "optionsChosen": 0,
+      "filesChosen": 0,
+      "keyPresses": 0,
+      "screenshot": "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1\\01-open-the-app-for-the-first-time.png"
+    },
+    {
+      "name": "Connect Claude",
+      "ms": 314,
+      "waitMs": 0,
+      "clicks": 1,
+      "fieldsTyped": 0,
+      "optionsChosen": 0,
+      "filesChosen": 0,
+      "keyPresses": 0,
+      "screenshot": "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1\\02-connect-claude.png"
+    },
+    {
+      "name": "Choose a folder (browser: she must type a full path)",
+      "ms": 183,
+      "waitMs": 0,
+      "clicks": 2,
+      "fieldsTyped": 1,
+      "optionsChosen": 0,
+      "filesChosen": 0,
+      "keyPresses": 0,
+      "screenshot": "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1\\03-choose-a-folder-browser-she-must-type-a-full-path.png"
+    },
+    {
+      "name": "Add resume and read it",
+      "ms": 1054,
+      "waitMs": 831,
+      "clicks": 3,
+      "fieldsTyped": 0,
+      "optionsChosen": 0,
+      "filesChosen": 1,
+      "keyPresses": 0,
+      "screenshot": "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1\\04-add-resume-and-read-it.png"
+    },
+    {
+      "name": "Your story: confirm everything",
+      "ms": 2577,
+      "waitMs": 0,
+      "clicks": 16,
+      "fieldsTyped": 0,
+      "optionsChosen": 0,
+      "filesChosen": 0,
+      "keyPresses": 0,
+      "screenshot": "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1\\05-your-story-confirm-everything.png"
+    },
+    {
+      "name": "Form answers (before she has said where she wants to work)",
+      "ms": 925,
+      "waitMs": 0,
+      "clicks": 1,
+      "fieldsTyped": 3,
+      "optionsChosen": 0,
+      "filesChosen": 0,
+      "keyPresses": 0,
+      "screenshot": "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1\\06-form-answers-before-she-has-said-where-she-wants-to-work.png"
+    },
+    {
+      "name": "Targets: Remote only",
+      "ms": 189,
+      "waitMs": 0,
+      "clicks": 2,
+      "fieldsTyped": 1,
+      "optionsChosen": 0,
+      "filesChosen": 0,
+      "keyPresses": 0,
+      "screenshot": "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1\\07-targets-remote-only.png"
+    },
+    {
+      "name": "Finish",
+      "ms": 142,
+      "waitMs": 0,
+      "clicks": 1,
+      "fieldsTyped": 0,
+      "optionsChosen": 0,
+      "filesChosen": 0,
+      "keyPresses": 0,
+      "screenshot": "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1\\08-finish.png"
+    },
+    {
+      "name": "Find jobs (Remote only)",
+      "ms": 2346,
+      "waitMs": 1694,
+      "clicks": 1,
+      "fieldsTyped": 0,
+      "optionsChosen": 0,
+      "filesChosen": 0,
+      "keyPresses": 0,
+      "screenshot": "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1\\09-find-jobs-remote-only.png"
+    },
+    {
+      "name": "WORKAROUND: add United States on Profile > Targets, Find jobs again",
+      "ms": 2348,
+      "waitMs": 1641,
+      "clicks": 6,
+      "fieldsTyped": 0,
+      "optionsChosen": 0,
+      "filesChosen": 0,
+      "keyPresses": 0,
+      "screenshot": "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1\\10-workaround-add-united-states-on-profile-targets-find-jobs-again.png"
+    },
+    {
+      "name": "WORKAROUND 2: Add a job with the Acme link",
+      "ms": 2311,
+      "waitMs": 2066,
+      "clicks": 2,
+      "fieldsTyped": 1,
+      "optionsChosen": 0,
+      "filesChosen": 0,
+      "keyPresses": 0,
+      "screenshot": "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1\\11-workaround-2-add-a-job-with-the-acme-link.png"
+    },
+    {
+      "name": "Review Acme Cloud",
+      "ms": 1119,
+      "waitMs": 0,
+      "clicks": 2,
+      "fieldsTyped": 0,
+      "optionsChosen": 0,
+      "filesChosen": 0,
+      "keyPresses": 0,
+      "screenshot": "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1\\12-review-acme-cloud.png"
+    },
+    {
+      "name": "Wait for answers, then Open application",
+      "ms": 2756,
+      "waitMs": 1641,
+      "clicks": 1,
+      "fieldsTyped": 0,
+      "optionsChosen": 0,
+      "filesChosen": 0,
+      "keyPresses": 0,
+      "screenshot": "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1\\13-wait-for-answers-then-open-application.png"
+    },
+    {
+      "name": "Copy a value, open the resume file",
+      "ms": 288,
+      "waitMs": 0,
+      "clicks": 2,
+      "fieldsTyped": 0,
+      "optionsChosen": 0,
+      "filesChosen": 0,
+      "keyPresses": 0,
+      "screenshot": "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1\\14-copy-a-value-open-the-resume-file.png"
+    },
+    {
+      "name": "I submitted (with proof)",
+      "ms": 610,
+      "waitMs": 0,
+      "clicks": 2,
+      "fieldsTyped": 1,
+      "optionsChosen": 0,
+      "filesChosen": 0,
+      "keyPresses": 0,
+      "screenshot": "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1\\15-i-submitted-with-proof.png"
+    },
+    {
+      "name": "Pipeline shows Applied",
+      "ms": 852,
+      "waitMs": 0,
+      "clicks": 1,
+      "fieldsTyped": 0,
+      "optionsChosen": 0,
+      "filesChosen": 0,
+      "keyPresses": 0,
+      "screenshot": "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1\\16-pipeline-shows-applied.png"
+    },
+    {
+      "name": "Move through the pipeline to Accepted",
+      "ms": 728,
+      "waitMs": 0,
+      "clicks": 6,
+      "fieldsTyped": 0,
+      "optionsChosen": 5,
+      "filesChosen": 0,
+      "keyPresses": 0,
+      "screenshot": "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1\\17-move-through-the-pipeline-to-accepted.png"
+    },
+    {
+      "name": "Export the tracker from Settings",
+      "ms": 1304,
+      "waitMs": 0,
+      "clicks": 3,
+      "fieldsTyped": 0,
+      "optionsChosen": 0,
+      "filesChosen": 0,
+      "keyPresses": 0,
+      "screenshot": "<home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\screens\\j1\\18-export-the-tracker-from-settings.png"
+    }
+  ],
+  "notes": [
+    "Your story: 3 'Confirm all' group buttons visible at the start; no single button for the whole story.",
+    "Form answers: summary=\"3 answers are still needed: Where you want to work, Notice period, Earliest start date.\"; fields marked 'Needs your answer'=9; region groups shown=United States,India; pay label=Expected yearly pay",
+    "Finish screen text: You are ready One last click, and Jobgoblin is yours. 22 items in your story are confirmed. 3 answers are still missing. You can add them later in Profile. Next you will see Today. Choose Find jobs there to look for your first roles. Back Finish setup",
+    "After Find jobs with only Remote chosen, Today shows: Today Find jobs Add a job Needs you Nothing needs you right now. Running Reading your resume Finished Dismiss Finding jobs Finished Dismiss Done today Jobs found 0 Resumes tailored 0 Approved 0 Applied 0",
+    "WORKAROUND: Maya adds United States on Profile > Targets so that the Remote-US Acme job can be reached.",
+    "After adding United States and pressing Find jobs again, Today shows: Today Find jobs Add a job Needs you Nothing needs you right now. Running Reading your resume Finished Dismiss Finding jobs Finished Dismiss Finding jobs Finished Dismiss Done today Jobs found 0 Resumes tailored 0 Approved 0 Applied 0",
+    "WORKAROUND 2: Maya cannot get Acme from Find jobs, so she pastes its link with Add a job.",
+    "Data sheet region=US; missing values at review: LinkedIn profile, Portfolio or website, Authorized to work here, Needs visa sponsorship, Willing to relocate",
+    "Exports saved: <home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j1-exports\\Jobgoblin tracker.csv, <home>\\AppData\\Local\\Temp\\claude\\<project>\\859c954c-890e-44a8-9a2c-82528f47ac4a\\scratchpad\\audit\\j1-exports\\Jobgoblin tracker.xlsx"
+  ]
+}

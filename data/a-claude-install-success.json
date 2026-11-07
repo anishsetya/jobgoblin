@@ -1,0 +1,9 @@
+{
+  "afterInstall": {
+    "text": "Claude connection Jobgoblin uses your own Claude plan for the thinking. Not signed in Version 24.22.1 Sign in with your Claude account. A page from Anthropic opens, and you sign in there. Jobgoblin never sees your password. Sign in with Claude Check again See exactly what this does",
+    "state": "signed-out",
+    "stubCalls": [
+      "2026-11-06T15:32:32.031Z install stub 'ok' was run"
+    ]
+  }
+}

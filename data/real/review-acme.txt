@@ -1,0 +1,118 @@
+3 of 3 waiting for review
+
+Backend Engineer
+Acme Cloud
+Remote - US
+Strong match
+Open posting
+Approve
+Request edit
+Skip
+
+Keys: A approve, E request an edit, S skip, J next, K previous.
+
+Fit
+
+96/ 100
+
+Strong match
+
+Near-exact match: Python/Postgres APIs, Redis, K8s on AWS, Terraform, on-call runbooks; 2+ years fits; only risk is the suspicious injected line in the posting.
+
+Things to check
+Posting contains an embedded instruction to email personal data to an outside address; ignored, treat with caution
+Check you can work remotely from there: remote US only
+From your story
+Python
+Terraform
+Built a shipment-tracking API in Python and PostgreSQL that serves 2M requests a day
+Cut p95 latency of the orders service 40% by adding a Redis read-through cache
+Led the migration of 12 services from VMs to Kubernetes on AWS with zero downtime
+Contributed to the on-call rotation and wrote 15 runbooks for incident response
+Changes from your main resume
+
+How this resume differs from the one you confirmed in setup.
+
+The order of some lines changed.
+
+What will be sent
+
+Every value on the form. Approving locks this exact list.
+
+Every value that will be sent with this application
+Field	Value
+Full name	Alex Rivera
+First name	Alex
+Last name	Rivera
+Email address	alex.rivera@example.com
+Phone number	+1 555 0100
+Location	Austin, TX
+LinkedIn profile	Missing
+GitHub profile	github.com/alexrivera-example
+Portfolio or website	Missing
+Authorized to work here	Yes
+Needs visa sponsorship	No
+Willing to relocate	Yes
+Notice period	2 weeks
+Earliest start date	2026-12-01
+Years of experience	Missing
+Current employer	Northwind Logistics
+Current job title	Software Engineer
+Expected base salary	Missing
+Gender	Decline to self-identify
+Race or ethnicity	Decline to self-identify
+Veteran status	Decline to self-identify
+Disability status	Decline to self-identify
+Resume file name	Alex Rivera - Resume.pdf
+Resume version	r-d872d466
+Resume
+
+Version r-d872d466
+
+Download PDF
+
+Reworded lineLines that were reworded for this job.
+
+Alex Rivera
+
+alex.rivera@example.com | +1 555 0100 | Austin, TX | github.com/alexrivera-example
+
+Backend engineer who builds reliable APIs and the platforms they run on
+
+EXPERIENCE
+
+Northwind Logistics
+
+Austin, TX
+
+Software Engineer
+
+Jun 2024 - Present
+
+Built a shipment-tracking API in Python and PostgreSQL that serves 2M requests a day
+Cut p95 latency of the orders service 40% by adding a Redis read-through cache
+Led the migration of 12 services from VMs to Kubernetes on AWS with zero downtime
+Contributed to the on-call rotation and wrote 15 runbooks for incident response
+
+Contoso Health
+
+Remote
+
+Software Engineering Intern
+
+May 2023 - Aug 2023
+
+Designed a TypeScript service that syncs patient appointment data between two systems
+Wrote integration tests that raised coverage of the scheduling module from 55% to 85%
+PROJECTS
+
+Ledgerline
+
+Built an open-source double-entry ledger library in Go with 300 GitHub stars
+SKILLS
+
+Python, PostgreSQL, Docker, Kubernetes, AWS, Terraform, Redis, TypeScript, Go, React
+
+EDUCATION
+B.S. Computer Science, State University
+Aug 2020 - May 2024

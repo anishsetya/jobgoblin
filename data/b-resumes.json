@@ -1,0 +1,67 @@
+{
+  "truncated-pdf": {
+    "alerts": [
+      "This file looks damaged or incomplete. Export your resume again as a PDF and choose the new file."
+    ],
+    "readButtonEnabled": true,
+    "status": "Add your resume Choose your resume as a PDF or Word file. Claude reads it and drafts the story of your work for you to check. Your resume A PDF or Word file, up to 10 MB. truncated.pdf 19 KB Change Remove This file looks damaged or incomplete. Export your resume again as a PDF and choose the new file. Read my resume Your name, email, phone number and address are taken out of the text before Claude reads it. Claude never sees them. Your LinkedIn profile (optional) On LinkedIn, choose Save to PDF on your profile and add the file here for more detail. Add it before you read your resume. Drop a file here, or choose one from your computer Back Continue Choose Read my resume to continue."
+  },
+  "text-file-named-pdf": {
+    "alerts": [
+      "This file looks damaged or incomplete. Export your resume again as a PDF and choose the new file."
+    ],
+    "readButtonEnabled": true,
+    "status": "Add your resume Choose your resume as a PDF or Word file. Claude reads it and drafts the story of your work for you to check. Your resume A PDF or Word file, up to 10 MB. text-file.pdf 75 B Change Remove This file looks damaged or incomplete. Export your resume again as a PDF and choose the new file. Read my resume Your name, email, phone number and address are taken out of the text before Claude reads it. Claude never sees them. Your LinkedIn profile (optional) On LinkedIn, choose Save to PDF on your profile and add the file here for more detail. Add it before you read your resume. Drop a file here, or choose one from your computer Back Continue Choose Read my resume to continue."
+  },
+  "truncated-docx": {
+    "alerts": [
+      "This file looks damaged or incomplete. Export your resume again as a PDF and choose the new file."
+    ],
+    "readButtonEnabled": true,
+    "status": "Add your resume Choose your resume as a PDF or Word file. Claude reads it and drafts the story of your work for you to check. Your resume A PDF or Word file, up to 10 MB. truncated.docx 871 B Change Remove This file looks damaged or incomplete. Export your resume again as a PDF and choose the new file. Read my resume Your name, email, phone number and address are taken out of the text before Claude reads it. Claude never sees them. Your LinkedIn profile (optional) On LinkedIn, choose Save to PDF on your profile and add the file here for more detail. Add it before you read your resume. Drop a file here, or choose one from your computer Back Continue Choose Read my resume to continue."
+  },
+  "text-file-named-docx": {
+    "alerts": [
+      "This file looks damaged or incomplete. Export your resume again as a PDF and choose the new file."
+    ],
+    "readButtonEnabled": true,
+    "status": "Add your resume Choose your resume as a PDF or Word file. Claude reads it and drafts the story of your work for you to check. Your resume A PDF or Word file, up to 10 MB. text-file.docx 75 B Change Remove This file looks damaged or incomplete. Export your resume again as a PDF and choose the new file. Read my resume Your name, email, phone number and address are taken out of the text before Claude reads it. Claude never sees them. Your LinkedIn profile (optional) On LinkedIn, choose Save to PDF on your profile and add the file here for more detail. Add it before you read your resume. Drop a file here, or choose one from your computer Back Continue Choose Read my resume to continue."
+  },
+  "password-pdf": {
+    "alerts": [
+      "This PDF is protected with a password. Open it, save a copy without a password, and choose that copy."
+    ],
+    "readButtonEnabled": true,
+    "status": "Add your resume Choose your resume as a PDF or Word file. Claude reads it and drafts the story of your work for you to check. Your resume A PDF or Word file, up to 10 MB. password-protected.pdf 1 KB Change Remove This PDF is protected with a password. Open it, save a copy without a password, and choose that copy. Read my resume Your name, email, phone number and address are taken out of the text before Claude reads it. Claude never sees them. Your LinkedIn profile (optional) On LinkedIn, choose Save to PDF on your profile and add the file here for more detail. Add it before you read your resume. Drop a file here, or choose one from your computer Back Continue Choose Read my resume to continu"
+  },
+  "image-only-pdf": {
+    "alerts": [
+      "This file has no readable text. Try a PDF exported from Word or Google Docs. Choose another file."
+    ],
+    "readButtonEnabled": true,
+    "status": "Add your resume Choose your resume as a PDF or Word file. Claude reads it and drafts the story of your work for you to check. Your resume A PDF or Word file, up to 10 MB. image-only.pdf 301 B Change Remove This file has no readable text. Try a PDF exported from Word or Google Docs. Choose another file. Read my resume Your name, email, phone number and address are taken out of the text before Claude reads it. Claude never sees them. Your LinkedIn profile (optional) On LinkedIn, choose Save to PDF on your profile and add the file here for more detail. Add it before you read your resume. Drop a file here, or choose one from your computer Back Continue Choose Read my resume to continue."
+  },
+  "too-large-11mb-ui": {
+    "text": "Add your resume Choose your resume as a PDF or Word file. Claude reads it and drafts the story of your work for you to check. Your resume A PDF or Word file, up to 10 MB. big.pdf 10.5 MB Change Remove big.pdf is larger than 10.0 MB. Choose a smaller file. Read my resume Your name, email, phone number and address are taken out of the text before Claude reads it. Claude never sees them. Your LinkedIn profile (optional) On LinkedIn, choose Save to PDF on your profile and add the file here for more detail. Add it before you read your resume. Drop a file here, or choose one from your computer Back ",
+    "readButtonEnabled": false
+  },
+  "too-large-10.5mb-api": {
+    "status": 400,
+    "body": "{\"code\":\"file-too-large\",\"message\":\"That file is larger than 10 MB.\",\"action\":\"Choose a smaller PDF or Word file.\"}"
+  },
+  "too-large-12mb-api": {
+    "status": 413,
+    "body": "{\"code\":\"too-large\",\"message\":\"That is larger than Jobgoblin accepts.\",\"action\":\"Choose a smaller file.\"}"
+  },
+  "linkedin-broken": {
+    "alerts": [
+      "This file looks damaged or incomplete. Export your resume again as a PDF and choose the new file."
+    ],
+    "text": "Add your resume Choose your resume as a PDF or Word file. Claude reads it and drafts the story of your work for you to check. Your resume A PDF or Word file, up to 10 MB. alex-rivera.pdf 38 KB Change Remove Read my resume Your name, email, phone number and address are taken out of the text before Claude reads it. Claude never sees them. Your LinkedIn profile (optional) On LinkedIn, choose Save to PDF on your profile and add the file here for more detail. Add it before you read your resume. text-file.pdf 75 B Change Remove This file looks damaged or incomplete. Export your resume again as a PDF and choose the new file. Back Continue Choose Read my resume to continue."
+  },
+  "word-docx-with-linkedin-pdf": {
+    "outcome": "read",
+    "alerts": []
+  },
+  "story-items-after-word": 22
+}

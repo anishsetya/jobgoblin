@@ -1,0 +1,47 @@
+Today
+Find jobs
+Add a job
+Needs you
+Ready to review
+Backend Engineer at Acme Cloud
+
+Fit 96. Look over the resume, then approve it.
+
+Review
+Ready to review
+Platform Engineer at Brightpath
+
+Fit 89. Look over the resume, then approve it.
+
+Review
+Ready to review
+Software Engineer, Applied AI at Copperleaf AI
+
+Fit 72. Look over the resume, then approve it.
+
+Review
+Running
+Reading your resume
+
+Finished
+
+Dismiss
+Finding jobs
+
+Finished
+
+Dismiss
+Tailoring resumes
+
+Finished
+
+Dismiss
+Done today
+Jobs found
+3
+Resumes tailored
+3
+Approved
+0
+Applied
+0

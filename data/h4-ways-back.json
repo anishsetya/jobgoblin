@@ -1,0 +1,19 @@
+{
+  "appButtons": [
+    "Open posting",
+    "Withdraw",
+    "Download PDF",
+    "Copy",
+    "Ask"
+  ],
+  "appLinks": [
+    "Skip to the main content",
+    "Today",
+    "Pipeline",
+    "Profile",
+    "Settings",
+    "Open application"
+  ],
+  "reviewNotice": "Loading...",
+  "reviewButtons": []
+}

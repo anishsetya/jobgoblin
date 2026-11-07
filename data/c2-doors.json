@@ -1,0 +1,145 @@
+{
+  "noToken": {
+    "status": 401,
+    "body": {
+      "code": "unauthorized",
+      "message": "Jobgoblin did not recognise this request.",
+      "action": "Close Jobgoblin and open it again."
+    }
+  },
+  "wrongToken": {
+    "status": 401,
+    "body": {
+      "code": "unauthorized",
+      "message": "Jobgoblin did not recognise this request.",
+      "action": "Close Jobgoblin and open it again."
+    }
+  },
+  "tokenInQuery": {
+    "status": 401,
+    "body": {
+      "code": "unauthorized",
+      "message": "Jobgoblin did not recognise this request.",
+      "action": "Close Jobgoblin and open it again."
+    }
+  },
+  "noTokenPost": {
+    "status": 401,
+    "body": {
+      "code": "unauthorized",
+      "message": "Jobgoblin did not recognise this request.",
+      "action": "Close Jobgoblin and open it again."
+    }
+  },
+  "noTokenPdf": {
+    "status": 401,
+    "body": {
+      "code": "unauthorized",
+      "message": "Jobgoblin did not recognise this request.",
+      "action": "Close Jobgoblin and open it again."
+    }
+  },
+  "noTokenEvents": {
+    "status": 401,
+    "body": {
+      "code": "unauthorized",
+      "message": "Jobgoblin did not recognise this request.",
+      "action": "Close Jobgoblin and open it again."
+    }
+  },
+  "noTokenExport": {
+    "status": 401,
+    "body": {
+      "code": "unauthorized",
+      "message": "Jobgoblin did not recognise this request.",
+      "action": "Close Jobgoblin and open it again."
+    }
+  },
+  "noTokenBackup": {
+    "status": 401,
+    "body": {
+      "code": "unauthorized",
+      "message": "Jobgoblin did not recognise this request.",
+      "action": "Close Jobgoblin and open it again."
+    }
+  },
+  "noTokenMcp": {
+    "status": 401,
+    "body": {
+      "code": "unauthorized",
+      "message": "Jobgoblin did not recognise this request.",
+      "action": "Close Jobgoblin and open it again."
+    }
+  },
+  "sessionTokenOnMcp": {
+    "status": 401,
+    "body": {
+      "code": "unauthorized",
+      "message": "Jobgoblin did not recognise this request.",
+      "action": "Close Jobgoblin and open it again."
+    }
+  },
+  "badHost": {
+    "status": 403,
+    "body": {
+      "code": "forbidden-host",
+      "message": "Jobgoblin only answers requests sent to this computer.",
+      "action": "Open Jobgoblin from its own window."
+    }
+  },
+  "badHostPort": {
+    "status": 403,
+    "body": {
+      "code": "forbidden-host",
+      "message": "Jobgoblin only answers requests sent to this computer.",
+      "action": "Open Jobgoblin from its own window."
+    }
+  },
+  "badHostOnStatic": {
+    "status": 403,
+    "body": {
+      "code": "forbidden-host",
+      "message": "Jobgoblin only answers requests sent to this computer.",
+      "action": "Open Jobgoblin from its own window."
+    }
+  },
+  "badOrigin": {
+    "status": 403,
+    "body": {
+      "code": "forbidden-origin",
+      "message": "Jobgoblin does not accept requests from other websites.",
+      "action": "Use Jobgoblin from its own window."
+    }
+  },
+  "nullOrigin": {
+    "status": 403,
+    "body": {
+      "code": "forbidden-origin",
+      "message": "Jobgoblin does not accept requests from other websites.",
+      "action": "Use Jobgoblin from its own window."
+    }
+  },
+  "goodOriginAndHost": {
+    "status": 200,
+    "body": {
+      "needsYou": [],
+      "running": [],
+      "doneToday": {
+        "found": 0,
+        "tailored": 0,
+        "approved": 0,
+        "applied": 0
+      },
+      "setupComplete": true,
+      "usageNoticeSeen": true
+    }
+  },
+  "badOriginPostApprove": {
+    "status": 403,
+    "body": {
+      "code": "forbidden-origin",
+      "message": "Jobgoblin does not accept requests from other websites.",
+      "action": "Use Jobgoblin from its own window."
+    }
+  }
+}

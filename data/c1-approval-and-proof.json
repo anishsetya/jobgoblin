@@ -1,0 +1,103 @@
+{
+  "submitWithoutApproval": {
+    "status": 409,
+    "body": {
+      "code": "not-submittable",
+      "message": "This application is \"Awaiting approval\", so it can't be marked as submitted.",
+      "action": "Open it from Pipeline."
+    }
+  },
+  "statusRouteFromAwaitingApproval": {
+    "Approved (from Awaiting approval)": 409,
+    "Applied (from Awaiting approval)": 409,
+    "Filling (from Awaiting approval)": 409,
+    "OA (from Awaiting approval)": 409,
+    "Phone screen (from Awaiting approval)": 409,
+    "Onsite (from Awaiting approval)": 409,
+    "Offer (from Awaiting approval)": 409,
+    "Accepted (from Awaiting approval)": 409,
+    "Awaiting approval (from Awaiting approval)": 409,
+    "Tailored (from Awaiting approval)": 409
+  },
+  "statusAfterAttempts": "Awaiting approval",
+  "staleHashZero": {
+    "status": 409,
+    "body": {
+      "code": "data-sheet-changed",
+      "message": "Your details changed since you opened this page.",
+      "action": "Review the application again."
+    }
+  },
+  "malformedHash": {
+    "status": 400,
+    "body": {
+      "code": "invalid-request",
+      "message": "\"dataSheetHash\": This is not a valid value.",
+      "action": "Check what you entered and try again."
+    }
+  },
+  "approveLongShotNotTailored": {
+    "status": 409,
+    "body": {
+      "code": "not-approvable",
+      "message": "This application is \"Long shot\", so it can't be approved now.",
+      "action": "Open it from Pipeline."
+    }
+  },
+  "statusAfterStaleAttempts": "Awaiting approval",
+  "approveWithHashFromBeforeProfileChange": {
+    "status": 409,
+    "body": {
+      "code": "data-sheet-changed",
+      "message": "Your details changed since you opened this page.",
+      "action": "Review the application again."
+    }
+  },
+  "statusBrightpathAfterStale": "Awaiting approval",
+  "approveAcme": 200,
+  "approveAgain": {
+    "status": 409,
+    "body": {
+      "code": "not-approvable",
+      "message": "This application is \"Approved\", so it can't be approved now.",
+      "action": "Open it from Pipeline."
+    }
+  },
+  "statusRouteFromApproved": {
+    "Applied": 409,
+    "Approved": 409,
+    "Filling": 409,
+    "OA": 409,
+    "Offer": 409,
+    "Accepted": 409
+  },
+  "statusAfterStatusRoute": "Approved",
+  "submitEmptyProof": {
+    "status": 400,
+    "body": {
+      "code": "proof-missing",
+      "message": "Add the proof that it was sent.",
+      "action": "Paste the confirmation text, or choose \"I saw it\"."
+    }
+  },
+  "submitDifferentFile": {
+    "status": 409,
+    "body": {
+      "code": "different-file",
+      "message": "The file you attached is not the resume you approved.",
+      "action": "Attach the approved file, or confirm that you applied with a different one."
+    }
+  },
+  "statusAfterBadSubmissions": "Approved",
+  "submitAfterPhoneChange": {
+    "status": 409,
+    "body": {
+      "code": "approval-void",
+      "message": "Your details changed since you approved.",
+      "action": "Review the application again and approve it."
+    }
+  },
+  "statusAfterPhoneChange": "Approved",
+  "phoneChangedFrom": "+1 555 0100",
+  "skipApproved": 409
+}

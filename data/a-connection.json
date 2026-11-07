@@ -1,0 +1,59 @@
+{
+  "offlineTimeline": [
+    {
+      "afterMs": 500,
+      "alerts": [],
+      "findEnabled": false
+    },
+    {
+      "afterMs": 2000,
+      "alerts": [],
+      "findEnabled": false
+    },
+    {
+      "afterMs": 5000,
+      "alerts": [],
+      "findEnabled": false
+    },
+    {
+      "afterMs": 10000,
+      "alerts": [],
+      "findEnabled": false
+    }
+  ],
+  "offlineAlert": [],
+  "afterOnlineFindEnabled": true,
+  "afterBackOnlineAlerts": [],
+  "afterBackOnlineNeeds": [
+    "Ready to review Backend Engineer at Acme Cloud Fit 86. Look over the resume, then approve it. Review",
+    "Ready to review Platform Engineer at Brightpath Fit 68. Look over the resume, then approve it. Review",
+    "Long shot Software Engineer, Applied AI at Copperleaf AI A long shot (fit 55). Make a resume if you want to try it. See details"
+  ],
+  "liveUpdateWorkedWithoutReload": true,
+  "afterCrashUnclicked": {
+    "alerts": [],
+    "text": "Skip to the main content\n\nJobgoblin\n\nToday\nPipeline\nProfile\nSettings\nToday\nFind jobs\nAdd a job\nNeeds you\nReady to review\nBackend Engineer at Acme Cloud\n\nFit 86. Look over the resume, then approve it.\n\nReview\nReady to review\nPlatform Engineer at Brightpath\n\nFit 68. Look over the resume, then approve it.\n\nReview\nLong shot\nSoftware Engineer, Applied AI at Copperleaf AI\n\nA long shot (fit 55). Make a r"
+  },
+  "findJobsStillEnabledWhenServerIsDead": true,
+  "afterCrashFindJobs": {
+    "alerts": [
+      "Jobgoblin could not be reached. Check that Jobgoblin is still open on your computer, then try again."
+    ]
+  },
+  "afterCrashPipelineClick": {
+    "headings": [
+      "This screen could not open"
+    ],
+    "alerts": [
+      "Something went wrong on this screen. Try again. Your information is safe. Try again"
+    ],
+    "text": "This screen could not open Something went wrong on this screen. Try again. Your information is safe. Try again",
+    "sidebarStillThere": false
+  },
+  "afterTryAgainOnDeadServer": {
+    "headings": [
+      "This screen could not open"
+    ],
+    "text": "This screen could not open Something went wrong on this screen. Try again. Your information is safe. Try again"
+  }
+}

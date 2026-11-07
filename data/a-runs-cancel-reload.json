@@ -1,0 +1,211 @@
+{
+  "duringRun": {
+    "cards": [
+      {
+        "title": "Finding jobs",
+        "status": "Finished",
+        "buttons": [
+          "Dismiss: Finding jobs"
+        ]
+      },
+      {
+        "title": "Tailoring resumes",
+        "status": "Getting started",
+        "buttons": [
+          "Cancel: Tailoring resumes"
+        ]
+      }
+    ],
+    "needsYou": [
+      "Long shot Software Engineer, Applied AI at Copperleaf AI A long shot (fit 55). Make a resume if you want to try it. See details"
+    ],
+    "alerts": [],
+    "findJobsEnabled": true
+  },
+  "findDisabledDuringTailor": false,
+  "afterReload": {
+    "cards": [
+      {
+        "title": "Finding jobs",
+        "status": "Finished",
+        "buttons": [
+          "Dismiss: Finding jobs"
+        ]
+      },
+      {
+        "title": "Tailoring resumes",
+        "status": "Getting started",
+        "buttons": [
+          "Cancel: Tailoring resumes"
+        ]
+      }
+    ],
+    "needsYou": [
+      "Long shot Software Engineer, Applied AI at Copperleaf AI A long shot (fit 55). Make a resume if you want to try it. See details"
+    ],
+    "alerts": [],
+    "findJobsEnabled": true
+  },
+  "afterCancel": {
+    "cards": [
+      {
+        "title": "Finding jobs",
+        "status": "Finished",
+        "buttons": [
+          "Dismiss: Finding jobs"
+        ]
+      },
+      {
+        "title": "Tailoring resumes",
+        "status": "This run was cancelled",
+        "buttons": [
+          "Dismiss: Tailoring resumes"
+        ]
+      }
+    ],
+    "needsYou": [
+      "Long shot Software Engineer, Applied AI at Copperleaf AI A long shot (fit 55). Make a resume if you want to try it. See details"
+    ],
+    "alerts": [],
+    "findJobsEnabled": true
+  },
+  "pipelineAfterCancel": [
+    {
+      "id": "4964d21b-4ab1-4a53-9061-8ab86939995d",
+      "jobId": "lever:brightpath:7c1d0e02-3f4a-4b5c-8d6e-0000000b0002",
+      "company": "Brightpath",
+      "title": "Platform Engineer",
+      "status": "Scored",
+      "fitScore": 68,
+      "band": "stretch",
+      "resumeVersion": null,
+      "submitMode": "manual",
+      "folder": null,
+      "appliedAt": null,
+      "followUpOn": null,
+      "tailorAttempts": 0,
+      "tailorError": null,
+      "createdAt": "2026-11-06T15:31:10.438Z",
+      "updatedAt": "2026-11-06T15:31:10.501Z",
+      "overdue": false,
+      "location": "New York, NY",
+      "region": "US"
+    },
+    {
+      "id": "a5355ffd-0331-46b8-a06f-5539c4fd5541",
+      "jobId": "greenhouse:acmecloud:4012345",
+      "company": "Acme Cloud",
+      "title": "Backend Engineer",
+      "status": "Scored",
+      "fitScore": 86,
+      "band": "apply",
+      "resumeVersion": null,
+      "submitMode": "manual",
+      "folder": null,
+      "appliedAt": null,
+      "followUpOn": null,
+      "tailorAttempts": 0,
+      "tailorError": null,
+      "createdAt": "2026-11-06T15:31:10.427Z",
+      "updatedAt": "2026-11-06T15:31:10.501Z",
+      "overdue": false,
+      "location": "Remote - US",
+      "region": "US"
+    },
+    {
+      "id": "ebd27570-3a0a-4c95-aa23-e5a0d43ea8dc",
+      "jobId": "ashby:copperleaf:9a8b7c03-1d2e-4f3a-8b4c-0000000c0004",
+      "company": "Copperleaf AI",
+      "title": "Data Analyst",
+      "status": "Skipped (low fit)",
+      "fitScore": 20,
+      "band": "skip",
+      "resumeVersion": null,
+      "submitMode": "manual",
+      "folder": null,
+      "appliedAt": null,
+      "followUpOn": null,
+      "tailorAttempts": 0,
+      "tailorError": null,
+      "createdAt": "2026-11-06T15:31:10.414Z",
+      "updatedAt": "2026-11-06T15:31:10.415Z",
+      "overdue": false,
+      "location": "San Francisco, CA",
+      "region": "US"
+    },
+    {
+      "id": "32c9267a-874f-46a8-9de8-7ada4f7532d6",
+      "jobId": "ashby:copperleaf:9a8b7c03-1d2e-4f3a-8b4c-0000000c0003",
+      "company": "Copperleaf AI",
+      "title": "Software Engineer, Applied AI",
+      "status": "Long shot",
+      "fitScore": 55,
+      "band": "long-shot",
+      "resumeVersion": null,
+      "submitMode": "manual",
+      "folder": null,
+      "appliedAt": null,
+      "followUpOn": null,
+      "tailorAttempts": 0,
+      "tailorError": null,
+      "createdAt": "2026-11-06T15:31:10.399Z",
+      "updatedAt": "2026-11-06T15:31:10.403Z",
+      "overdue": false,
+      "location": "San Francisco, CA",
+      "region": "US"
+    }
+  ],
+  "stuck": [
+    {
+      "id": "4964d21b-4ab1-4a53-9061-8ab86939995d",
+      "jobId": "lever:brightpath:7c1d0e02-3f4a-4b5c-8d6e-0000000b0002",
+      "company": "Brightpath",
+      "title": "Platform Engineer",
+      "status": "Scored",
+      "fitScore": 68,
+      "band": "stretch",
+      "resumeVersion": null,
+      "submitMode": "manual",
+      "folder": null,
+      "appliedAt": null,
+      "followUpOn": null,
+      "tailorAttempts": 0,
+      "tailorError": null,
+      "createdAt": "2026-11-06T15:31:10.438Z",
+      "updatedAt": "2026-11-06T15:31:10.501Z",
+      "overdue": false,
+      "location": "New York, NY",
+      "region": "US"
+    },
+    {
+      "id": "a5355ffd-0331-46b8-a06f-5539c4fd5541",
+      "jobId": "greenhouse:acmecloud:4012345",
+      "company": "Acme Cloud",
+      "title": "Backend Engineer",
+      "status": "Scored",
+      "fitScore": 86,
+      "band": "apply",
+      "resumeVersion": null,
+      "submitMode": "manual",
+      "folder": null,
+      "appliedAt": null,
+      "followUpOn": null,
+      "tailorAttempts": 0,
+      "tailorError": null,
+      "createdAt": "2026-11-06T15:31:10.427Z",
+      "updatedAt": "2026-11-06T15:31:10.501Z",
+      "overdue": false,
+      "location": "Remote - US",
+      "region": "US"
+    }
+  ],
+  "acmePage": {
+    "buttons": [
+      "Open posting",
+      "Tailor a resume",
+      "Withdraw",
+      "Ask"
+    ],
+    "text": "Backend Engineer Acme Cloud Remote - US Scored Strong match Open posting Tailor a resume Withdraw Fit 86/ 100 Strong match Strong match: Your story shows go, api, python. Not shown in your story SQL From your story Ledgerline, open-source double-entry ledger in Go Built a shipment-tracking API in Python and PostgreSQL that serves 2M requests a day Cut p95 latency of the orders service 40% by adding a Redis read-through cache Led the migration of 12 services from VMs to Kubernetes on AWS with zero downtime Contributed to the on-call rotation and wrote 15 runbooks for incident response Designed a TypeScript service that syncs patient appointment data between two systems Job description About A"
+  }
+}

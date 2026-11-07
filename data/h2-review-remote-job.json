@@ -1,0 +1,11 @@
+{
+  "decision": "Approve\nRequest edit\nSkip\n\nKeys: A approve, E request an edit, S skip, J next, K previous.",
+  "canApprove": true,
+  "missingRows": [
+    "LinkedIn profile\tMissing",
+    "Portfolio or website\tMissing",
+    "Authorized to work here\tMissing",
+    "Needs visa sponsorship\tMissing",
+    "Willing to relocate\tMissing"
+  ]
+}

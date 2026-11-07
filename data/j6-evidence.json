@@ -1,0 +1,32 @@
+{
+  "settings": {
+    "personFolder": "<home>\\AppData\\Local\\Temp\\jobgoblin-e2e-jQW7Qg\\person-folder",
+    "concurrency": 1,
+    "maxOpenPerCompany": 3,
+    "reapplyDays": 90,
+    "followUpDays": 7,
+    "usageNoticeSeen": true,
+    "setupComplete": true,
+    "lastBackupAt": "2026-11-06T14:13:00.000Z",
+    "trackerStatus": "ok",
+    "dataFolder": "<home>\\AppData\\Local\\Temp\\jobgoblin-e2e-jQW7Qg\\app-data"
+  },
+  "threeRows": [
+    "Software Engineer: Awaiting approval",
+    "Platform Engineer: Awaiting approval",
+    "Backend Engineer: Awaiting approval"
+  ],
+  "statusAfterAdd": "Added. Jobgoblin is scoring it now. | Finished | Finished | Finished | Finished | Finished | Finished | Finished | Finished",
+  "todayAfterFourth": "Today Find jobs Add a job Needs you Ready to review Backend Engineer at Limitco Fit 70. Look over the resume, then approve it. Review Ready to review Platform Engineer at Limitco Fit 70. Look over the resume, then approve it. Review Ready to review Software Engineer at Limitco Fit 70. Look over the resume, then approve it. Review Not tailored Data Engineer at Limitco You already have 3 open applications at Limitco, which is your limit. Withdraw or finish one before taking on another. See details Running Reading your resume Finished Dismiss Reading a job you added Finished Dismiss Tailoring resumes Finished Dismiss Reading a job you added Finished Dismiss Tailoring resumes Finished Dismiss Reading a job you added Finished Dismiss Tailoring resumes Finished Dismiss Reading a job you added Finished Dismiss Done today Jobs found 4 Resumes tailored 3 Approved 0 Applied 0",
+  "fourthRow": {
+    "status": "Scored",
+    "tailorError": "You already have 3 open applications at Limitco, which is your limit. Withdraw or finish one before taking on another."
+  },
+  "fourthPageText": "Data Engineer Limitco Remote, US Scored Stretch You already have 3 open applications at Limitco, which is your limit. Withdraw or finish one before taking on another. Tailor a resume Withdraw Fit 70/ 100 Stretch Good match on python, postgresql, kubernetes, though Your story does not show a few requirements. From your story Built a shipment-tracking API in Python and PostgreSQL that serves 2M requests a day Led the migration of 12 services from VMs to Kubernetes on AWS with zero downtime Job description Limitco is hiring a Data Engineer. You will build Python services on PostgreSQL, deploy with Docker and Kubernetes on AWS. 2+ years of experience building backend services. Resume versions No resume has been made for this application yet. Answers No answers have been written yet. They are written after you approve the application. Ask about this application Ask Claude anything about this ",
+  "afterTailorClick": "Data Engineer Limitco Remote, US Scored Stretch You already have 3 open applications at Limitco, which is your limit. Withdraw or finish one before taking on another. Tailor a resume Withdraw You already have 3 open applications at Limitco, which is your limit. Withdraw or finish one before taking on another. Change your limits in Settings, or finish another application first. Fit 70/ 100 Stretch Good match on python, postgresql, kubernetes, though Your story does not show a few requirements. From your story Built a shipment-tracking API in Python and PostgreSQL that serves 2M requests a day Led the migration of 12 services from VMs to Kubernetes on AWS with zero downtime Job description Limitco is hiring a Data Engineer. You will build Python services on PostgreSQL, deploy with Docker and Kubernetes on AWS. 2+ years of experience building backend services. Resume versions No resume has ",
+  "afterTailorAlerts": [
+    "You already have 3 open applications at Limitco, which is your limit. Withdraw or finish one before taking on another.Change your limits in Settings, or finish another application first."
+  ],
+  "reapplyStatus": "You already have this job (Applied). Open it from Pipeline. | Finished | Finished | Finished | Finished | Finished | Finished | Finished | Finished | Finished",
+  "reapplyAlerts": []
+}

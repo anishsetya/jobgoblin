@@ -1,0 +1,83 @@
+{
+  "pipelineRow": {
+    "id": "06900b71-70f0-413c-a318-4de38a2fec21",
+    "jobId": "pasted:extraordinarilylongnamedlongnamedlongnamedlongnamedlongnamedlongnamedlongnamedlongnamedlongnamedlongnamedlongnamedlongnamedlongnamedlongnamedindustries:a48ce918fd35",
+    "company": "ExtraordinarilyLongnamedLongnamedLongnamedLongnamedLongnamedLongnamedLongnamedLongnamedLongnamedLongnamedLongnamedLongnamedLongnamedLongnamedIndustries",
+    "title": "Senior Principal Distinguished Backend Platform Infrastructure Reliability Engineering Lead, Senior Principal Distinguished Backend Platform Infrastructure Reliability Engineering Lead, Senior Principal Distinguished Backend Platform Infrastructure Reliability Engineering Lead,",
+    "status": "Awaiting approval",
+    "fitScore": 70,
+    "band": "stretch",
+    "resumeVersion": "r-3bb8926dba5c223efd68ff9f39adafe84be3ef58d6f61d2bd281b4ecad968902",
+    "submitMode": "manual",
+    "folder": null,
+    "appliedAt": null,
+    "followUpOn": null,
+    "tailorAttempts": 0,
+    "tailorError": null,
+    "createdAt": "2026-11-06T15:34:04.015Z",
+    "updatedAt": "2026-11-06T15:34:05.222Z",
+    "overdue": false,
+    "location": "Remote",
+    "region": "REMOTE"
+  },
+  "overflow": {
+    "today": {
+      "overflow": true,
+      "scrollWidth": 1493,
+      "clientWidth": 1280
+    },
+    "pipeline-board": {
+      "overflow": false,
+      "scrollWidth": 1280,
+      "clientWidth": 1280
+    },
+    "pipeline-list": {
+      "overflow": false,
+      "scrollWidth": 1280,
+      "clientWidth": 1280
+    },
+    "application": {
+      "overflow": true,
+      "scrollWidth": 1443,
+      "clientWidth": 1280
+    },
+    "review": {
+      "overflow": true,
+      "scrollWidth": 1443,
+      "clientWidth": 1280
+    }
+  },
+  "unknownRoutes": {
+    "/nope": {
+      "final": "/nope",
+      "text": "We could not find that page The address may be old or mistyped. Go to Today"
+    },
+    "/review/does-not-exist": {
+      "final": "/review/does-not-exist",
+      "text": "Skip to the main content Jobgoblin Today Pipeline Profile Settings Jobgoblin can't find that application. Open it from Pipeline. Try again"
+    },
+    "/apps/does-not-exist": {
+      "final": "/apps/does-not-exist",
+      "text": "Skip to the main content Jobgoblin Today Pipeline Profile Settings Jobgoblin can't find that application. Open it from Pipeline. Try again"
+    },
+    "/apply/does-not-exist": {
+      "final": "/apply/does-not-exist",
+      "text": "Skip to the main content Jobgoblin Today Pipeline Profile Settings Jobgoblin can't find that application. Open it from Pipeline. Try again"
+    },
+    "/profile/zzz": {
+      "final": "/profile/story",
+      "text": "Skip to the main content Jobgoblin Today Pipeline Profile Settings Profile Your story Form answers Targets Banned words Everything here is something you said is true. Resumes and fit scores use only what you have confirmed. Add to your story Jobs Job Confirmed"
+    },
+    "/pipeline?view=bogus&q=%3Cscript%3E": {
+      "final": "/pipeline",
+      "text": "Skip to the main content Jobgoblin Today Pipeline Profile Settings Pipeline Board List Search Status All statuses Found Scored Skipped (low fit) Long shot Tailored Awaiting approval Skipped Approved Filling Needs your input Applied Online assessment Phone scre"
+    }
+  },
+  "deepLinkNoToken": {
+    "text": "Skip to the main content Jobgoblin Today Pipeline Profile Settings Jobgoblin did not recognise this request. Close Jobgoblin and open it again. Try again",
+    "alerts": [
+      "Jobgoblin did not recognise this request.\n\nClose Jobgoblin and open it again.\n\nTry again"
+    ]
+  },
+  "deepLinkNoTokenReview": "Skip to the main content Jobgoblin Today Pipeline Profile Settings Jobgoblin did not recognise this request. Close Jobgoblin and open it again. Try again"
+}

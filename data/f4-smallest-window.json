@@ -1,0 +1,61 @@
+{
+  "sizeAtStart": [
+    1280,
+    752
+  ],
+  "sizeAfterTryingTo300": [
+    900,
+    602
+  ],
+  "minimumSize": [
+    900,
+    600
+  ],
+  "layoutAtSmallest": {
+    "today": {
+      "overflow": false,
+      "scrollWidth": 871,
+      "clientWidth": 871,
+      "viewport": [
+        886,
+        564
+      ]
+    },
+    "pipeline": {
+      "overflow": false,
+      "scrollWidth": 871,
+      "clientWidth": 871,
+      "viewport": [
+        886,
+        564
+      ]
+    },
+    "settings": {
+      "overflow": false,
+      "scrollWidth": 871,
+      "clientWidth": 871,
+      "viewport": [
+        886,
+        564
+      ]
+    },
+    "profile-answers": {
+      "overflow": false,
+      "scrollWidth": 871,
+      "clientWidth": 871,
+      "viewport": [
+        886,
+        564
+      ]
+    },
+    "review": {
+      "overflow": false,
+      "scrollWidth": 871,
+      "clientWidth": 871,
+      "viewport": [
+        886,
+        564
+      ]
+    }
+  }
+}

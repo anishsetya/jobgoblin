@@ -1,0 +1,36 @@
+{
+  "fileName": "Alex Rivera - Resume.pdf",
+  "filesInFolder": [
+    "Alex Rivera - Resume.pdf",
+    "Answers.md",
+    "Job description.md"
+  ],
+  "pages": 1,
+  "title": "Alex Rivera - Resume",
+  "author": "Alex Rivera",
+  "keywords": "r-cec9e1380b5a784a11290d30e3e053feeda6dea4615b2a974b76119468ef267e",
+  "producer": null,
+  "approvedVersionId": "r-cec9e1380b5a784a11290d30e3e053feeda6dea4615b2a974b76119468ef267e",
+  "shortId": "r-cec9e138",
+  "approvedSha": "69c2aa0ab0b2bbe64d254b336dc8b2457de91893887d9fb2edb6c55c49f1bd33",
+  "fileSha": "69c2aa0ab0b2bbe64d254b336dc8b2457de91893887d9fb2edb6c55c49f1bd33",
+  "bytes": 38955,
+  "shaAfterChange": "69c2aa0ab0b2bbe64d254b336dc8b2457de91893887d9fb2edb6c55c49f1bd33",
+  "shaDownloadOld": "69c2aa0ab0b2bbe64d254b336dc8b2457de91893887d9fb2edb6c55c49f1bd33",
+  "approvalVoidedAfterChange": null,
+  "appliedFacts": {
+    "status": "Applied",
+    "followUpOn": "2026-11-13",
+    "proof": "I saw the confirmation page.",
+    "history": [
+      "status-changed",
+      "status-changed",
+      "status-changed",
+      "status-changed",
+      "resume-drafted",
+      "approved",
+      "answers-saved",
+      "submitted"
+    ]
+  }
+}

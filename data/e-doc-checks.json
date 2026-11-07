@@ -1,0 +1,55 @@
+{
+  "readmeNode": "Node 24",
+  "guideNode": "Node 22.13",
+  "enginesNode": ">=22.13",
+  "ciNode": "24",
+  "nodeInUse": "v24.22.1",
+  "branchPocDeveloperPreview": "99ef5f35d11360c4332cd57435836817a8de5015\trefs/heads/poc/developer-preview",
+  "remotes": [
+    "origin\thttps://github.com/anishsetya/jobgoblin.git (fetch)",
+    "origin\thttps://github.com/anishsetya/jobgoblin.git (push)"
+  ],
+  "browserTestsActual": {
+    "allProjects": "40",
+    "files": "13",
+    "chromiumProject": "37"
+  },
+  "browserTestsClaimed": "37",
+  "companiesActual": 98,
+  "companiesClaimed": "100",
+  "statusesActual": 48,
+  "needsYouGuide": [
+    "Ready to review",
+    "Long shot",
+    "Question",
+    "Ready to submit",
+    "Follow-up due",
+    "Couldn't tailor",
+    "Run attention"
+  ],
+  "needsYouScreens": [
+    "Ready to review",
+    "Question",
+    "Ready to send",
+    "Long shot",
+    "Not tailored",
+    "Follow up",
+    "Needs attention"
+  ],
+  "needsYouInGuideNotOnScreens": [
+    "Ready to submit",
+    "Follow-up due",
+    "Couldn't tailor",
+    "Run attention"
+  ],
+  "statusNamesDifferent": [
+    "OA -> Online assessment",
+    "Onsite -> Interview round",
+    "Ghosted -> No reply"
+  ],
+  "guideSaysRetry": true,
+  "screensSayTryAgain": "Try again",
+  "desktopDialogSaysRetry": true,
+  "guideDefaultFolder": true,
+  "folderStepHasDefaultDocumentsJobgoblin": false
+}

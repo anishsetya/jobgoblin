@@ -1,0 +1,34 @@
+{
+  "windowBeforeClose": {
+    "visible": true,
+    "minimized": false,
+    "destroyed": false,
+    "focused": true
+  },
+  "windowAfterClose": {
+    "visible": false,
+    "minimized": false,
+    "destroyed": false,
+    "focused": false
+  },
+  "runsRightAfterClose": [
+    "running"
+  ],
+  "secondLaunchExitCode": 0,
+  "windowAfterSecondLaunch": {
+    "visible": true,
+    "minimized": false,
+    "destroyed": false,
+    "focused": true
+  },
+  "windowAfterOpenHandler": {
+    "visible": true,
+    "minimized": false,
+    "destroyed": false,
+    "focused": true
+  },
+  "runsAtEnd": [
+    "done",
+    "done"
+  ]
+}

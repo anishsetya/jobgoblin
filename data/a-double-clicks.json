@@ -1,0 +1,26 @@
+{
+  "huntCardsAfterDoubleClick": 1,
+  "afterDoubleApprove": {
+    "url": "http://127.0.0.1:59214/review/5f645f7b-af7a-4c2b-8829-0ed14f9dd878",
+    "alerts": [
+      "Something went wrong inside Jobgoblin. Try again. If it keeps happening, restart Jobgoblin."
+    ],
+    "serverOutputTail": [
+      "JOBGOBLIN_READY {\"port\":59214,\"url\":\"http://127.0.0.1:59214/#token=<redacted>\"}"
+    ]
+  },
+  "acmeStatus": "Approved",
+  "approvedEvents": 1,
+  "afterDoubleSubmitted": {
+    "status": "Applied",
+    "url": "http://127.0.0.1:59214/apply/5f645f7b-af7a-4c2b-8829-0ed14f9dd878",
+    "alerts": [
+      "This application is \"Applied\", so it can't be marked as submitted. Open it from Pipeline."
+    ]
+  },
+  "afterDoubleRestore": {
+    "url": "http://127.0.0.1:59214/settings",
+    "alerts": [],
+    "dialogOpen": 0
+  }
+}

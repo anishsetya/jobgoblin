@@ -1,0 +1,141 @@
+{
+  "todayTabStops": [
+    {
+      "role": "a",
+      "name": "Skip to the main content",
+      "hasFocusRing": true,
+      "tag": "A",
+      "inViewport": true
+    },
+    {
+      "role": "a",
+      "name": "Today",
+      "hasFocusRing": true,
+      "tag": "A",
+      "inViewport": true
+    },
+    {
+      "role": "a",
+      "name": "Pipeline",
+      "hasFocusRing": true,
+      "tag": "A",
+      "inViewport": true
+    },
+    {
+      "role": "a",
+      "name": "Profile",
+      "hasFocusRing": true,
+      "tag": "A",
+      "inViewport": true
+    },
+    {
+      "role": "a",
+      "name": "Settings",
+      "hasFocusRing": true,
+      "tag": "A",
+      "inViewport": true
+    },
+    {
+      "role": "button",
+      "name": "Find jobs",
+      "hasFocusRing": true,
+      "tag": "BUTTON",
+      "inViewport": true
+    },
+    {
+      "role": "button",
+      "name": "Add a job",
+      "hasFocusRing": true,
+      "tag": "BUTTON",
+      "inViewport": true
+    },
+    {
+      "role": "a",
+      "name": "Review",
+      "hasFocusRing": true,
+      "tag": "A",
+      "inViewport": true
+    }
+  ],
+  "todaySkipLinkFirst": "Skip to the main content",
+  "firstReviewOpened": {
+    "reviewHref": "/review/02fdb900-b13a-4cc7-8d06-65b324ecb8cf",
+    "title": "Backend Engineer"
+  },
+  "reviewInitialFocus": {
+    "role": "main",
+    "name": "2 of 2 waiting for review Backend Engineer Acme Cloud Remote - US Strong match O",
+    "hasFocusRing": true,
+    "tag": "MAIN",
+    "inViewport": true
+  },
+  "reviewTabStopsToApprove": [
+    {
+      "role": "button",
+      "name": "Open posting",
+      "hasFocusRing": true,
+      "tag": "BUTTON",
+      "inViewport": true
+    },
+    {
+      "role": "button",
+      "name": "Approve",
+      "hasFocusRing": true,
+      "tag": "BUTTON",
+      "inViewport": true
+    }
+  ],
+  "approveReachable": true,
+  "interactiveOnReview": 10,
+  "unreachableOnReview": [],
+  "afterApproveUrl": "http://127.0.0.1:53475/review/ec3b489e-a1ef-4b47-acea-5e451fa04aef",
+  "afterApproveFocus": {
+    "role": "main",
+    "name": "1 of 1 waiting for review Platform Engineer Brightpath New York, NY Stretch Open",
+    "hasFocusRing": true,
+    "tag": "MAIN",
+    "inViewport": true
+  },
+  "openApplicationFound": true,
+  "openApplicationStops": 9,
+  "firstCopyButtonStops": 4,
+  "copyConfirmationVisible": false,
+  "submittedButtonFound": true,
+  "submittedButtonStops": 23,
+  "dialogInitialFocus": {
+    "role": "button",
+    "name": "Close",
+    "hasFocusRing": true,
+    "tag": "BUTTON",
+    "inViewport": true
+  },
+  "dialogTabsToField": [
+    {
+      "role": "input",
+      "name": "I saw the confirmation page Paste its web address if you have it.",
+      "hasFocusRing": true,
+      "tag": "INPUT",
+      "inViewport": true
+    },
+    {
+      "role": "textarea",
+      "name": "Web address of the confirmation page",
+      "hasFocusRing": true,
+      "tag": "TEXTAREA",
+      "inViewport": true
+    }
+  ],
+  "fieldValueAfterTyping": "https://example.invalid/a-s-e-j-k",
+  "stillOnApplyAfterTyping": true,
+  "focusEscapedDialog": false,
+  "recordButtonReachable": true,
+  "finalApplied": false,
+  "keyPressesApprox": 91,
+  "focusAfterNavigation": {
+    "role": "main",
+    "name": "Loading...",
+    "hasFocusRing": true,
+    "tag": "MAIN",
+    "inViewport": true
+  }
+}

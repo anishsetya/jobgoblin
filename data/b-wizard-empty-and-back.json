@@ -1,0 +1,75 @@
+{
+  "story": {
+    "text": "Your story This is what Claude found in your resume. Keep what is true, fix what is off, and drop what does not belong. Only what you confirm is ever used in a resume. 0 confirmed, 22 waiting for you. Jobs Job To confirm Software Engineer Northwind Logistics | Austin, TX | Jun 2024 - Present Confirm Edit Drop Achievement To confirm Built a shipment-tracking API in Python and PostgreSQL that serves",
+    "continueEnabled": false,
+    "hint": "This is what Claude found in your resume. Keep what is true, fix what is off, and drop what does not belong. Only what you confirm is ever used in a resume."
+  },
+  "afterStoryContinue": {
+    "heading": "Your story"
+  },
+  "answersEmptySave": {
+    "heading": "Your targets",
+    "alerts": [],
+    "text": "Your targets Tell Jobgoblin what you are looking for, and what to leave out. You can change this any time. What you are looking for Job titles you want One per line, for example Backend Engineer. Where United States India Remote Somewhere else Most years of experience a job may ask for Jobs asking for more than this are left out. A job that asks for one or two more than your experience can still be worth trying. What to leave out or point out Roles to avoid One per line. A job with one of these "
+  },
+  "targetsEmptySave": {
+    "heading": "You are ready",
+    "alerts": [],
+    "text": "You are ready One last click, and Jobgoblin is yours. 0 items in your story are confirmed. 3 answers are still missing. You can add them later in Profile. Next you will see Today. Choose Find jobs there to look for your first roles. Back Finish setup"
+  },
+  "finishText": "You are ready One last click, and Jobgoblin is yours. 0 items in your story are confirmed. 3 answers are still missing. You can add them later in Profile. Next you will see Today. Choose Find jobs there to look for your first roles. Back Finish setup",
+  "todayAfterFindWithNothingConfirmed": {
+    "body": "Today Find jobs Add a job Needs you Ready to review Backend Engineer at Acme Cloud Fit 86. Look over the resume, then approve it. Review Ready to review Platform Engineer at Brightpath Fit 68. Look over the resume, then approve it. Review Long shot Software Engineer, Applied AI at Copperleaf AI A long shot (fit 55). Make a resume if you want to try it. See details Running Reading your resume Finished Dismiss Finding jobs Finished Dismiss Tailoring resumes Finished Dismiss Done today Jobs found 5 Resumes tailored 2 Approved 0 Applied 0",
+    "alerts": []
+  },
+  "pipelineSize": 5,
+  "acmeWithNothingConfirmed": {
+    "status": "Awaiting approval",
+    "confirmedItems": 0,
+    "resumeTextStart": "Alex Rivera Austin, TX | alex.rivera@example.com | +1 555 0100 | github.com/alexrivera-example ",
+    "pages": 1,
+    "canApprove": true,
+    "fit": 86
+  },
+  "reloadAndBack": {
+    "step-2": {
+      "before": "Connect Claude",
+      "afterReload": "Connect Claude",
+      "afterBack": "Welcome to Jobgoblin"
+    },
+    "step-3": {
+      "before": "Choose your folder",
+      "afterReload": "Choose your folder",
+      "afterBack": "Connect Claude"
+    },
+    "step-4": {
+      "before": "Add your resume",
+      "afterReload": "Add your resume",
+      "afterBack": "Choose your folder"
+    },
+    "step-5-after-1.5s": {
+      "url": "/setup/5",
+      "heading": "Your story"
+    },
+    "step-5": {
+      "before": "Your story",
+      "afterReload": "Your story",
+      "afterBack": "Your story"
+    },
+    "step-6": {
+      "before": "Form answers",
+      "afterReload": "Form answers",
+      "afterBack": "Your story"
+    },
+    "step-7": {
+      "before": "Your targets",
+      "afterReload": "Your targets",
+      "afterBack": "Form answers"
+    },
+    "step-8": {
+      "before": "You are ready",
+      "afterReload": "You are ready",
+      "afterBack": "Your targets"
+    }
+  }
+}

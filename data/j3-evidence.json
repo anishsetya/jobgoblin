@@ -1,0 +1,177 @@
+{
+  "skipImmediateScreenMentionsUndo": false,
+  "skipImmediateUrl": "http://127.0.0.1:59533/review/adb8cdf7-416e-4d01-9afe-7d06f6377848",
+  "todayMentionsSkipped": false,
+  "brightpathStillOnToday": false,
+  "pipelineShowsSkipped": true,
+  "skippedPageActions": {
+    "buttons": [
+      "Open posting",
+      "Undo skip",
+      "Download PDF",
+      "Ask"
+    ],
+    "links": [],
+    "statusOptions": [],
+    "text": "Platform Engineer Brightpath New York, NY Skipped Stretch Open posting Undo skip Fit 68/ 100 Stretch Good match on go, python, kubernetes, though Your story does not show a few requirements. From your story Ledgerline, open-source double-entry ledger in Go Built a shipment-tracking API in Python and PostgreSQL that serves 2M requests a day Led the migration of 12 services from VMs to Kubernetes on AWS with zero downtime Contributed to the on-call rotation and wrote 15 runbooks for incident response Built an open-source double-entry ledger library in Go with 300 GitHub stars Job description Brightpath helps families plan and pay for college. Our product is used by more than two million studen"
+  },
+  "undoSkipWorked": true,
+  "versionControls": [
+    "Download PDF",
+    "Download PDF"
+  ],
+  "versionsText": "Resume versions r-1ade8a64 Draft Nov 6, 2026, 7:42 PM Download PDF r-e03ad851 Draft Current Nov 6, 2026, 7:42 PM Download PDF",
+  "canGoBackToOlderVersion": false,
+  "afterAccidentalApprove": {
+    "buttons": [
+      "Open posting",
+      "Withdraw",
+      "Download PDF",
+      "Copy",
+      "Ask"
+    ],
+    "links": [
+      "Open application"
+    ],
+    "statusOptions": [],
+    "text": "Platform Engineer Brightpath New York, NY Approved Stretch Open posting Open application Withdraw Fit 68/ 100 Stretch Good match on go, python, kubernetes, though Your story does not show a few requirements. From your story Ledgerline, open-source double-entry ledger in Go Built a shipment-tracking API in Python and PostgreSQL that serves 2M requests a day Led the migration of 12 services from VMs to Kubernetes on AWS with zero downtime Contributed to the on-call rotation and wrote 15 runbooks for incident response Built an open-source double-entry ledger library in Go with 300 GitHub stars Job description Brightpath helps families plan and pay for college. Our product is used by more than t"
+  },
+  "submittedDialogText": "Record that you applied An application counts as sent once you give proof that the company received it. How do you know it was sent? I saw the confirmation page Paste its web address if you have it. I will paste the confirmation text Copy the message the site showed you. I took a screenshot Say where you saved it. I got a confirmation email Paste the subject line. I saw the confirmation, and have nothing to paste Choose this if the page did not give you anything to copy. Web address of the confirmation page The resume file you attached (optional) Pick the file you uploaded to the form. Jobgoblin checks that it is the one you approved. The file stays on your computer. Cancel Record as applied",
+  "afterWrongSubmitted": {
+    "buttons": [
+      "Open posting",
+      "Withdraw",
+      "Download PDF",
+      "Copy",
+      "Change status",
+      "Ask"
+    ],
+    "links": [],
+    "statusOptions": [
+      "Online assessment",
+      "Phone screen",
+      "Interview round",
+      "Rejected",
+      "No reply"
+    ],
+    "text": "Platform Engineer Brightpath New York, NY Applied Stretch Follow up on Nov 13, 2026 Open posting Withdraw Fit 68/ 100 Stretch Good match on go, python, kubernetes, though Your story does not show a few requirements. From your story Ledgerline, open-source double-entry ledger in Go Built a shipment-tracking API in Python and PostgreSQL that serves 2M requests a day Led the migration of 12 services from VMs to Kubernetes on AWS with zero downtime Contributed to the on-call rotation and wrote 15 runbooks for incident response Built an open-source double-entry ledger library in Go with 300 GitHub stars Job description Brightpath helps families plan and pay for college. Our product is used by mor"
+  },
+  "afterWithdraw": {
+    "buttons": [
+      "Open posting",
+      "Download PDF",
+      "Copy",
+      "Ask"
+    ],
+    "links": [],
+    "statusOptions": [],
+    "text": "Platform Engineer Brightpath New York, NY Withdrawn Stretch Follow up on Nov 13, 2026 Open posting Fit 68/ 100 Stretch Good match on go, python, kubernetes, though Your story does not show a few requirements. From your story Ledgerline, open-source double-entry ledger in Go Built a shipment-tracking API in Python and PostgreSQL that serves 2M requests a day Led the migration of 12 services from VMs to Kubernetes on AWS with zero downtime Contributed to the on-call rotation and wrote 15 runbooks for incident response Built an open-source double-entry ledger library in Go with 300 GitHub stars Job description Brightpath helps families plan and pay for college. Our product is used by more than "
+  },
+  "pipelineAfterWithdraw": [
+    {
+      "id": "0ca469a3-9e7d-433b-a497-1f8572b7a9f5",
+      "jobId": "lever:brightpath:7c1d0e02-3f4a-4b5c-8d6e-0000000b0002",
+      "company": "Brightpath",
+      "title": "Platform Engineer",
+      "status": "Withdrawn",
+      "fitScore": 68,
+      "band": "stretch",
+      "resumeVersion": "r-a6f3056dec7345077295c9e1805eff5d1ad41eeec1ed3fbf699411d7001c094a",
+      "submitMode": "manual",
+      "folder": "Applications/2026-11-06 Brightpath - Platform Engineer",
+      "appliedAt": "2026-11-06T14:12:24.102Z",
+      "followUpOn": "2026-11-13",
+      "tailorAttempts": 0,
+      "tailorError": null,
+      "createdAt": "2026-11-06T14:12:12.122Z",
+      "updatedAt": "2026-11-06T14:12:25.218Z",
+      "overdue": false,
+      "location": "New York, NY",
+      "region": "US"
+    },
+    {
+      "id": "adb8cdf7-416e-4d01-9afe-7d06f6377848",
+      "jobId": "greenhouse:acmecloud:4012345",
+      "company": "Acme Cloud",
+      "title": "Backend Engineer",
+      "status": "Awaiting approval",
+      "fitScore": 86,
+      "band": "apply",
+      "resumeVersion": "r-e03ad85128d973613e570f77be43b30661454d7afe9b66c8acef86f50fefa3a5",
+      "submitMode": "manual",
+      "folder": null,
+      "appliedAt": null,
+      "followUpOn": null,
+      "tailorAttempts": 0,
+      "tailorError": null,
+      "createdAt": "2026-11-06T14:12:12.101Z",
+      "updatedAt": "2026-11-06T14:12:17.775Z",
+      "overdue": false,
+      "location": "Remote - US",
+      "region": "US"
+    },
+    {
+      "id": "44053005-e855-45ea-8483-d239083ec492",
+      "jobId": "greenhouse:acmecloud:4012399",
+      "company": "Acme Cloud",
+      "title": "QA Automation Engineer",
+      "status": "Long shot",
+      "fitScore": 50,
+      "band": "long-shot",
+      "resumeVersion": null,
+      "submitMode": "manual",
+      "folder": null,
+      "appliedAt": null,
+      "followUpOn": null,
+      "tailorAttempts": 0,
+      "tailorError": null,
+      "createdAt": "2026-11-06T14:12:12.111Z",
+      "updatedAt": "2026-11-06T14:12:12.112Z",
+      "overdue": false,
+      "location": "Remote - US",
+      "region": "US"
+    },
+    {
+      "id": "31afaaf7-d5b7-49b4-adbf-59b1b0e8f32d",
+      "jobId": "ashby:copperleaf:9a8b7c03-1d2e-4f3a-8b4c-0000000c0004",
+      "company": "Copperleaf AI",
+      "title": "Data Analyst",
+      "status": "Skipped (low fit)",
+      "fitScore": 20,
+      "band": "skip",
+      "resumeVersion": null,
+      "submitMode": "manual",
+      "folder": null,
+      "appliedAt": null,
+      "followUpOn": null,
+      "tailorAttempts": 0,
+      "tailorError": null,
+      "createdAt": "2026-11-06T14:12:12.090Z",
+      "updatedAt": "2026-11-06T14:12:12.091Z",
+      "overdue": false,
+      "location": "San Francisco, CA",
+      "region": "US"
+    },
+    {
+      "id": "be5017b6-5a77-4599-ac55-8bd835f78993",
+      "jobId": "ashby:copperleaf:9a8b7c03-1d2e-4f3a-8b4c-0000000c0003",
+      "company": "Copperleaf AI",
+      "title": "Software Engineer, Applied AI",
+      "status": "Long shot",
+      "fitScore": 55,
+      "band": "long-shot",
+      "resumeVersion": null,
+      "submitMode": "manual",
+      "folder": null,
+      "appliedAt": null,
+      "followUpOn": null,
+      "tailorAttempts": 0,
+      "tailorError": null,
+      "createdAt": "2026-11-06T14:12:12.077Z",
+      "updatedAt": "2026-11-06T14:12:12.081Z",
+      "overdue": false,
+      "location": "San Francisco, CA",
+      "region": "US"
+    }
+  ]
+}

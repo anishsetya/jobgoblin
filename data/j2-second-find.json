@@ -1,0 +1,10 @@
+{
+  "pipelineBefore": 4,
+  "pipelineAfter": 4,
+  "todayText": "Today\nFind jobs\nAdd a job\nNeeds you\nReady to review\nPlatform Engineer at Brightpath\n\nFit 68. Look over the resume, then approve it.\n\nReview\nFollow up\nBackend Engineer at Acme Cloud\n\nYou planned to follow up on 2026-11-04.\n\nUpdate status\nLong shot\nSoftware Engineer, Applied AI at Copperleaf AI\n\nA long shot (fit 55). Make a resume if you want to try it.\n\nSee details\nRunning\nFinding jobs\n\nFinished\n\nDismiss\nTailoring resumes\n\nFinished\n\nDismiss\nWriting answers\n\nFinished\n\nDismiss\nFinding jobs\n\nFinished\n\nDismiss\nDone today\nJobs found\n4\nResumes tailored\n2\nApproved\n1\nApplied\n1",
+  "runCardTexts": [
+    "Finding jobs Finished Dismiss",
+    "Tailoring resumes Finished Dismiss",
+    "Writing answers Finished Dismiss"
+  ]
+}

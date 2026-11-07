@@ -1,0 +1,67 @@
+{
+  "Retry (word)": [],
+  "Try again": [
+    "Today failure crash",
+    "Today failure usage limit",
+    "Today failure signed out",
+    "Today failure claude not installed"
+  ],
+  "OA (abbreviation)": [],
+  "Online assessment": [
+    "Pipeline empty",
+    "Application applied",
+    "Dialog withdraw",
+    "Pipeline board",
+    "Pipeline list",
+    "Pipeline no results"
+  ],
+  "Onsite": [],
+  "Interview round": [
+    "Pipeline empty",
+    "Application applied",
+    "Dialog withdraw",
+    "Pipeline board",
+    "Pipeline list",
+    "Pipeline no results"
+  ],
+  "Interview (alone)": [],
+  "No reply": [
+    "Pipeline empty",
+    "Application applied",
+    "Dialog withdraw",
+    "Pipeline board",
+    "Pipeline list",
+    "Pipeline no results"
+  ],
+  "Ghosted": [],
+  "Making resumes": [],
+  "Tailoring resumes": [
+    "Today tailoring running",
+    "Today needs you",
+    "Dialog add a job (link)",
+    "Dialog add a job (text)",
+    "Today ready to send",
+    "Today failure crash"
+  ],
+  "Needs attention": [
+    "Today failure crash",
+    "Today failure usage limit",
+    "Today failure signed out",
+    "Today failure claude not installed"
+  ],
+  "Needs your input": [
+    "Pipeline empty",
+    "Pipeline board",
+    "Pipeline list",
+    "Pipeline no results"
+  ],
+  "Open application (title)": [
+    "Today ready to send",
+    "Open application",
+    "Dialog record that you applied",
+    "Settings",
+    "Dialog restore this backup",
+    "Settings claude signed out",
+    "Settings claude not installed"
+  ]
+}

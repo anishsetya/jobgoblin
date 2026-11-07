@@ -1,0 +1,32 @@
+{
+  "todayAfterIndiaOnly": "Today Find jobs Add a job Needs you Nothing needs you right now. Running Reading your resume Finished Dismiss Finding jobs Finished Dismiss Done today Jobs found 0 Resumes tailored 0 Approved 0 Applied 0",
+  "pipelineAfterIndiaOnly": 0,
+  "todayAfterSwitchToUs": "Today Find jobs Add a job Needs you Nothing needs you right now. Running Reading your resume Finished Dismiss Finding jobs Finished Dismiss Finding jobs Finished Dismiss Done today Jobs found 0 Resumes tailored 0 Approved 0 Applied 0",
+  "pipelineAfterSwitchToUs": 0,
+  "approvedPdfShaOnApproval": "b5b7ad988689a90c3eccdbdeb68d108fa4a64df9a3e6ef4d09c1e1217f66445a",
+  "approvedPdfFileShaOnApproval": "b5b7ad988689a90c3eccdbdeb68d108fa4a64df9a3e6ef4d09c1e1217f66445a",
+  "brightpathVersionBefore": "r-18fc4806",
+  "brightpathReviewHasBannedWord": true,
+  "brightpathReviewWarnsBanned": false,
+  "approveEnabledWithBannedWord": true,
+  "approveAnswerBanned": "1 of 1 waiting for review Platform Engineer Brightpath New York, NY Stretch Open posting Approve Request edit Skip Keys: A approve, E request an edit, S skip, J next, K previous. The resume file contains \"Kubernetes\", which is on your banned words list. Reword the line that uses it. Ask for an edit that rewords it. Fit 68/ 100 Stretch Good match on go, python, kubernetes, though Your story does no",
+  "brightpathStatusAfterApproveWithBannedWord": "Awaiting approval",
+  "droppedItemStatus": "rejected",
+  "acmeAfterDrop": {
+    "status": "Approved",
+    "voided": null,
+    "sha": "b5b7ad988689a90c3eccdbdeb68d108fa4a64df9a3e6ef4d09c1e1217f66445a"
+  },
+  "brightpathReviewStillHasDroppedItem": true,
+  "brightpathReviewWarns": false,
+  "brightpathStatusAfterApproveWithDroppedItem": "Approved",
+  "brightpathApprovedResumeHasDroppedItem": true,
+  "approveAnswerDropped": "Today Find jobs Add a job Needs you Ready to send Backend Engineer at Acme Cloud Approved. Apply on the company's site, then say that you submitted it. Open application Ready to send Platform Engineer at Brightpath Approved. Apply on the company's site, then say that you submitted it. Open applicati",
+  "acmeAfterPhone": {
+    "status": "Approved",
+    "voided": "2026-11-06T14:12:49.373Z",
+    "sha": "b5b7ad988689a90c3eccdbdeb68d108fa4a64df9a3e6ef4d09c1e1217f66445a"
+  },
+  "approvedPdfFileShaAfterAllChanges": "b5b7ad988689a90c3eccdbdeb68d108fa4a64df9a3e6ef4d09c1e1217f66445a",
+  "todayAfterPhone": "Today Find jobs Add a job Needs you Ready to review Backend Engineer at Acme Cloud Your details changed since you approved this. Review it again. Review Ready to review Platform Engineer at Brightpath Your details changed since you approved this. Review it again. Review Long shot Software Engineer, Applied AI at Copperleaf AI A long shot (fit 55). Make a resume if you want to try it. See details Running Finding jobs Finished Dismiss Tailoring resumes Finished Dismiss Writing answers Finished Dismiss Writing answers Finished Dismiss Done today Jobs found 4 Resumes tailored 2 Approved 2 Applied 0"
+}

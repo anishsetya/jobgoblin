@@ -1,0 +1,12 @@
+{
+  "connectStepText": "Connect Claude Jobgoblin does its thinking with your own Claude plan, so there is no extra subscription. Connected Version 2.1.99 Plan: pro Claude is ready. Jobgoblin will use your Claude plan for the thinking. Check again Back Continue",
+  "folderChooserCalls": 1,
+  "clipboardAfterCopy": "alex.rivera@example.com",
+  "openResumeButtonCount": 1,
+  "openedPaths": [
+    "<home>\\AppData\\Local\\Temp\\jobgoblin-audit2-desktop-person-35qQA8\\Applications\\2026-11-06 Acme Cloud - Backend Engineer\\Alex Rivera - Resume.pdf"
+  ],
+  "personFolder": "<home>\\AppData\\Local\\Temp\\jobgoblin-audit2-desktop-person-35qQA8",
+  "quitExitCode": 0,
+  "serverJsonGoneAfterQuit": true
+}

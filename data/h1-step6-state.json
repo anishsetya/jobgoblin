@@ -1,0 +1,28 @@
+{
+  "summary": "3 answers are still needed: Where you want to work, Notice period, Earliest start date.",
+  "marked": 9,
+  "groups": [
+    "United States",
+    "India"
+  ],
+  "payLabel": [
+    "Expected yearly pay"
+  ],
+  "apiMissing": [
+    {
+      "section": "targets",
+      "key": "regions",
+      "label": "Where you want to work"
+    },
+    {
+      "section": "employment",
+      "key": "noticePeriod",
+      "label": "Notice period"
+    },
+    {
+      "section": "employment",
+      "key": "earliestStartDate",
+      "label": "Earliest start date"
+    }
+  ]
+}

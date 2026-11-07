@@ -1,0 +1,44 @@
+{
+  "statusBeforeAnyClick": {
+    "state": "not-installed",
+    "version": null,
+    "minimumVersion": "2.1.0",
+    "installCommand": "<home>\\scoop\\apps\\nodejs-lts\\current\\node.exe <home>\\AppData\\Local\\Temp\\jobgoblin-audit2-install-fail-o07GzJ\\install-fail.mjs",
+    "signInCommand": "claude auth login",
+    "plan": null
+  },
+  "todayAfterFindJobs": {
+    "cards": [
+      {
+        "title": "Finding jobs",
+        "status": "Claude Code is not installed",
+        "buttons": [
+          "Try again: Finding jobs",
+          "Dismiss: Finding jobs"
+        ]
+      }
+    ],
+    "needsYou": [
+      "Needs attention Finding jobs Claude Code is not installed Check settings"
+    ],
+    "alerts": []
+  },
+  "attentionAction": {
+    "text": "Check settings",
+    "href": "/settings"
+  },
+  "attentionLandedOn": "http://127.0.0.1:52008/settings",
+  "settingsText": "Claude connection Jobgoblin uses your own Claude plan for the thinking. Not installed Jobgoblin needs Claude Code on this computer. One button installs it for you. Install Claude Code Check again See exactly what this does",
+  "afterFailedInstall": {
+    "text": "Claude connection Jobgoblin uses your own Claude plan for the thinking. Not installed Jobgoblin needs Claude Code on this computer. One button installs it for you. Install Claude Code Check again See exactly what this does",
+    "alerts": [],
+    "stubCalls": [
+      "2026-11-06T15:32:27.314Z install stub 'fail' was run"
+    ],
+    "stateNow": "not-installed"
+  },
+  "wizardConnect": {
+    "text": "Connect Claude Jobgoblin does its thinking with your own Claude plan, so there is no extra subscription. Not installed Jobgoblin needs Claude Code on this computer. One button installs it for you. Install Claude Code Check again See exactly what this does Back Continue",
+    "continueEnabled": false
+  }
+}

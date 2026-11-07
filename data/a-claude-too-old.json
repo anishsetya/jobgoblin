@@ -1,0 +1,22 @@
+{
+  "settingsText": "Claude connection Jobgoblin uses your own Claude plan for the thinking. Needs an update Version 1.0.0 Your copy of Claude Code is too old for Jobgoblin. One button updates it. Update Claude Code Check again See exactly what this does",
+  "todayAfterFindJobs": {
+    "cards": [
+      {
+        "title": "Finding jobs",
+        "status": "Claude Code needs an update",
+        "buttons": [
+          "Try again: Finding jobs",
+          "Dismiss: Finding jobs"
+        ]
+      }
+    ],
+    "needsYou": [
+      "Needs attention Finding jobs Claude Code needs an update Check settings"
+    ]
+  },
+  "afterFailedUpdate": {
+    "text": "Claude connection Jobgoblin uses your own Claude plan for the thinking. Needs an update Version 1.0.0 Your copy of Claude Code is too old for Jobgoblin. One button updates it. Update Claude Code Check again See exactly what this does",
+    "alerts": []
+  }
+}

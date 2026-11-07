@@ -1,0 +1,139 @@
+{
+  "1-greenhouse": {
+    "todayText": "Today Find jobs Add a job Added. Jobgoblin is scoring it now. Needs you Ready to review Backend Engineer at Gridline Energy Fit 78. Look over the resume, then approve it. Review Running Reading your resume Finished Dismiss Reading a job you added Finished Dismiss Tailoring resumes Finished Dismiss Done today Jobs found 1 Resumes tailored 1 Approved 0 Applied 0",
+    "url": "https://boards.greenhouse.io/gridline/jobs/4100",
+    "dialogStayedOpen": false,
+    "dialogText": "",
+    "statusText": "Added. Jobgoblin is scoring it now. | Finished | Finished | Finished",
+    "alertText": "",
+    "rowsBefore": 0,
+    "rowsAfter": 1,
+    "newRows": [
+      "Backend Engineer at Gridline Energy: Awaiting approval"
+    ]
+  },
+  "2-lever": {
+    "todayText": "Today Find jobs Add a job Added. Jobgoblin is scoring it now. Needs you Ready to review Backend Engineer at Gridline Energy Fit 78. Look over the resume, then approve it. Review Running Reading your resume Finished Dismiss Reading a job you added Finished Dismiss Tailoring resumes Finished Dismiss Reading a job you added Finished Dismiss Done today Jobs found 2 Resumes tailored 1 Approved 0 Applied 0",
+    "url": "https://jobs.lever.co/brightpath/7c1d0e02-3f4a-4b5c-8d6e-0000000b0006",
+    "dialogStayedOpen": false,
+    "dialogText": "",
+    "statusText": "Added. Jobgoblin is scoring it now. | Finished | Finished | Finished | Finished",
+    "alertText": "",
+    "rowsBefore": 1,
+    "rowsAfter": 2,
+    "newRows": [
+      "Senior Staff Engineer (8+ years) at Brightpath: Skipped (low fit)"
+    ]
+  },
+  "3-ashby": {
+    "todayText": "Today Find jobs Add a job Added. Jobgoblin is scoring it now. Needs you Ready to review Backend Engineer at Gridline Energy Fit 78. Look over the resume, then approve it. Review Ready to review Software Engineer, Applied AI at Copperleaf Fit 70. Look over the resume, then approve it. Review Running Reading your resume Finished Dismiss Reading a job you added Finished Dismiss Tailoring resumes Finished Dismiss Reading a job you added Finished Dismiss Reading a job you added Finished Dismiss Tailoring resumes Finished Dismiss Done today Jobs found 3 Resumes tailored 2 Approved 0 Applied 0",
+    "url": "https://jobs.ashbyhq.com/copperleaf/9a8b7c03-1d2e-4f3a-8b4c-0000000c0003",
+    "dialogStayedOpen": false,
+    "dialogText": "",
+    "statusText": "Added. Jobgoblin is scoring it now. | Finished | Finished | Finished | Finished | Finished | Finished",
+    "alertText": "",
+    "rowsBefore": 2,
+    "rowsAfter": 3,
+    "newRows": []
+  },
+  "4-linkedin": {
+    "todayText": "Today Find jobs Add a job Needs you Ready to review Backend Engineer at Gridline Energy Fit 78. Look over the resume, then approve it. Review Ready to review Software Engineer, Applied AI at Copperleaf Fit 70. Look over the resume, then approve it. Review Running Reading your resume Finished Dismiss Reading a job you added Finished Dismiss Tailoring resumes Finished Dismiss Reading a job you added Finished Dismiss Reading a job you added Finished Dismiss Tailoring resumes Finished Dismiss Done today Jobs found 3 Resumes tailored 2 Approved 0 Applied 0",
+    "url": "https://www.linkedin.com/jobs/view/3912345678",
+    "dialogStayedOpen": true,
+    "dialogText": "Add a job Paste a link to a job. If the site needs you to sign in, paste the job's text instead. That site needs you to sign in, so Jobgoblin can't read the page. Paste the job text here instead. Link to the job Company Job title Place (optional) You can leave this empty. Job description Cancel Add job",
+    "statusText": "That site needs you to sign in, so Jobgoblin can't read the page. Paste the job text here instead.",
+    "alertText": "",
+    "rowsBefore": 3,
+    "rowsAfter": 3,
+    "newRows": [
+      "Software Engineer, Applied AI at Copperleaf: Awaiting approval",
+      "Senior Staff Engineer (8+ years) at Brightpath: Skipped (low fit)",
+      "Backend Engineer at Gridline Energy: Awaiting approval"
+    ]
+  },
+  "5-bad-url": {
+    "todayText": "Today Find jobs Add a job Needs you Ready to review Backend Engineer at Gridline Energy Fit 78. Look over the resume, then approve it. Review Ready to review Software Engineer, Applied AI at Copperleaf Fit 70. Look over the resume, then approve it. Review Running Reading your resume Finished Dismiss Reading a job you added Finished Dismiss Tailoring resumes Finished Dismiss Reading a job you added Finished Dismiss Reading a job you added Finished Dismiss Tailoring resumes Finished Dismiss Done today Jobs found 3 Resumes tailored 2 Approved 0 Applied 0",
+    "url": "this is not a link",
+    "dialogStayedOpen": true,
+    "dialogText": "Add a job Paste a link to a job. If the site needs you to sign in, paste the job's text instead. Link to the job Paste the job text instead Cancel Add job",
+    "statusText": "",
+    "alertText": "",
+    "rowsBefore": 3,
+    "rowsAfter": 3,
+    "newRows": [
+      "Software Engineer, Applied AI at Copperleaf: Awaiting approval",
+      "Senior Staff Engineer (8+ years) at Brightpath: Skipped (low fit)",
+      "Backend Engineer at Gridline Energy: Awaiting approval"
+    ]
+  },
+  "5b-unknown-site": {
+    "todayText": "Today Find jobs Add a job Needs you Ready to review Backend Engineer at Gridline Energy Fit 78. Look over the resume, then approve it. Review Ready to review Software Engineer, Applied AI at Copperleaf Fit 70. Look over the resume, then approve it. Review Running Reading your resume Finished Dismiss Reading a job you added Finished Dismiss Tailoring resumes Finished Dismiss Reading a job you added Finished Dismiss Reading a job you added Finished Dismiss Tailoring resumes Finished Dismiss Done today Jobs found 3 Resumes tailored 2 Approved 0 Applied 0",
+    "url": "https://example.invalid/jobs/1",
+    "dialogStayedOpen": true,
+    "dialogText": "Add a job Paste a link to a job. If the site needs you to sign in, paste the job's text instead. Jobgoblin couldn't read that link. Paste the job text here instead. Link to the job Company Job title Place (optional) You can leave this empty. Job description Cancel Add job",
+    "statusText": "Jobgoblin couldn't read that link. Paste the job text here instead.",
+    "alertText": "",
+    "rowsBefore": 3,
+    "rowsAfter": 3,
+    "newRows": [
+      "Software Engineer, Applied AI at Copperleaf: Awaiting approval",
+      "Senior Staff Engineer (8+ years) at Brightpath: Skipped (low fit)",
+      "Backend Engineer at Gridline Energy: Awaiting approval"
+    ]
+  },
+  "6-same-job-twice": {
+    "todayText": "Today Find jobs Add a job You already have this job (Awaiting approval). Open it from Pipeline. Needs you Ready to review Backend Engineer at Gridline Energy Fit 78. Look over the resume, then approve it. Review Ready to review Software Engineer, Applied AI at Copperleaf Fit 70. Look over the resume, then approve it. Review Running Reading your resume Finished Dismiss Reading a job you added Finished Dismiss Tailoring resumes Finished Dismiss Reading a job you added Finished Dismiss Reading a job you added Finished Dismiss Tailoring resumes Finished Dismiss Done today Jobs found 3 Resumes tailored 2 Approved 0 Applied 0",
+    "url": "https://boards.greenhouse.io/gridline/jobs/4100",
+    "dialogStayedOpen": false,
+    "dialogText": "",
+    "statusText": "You already have this job (Awaiting approval). Open it from Pipeline. | Finished | Finished | Finished | Finished | Finished | Finished",
+    "alertText": "",
+    "rowsBefore": 3,
+    "rowsAfter": 3,
+    "newRows": [
+      "Backend Engineer at Gridline Energy: Awaiting approval"
+    ]
+  },
+  "6-gridline-rows": 1,
+  "7-text-only-no-company": {
+    "dialogText": "Add a job Paste a link to a job. If the site needs you to sign in, paste the job's text instead. Link to the job Company Add the company name. Job title Add the job title. Place (optional) You can leave this empty. Job description Cancel Add job",
+    "alerts": [],
+    "invalidFields": 2
+  },
+  "8-long-text": {
+    "chars": 600000,
+    "dialogStayedOpen": false,
+    "dialogText": "",
+    "rowsBefore": 3,
+    "rowsAfter": 4,
+    "row": "Awaiting approval",
+    "seconds": 3.419
+  },
+  "9-markup-row": "Backend <script>window.__pwned=1</script> Engineer at Evil <b>Corp</b>: Long shot",
+  "9-markup-results": {
+    "/today": {
+      "rawTagsInDom": false,
+      "visibleText": true,
+      "pwned": 0,
+      "injectedImg": 0
+    },
+    "/pipeline": {
+      "rawTagsInDom": false,
+      "visibleText": true,
+      "pwned": 0,
+      "injectedImg": 0
+    },
+    "/apps/a4e5f637-dd3e-4301-b6e2-881fa9cc043b": {
+      "rawTagsInDom": false,
+      "visibleText": true,
+      "pwned": 0,
+      "injectedImg": 0
+    },
+    "/review/a4e5f637-dd3e-4301-b6e2-881fa9cc043b": {
+      "rawTagsInDom": false,
+      "visibleText": true,
+      "pwned": 0,
+      "injectedImg": 0
+    }
+  }
+}

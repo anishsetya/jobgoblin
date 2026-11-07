@@ -1,0 +1,92 @@
+{
+  "csvContentType": "text/csv; charset=utf-8",
+  "csvHeader": "Company,Role,Status,Fit,Band,Resume version,Applied on,Follow up on,Posting,Folder,Updated",
+  "csvRows": 4,
+  "xlsxContentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "xlsxSize": 8145,
+  "sheets": [
+    {
+      "name": "Applications",
+      "header": [
+        "Company",
+        "Role",
+        "Status",
+        "Fit",
+        "Band",
+        "Resume version",
+        "Applied on",
+        "Follow up on",
+        "Posting",
+        "Folder",
+        "Updated"
+      ],
+      "rowCount": 4,
+      "firstRows": [
+        [
+          "Acme Cloud",
+          "Backend Engineer",
+          "Applied",
+          "86",
+          "apply",
+          "r-cec9e138",
+          "2026-11-06",
+          "2026-11-13",
+          "https://boards.greenhouse.io/acmecloud/jobs/4012345",
+          "Applications/2026-11-06 Acme Cloud - Backend Engineer",
+          "2026-11-06 21:04"
+        ],
+        [
+          "Brightpath",
+          "Platform Engineer",
+          "Awaiting approval",
+          "68",
+          "stretch",
+          "r-df23fc69",
+          "",
+          "",
+          "https://jobs.lever.co/brightpath/7c1d0e02-3f4a-4b5c-8d6e-0000000b0002",
+          "",
+          "2026-11-06 21:04"
+        ],
+        [
+          "Copperleaf AI",
+          "Data Analyst",
+          "Skipped (low fit)",
+          "20",
+          "skip",
+          "",
+          "",
+          "",
+          "https://jobs.ashbyhq.com/copperleaf/9a8b7c03-1d2e-4f3a-8b4c-0000000c0004",
+          "",
+          "2026-11-06 21:04"
+        ]
+      ]
+    },
+    {
+      "name": "Read me",
+      "header": [
+        "This tracker is written by Jobgoblin. Make your changes in Jobgoblin, not here."
+      ],
+      "rowCount": 4,
+      "firstRows": [
+        [
+          "Changes you type into this spreadsheet are not read back, and the next update replaces them."
+        ],
+        [
+          "Tracker.csv, next to this file, has the same rows for Google Sheets or any other tool."
+        ],
+        [
+          "Dates and times are in your local time."
+        ]
+      ]
+    }
+  ],
+  "pipelineRows": 4,
+  "pipelineStatuses": [
+    "Acme Cloud/Applied",
+    "Brightpath/Awaiting approval",
+    "Copperleaf AI/Skipped (low fit)",
+    "Copperleaf AI/Long shot"
+  ]
+}
