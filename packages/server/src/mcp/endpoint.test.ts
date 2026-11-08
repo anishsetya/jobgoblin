@@ -131,7 +131,7 @@ describe("who may call /mcp", () => {
 describe("get_profile", () => {
   it("never returns contact details, pay or EEO answers", async () => {
     const { ctx, call } = createTestApp();
-    saveProfileSection(ctx.db, "compensation", { expectedBase: "$123,456" }, ctx.now().toISOString());
+    saveProfileSection(ctx.db, "compensation", { expectedBase: "$123,456", byRegion: {} }, ctx.now().toISOString());
     const run = aGoingRun(ctx, "hunt");
 
     const reply = await callTool(call, run.token, "get_profile");

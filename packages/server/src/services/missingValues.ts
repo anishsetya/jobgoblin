@@ -64,7 +64,8 @@ function missingPay(profile: Profile): MissingValue[] {
   if (!isStillToDo(expectedBase)) return [];
 
   return regionsOf(profile)
-    .filter((region) => isStillToDo(byRegion[region]))
+    // A region with no entry at all is as unanswered as one still marked TODO.
+    .filter((region) => byRegion[region] === undefined || isStillToDo(byRegion[region]))
     .map((region) => ({
       section: "compensation",
       key: `byRegion.${region}`,

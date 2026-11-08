@@ -46,7 +46,7 @@ describe("updateProfileSection", () => {
     const events: string[] = [];
     ctx.bus.subscribe((event) => events.push(event.type));
 
-    const response = updateProfileSection(ctx, "compensation", { expectedBase: "$120,000" });
+    const response = updateProfileSection(ctx, "compensation", { expectedBase: "$120,000", byRegion: {} });
 
     expect(response.profile.compensation.expectedBase).toBe("$120,000");
     expect(response.missing).toEqual([]);
