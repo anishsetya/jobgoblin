@@ -5,7 +5,7 @@
 // it proposes the 22 items of Alex Rivera's story from her resume, as pending.
 import { expect, test } from "../support/fixtures";
 import { snap } from "../support/screenshots";
-import { RESUME_PDF } from "../support/seed";
+import { PASSWORD_PROTECTED_PDF, RESUME_PDF, brokenResume } from "../support/seed";
 
 const PROPOSED_ITEMS = 22;
 
@@ -151,6 +151,68 @@ test.describe("As a first-time user, I set Jobgoblin up", () => {
       await expect(resume).toContainText("Backend engineer who builds reliable, well-tested APIs"); // my edit
       await expect(resume).toContainText("Python, TypeScript, Go, PostgreSQL, Redis, Docker, Kubernetes, AWS, Terraform");
       await expect(resume).not.toContainText("React"); // the item I dropped
+    });
+  });
+
+  test("on the resume step, a file that cannot be read is explained next to it, and choosing another file clears it", async ({ page, startServer }) => {
+    const server = await startServer({ seed: "none" });
+    await server.api("/api/settings/folder", { body: { path: server.personFolder } });
+    await server.api("/api/settings", { method: "PUT", body: { usageNoticeSeen: true } });
+    await page.goto(`${server.origin}/setup/4#token=${server.token}`);
+    const resumeInput = page.getByLabel("Your resume", { exact: true });
+    const readButton = page.getByRole("button", { name: "Read my resume" });
+    const problem = page.getByRole("alert");
+
+    await test.step("with no file yet, Read my resume and Continue are off, and Continue says why", async () => {
+      await expect(page.getByRole("heading", { level: 1, name: "Add your resume" })).toBeVisible();
+      await expect(readButton).toBeDisabled();
+      await expect(page.getByRole("button", { name: "Continue" })).toBeDisabled();
+      await expect(page.getByText("Add your resume and read it to continue.")).toBeVisible();
+    });
+
+    await test.step("a chosen file shows its name with Change and Remove, and Read my resume turns on", async () => {
+      await resumeInput.setInputFiles(brokenResume("truncated.pdf"));
+      await expect(page.getByText("truncated.pdf")).toBeVisible();
+      await expect(page.getByRole("button", { name: "Change truncated.pdf" })).toBeVisible();
+      await expect(readButton).toBeEnabled();
+      await expect(page.getByText("Choose Read my resume to continue.")).toBeVisible();
+    });
+
+    await test.step("a damaged file is called damaged, with what to do about it", async () => {
+      await readButton.click();
+      await expect(problem).toContainText("This file looks damaged or incomplete.");
+      await expect(problem).toContainText("Export your resume again as a PDF and choose the new file.");
+      await snap(page, "04b-setup-4-resume-damaged");
+    });
+
+    await test.step("Remove puts the empty box back and clears the message", async () => {
+      await page.getByRole("button", { name: "Remove truncated.pdf" }).click();
+      await expect(problem).toHaveCount(0);
+      await expect(readButton).toBeDisabled();
+    });
+
+    await test.step("a password-protected PDF is called protected, and choosing another file clears the message", async () => {
+      await resumeInput.setInputFiles(PASSWORD_PROTECTED_PDF);
+      await readButton.click();
+      await expect(problem).toContainText("This PDF is protected with a password.");
+
+      await resumeInput.setInputFiles(RESUME_PDF);
+      await expect(problem).toHaveCount(0);
+    });
+
+    await test.step("a text file named .png is not a PDF or a Word file", async () => {
+      await resumeInput.setInputFiles(brokenResume("text-file.png"));
+      await readButton.click();
+      await expect(problem).toContainText("This file is not a PDF or a Word file.");
+      await expect(problem).toContainText("Choose a PDF or a Word (.docx) file.");
+    });
+
+    await test.step("a good file is read, the success line shows, and Continue opens", async () => {
+      await resumeInput.setInputFiles(RESUME_PDF);
+      await readButton.click();
+      await expect(page.getByText("Your resume has been read. Next, check what we found.")).toBeVisible();
+      await expect(page.getByRole("button", { name: "Continue" })).toBeEnabled();
+      await expect(page.getByText("Add your resume and read it to continue.")).toHaveCount(0);
     });
   });
 

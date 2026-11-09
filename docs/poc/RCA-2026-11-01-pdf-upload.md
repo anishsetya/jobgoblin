@@ -70,3 +70,13 @@ Only one test ran the server in the process where it actually runs for the perso
 | 2 | Run one flow per server feature that touches a third-party library (render a PDF, export xlsx, back up) in the Electron test, not only upload | Any library may check its environment the way pdf.js does |
 | 3 | Give the upload error distinct messages: "this is not a PDF", "this PDF is password-protected" (pdf.js reports `PasswordException`), and "something went wrong on our side, try again" for everything else | A guess presented as fact sent the person looking for a problem in their own file |
 | 4 | Rework the resume step's layout (raw file inputs, a separate "Read my resume" button, Continue disabled with no reason given) | Raised by the owner at the same time |
+
+### Outcome
+
+Follow-ups 2, 3 and 4 are done.
+
+| # | What changed | Commit-ready description |
+| --- | --- | --- |
+| 2 | `e2e/tests/electron-smoke.spec.ts` has a second test inside the real desktop app. It finishes setup with Alex Rivera through the page's own API, runs Find jobs (Typst draws each resume, pdf.js reads it back), approves one application (the final PDF is in the folder and matches its hash), downloads the tracker as a real `.xlsx` and makes a backup. | `test(e2e): exercise render, read-back, xlsx export and backup inside Electron` |
+| 3 | `extractResumeText` throws `ResumeFileError` with a code, a message and an action. Codes: `unsupported-type`, `password-protected` (pdf.js `PasswordException`), `damaged` (`InvalidPDFException`, `FormatError`, or a broken Word file), `read-failed` (anything else, worded as our fault and sent as HTTP 500). `no-readable-text` (a scan) stays in the server. The server logs the code and the reader's error text on every failure, never the file's contents. Fixtures in `fixtures/resumes/broken/` include a real password-protected PDF made with `node:crypto`, and the Electron test checks the password message end to end. | `fix(render): say honestly why a resume file cannot be read` |
+| 4 | The resume step has one drop zone per file (a styled box over a hidden, keyboard-reachable file input, drag and drop, the chosen name with Change and Remove), one "Read my resume" button under the resume box, a progress card while Claude reads, the success line when done, errors beside the file they are about (cleared when another file is chosen), and a hint under Continue that says what is missing. | `feat(dashboard): clearer resume step with drop zones and honest upload errors` |

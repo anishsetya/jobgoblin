@@ -124,6 +124,14 @@
   "question": {
     "send": "Send answer"
   },
+  "fileDrop": {
+    "prompt": "Drop a file here, or",
+    "choose": "choose one from your computer",
+    "change": "Change",
+    "remove": "Remove",
+    "changeLabel": "Change {{name}}",
+    "removeLabel": "Remove {{name}}"
+  },
   "fit": {
     "title": "Fit",
     "notScored": "This job has not been scored yet.",
