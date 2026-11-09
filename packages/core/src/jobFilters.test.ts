@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { classifyRegion, codeFilter, dedupeKey, normalizeCompanyName, yearsRequired } from "./jobFilters";
+import { classifyRegion, codeFilter, codeFilterTargetsFor, dedupeKey, normalizeCompanyName, yearsRequired } from "./jobFilters";
 import { alexRiveraProfile } from "./testing/alexRivera";
 
 const ALEX_TARGETS = alexRiveraProfile().targets;
@@ -185,5 +185,43 @@ describe("codeFilter, with Alex Rivera's targets", () => {
 
   it("does not drop a role just because it is not one of the person's target roles, so the run can score it", () => {
     expect(codeFilter(aPosting("Data Analyst", "San Francisco, CA"), ALEX_TARGETS).passes).toBe(true);
+  });
+});
+
+describe("codeFilter, with chosen cities", () => {
+  const austinOnly = { ...ALEX_TARGETS, cities: ["Austin"] };
+
+  it("drops an on-site job in a city the person did not choose, and names the cities", () => {
+    const result = codeFilter(aPosting("Backend Engineer", "New York, NY"), austinOnly);
+
+    expect(result).toEqual({ passes: false, reason: expect.stringContaining("Austin") });
+  });
+
+  it("keeps a job in a chosen city, however the location is written", () => {
+    expect(codeFilter(aPosting("Backend Engineer", "Austin, TX"), austinOnly).passes).toBe(true);
+    expect(codeFilter(aPosting("Backend Engineer", "Hybrid - Austin"), austinOnly).passes).toBe(true);
+  });
+
+  it("always keeps a remote job, because it asks nobody to move", () => {
+    expect(codeFilter(aPosting("Backend Engineer", "Remote - US"), austinOnly).passes).toBe(true);
+    expect(codeFilter(aPosting("Backend Engineer", "Remote - Worldwide"), austinOnly).passes).toBe(true);
+  });
+
+  it("does not filter by city when the person chose none", () => {
+    expect(codeFilter(aPosting("Backend Engineer", "New York, NY"), { ...ALEX_TARGETS, cities: [] }).passes).toBe(true);
+  });
+});
+
+describe("codeFilterTargetsFor", () => {
+  it("allows two years more than the person's own experience", () => {
+    const profile = { ...alexRiveraProfile(), employment: { ...alexRiveraProfile().employment, yearsExperience: "5 years" } };
+
+    expect(codeFilterTargetsFor(profile).maxYearsRequired).toBe(7);
+  });
+
+  it("keeps the stored limit while the person's experience is not known", () => {
+    const profile = { ...alexRiveraProfile(), employment: { ...alexRiveraProfile().employment, yearsExperience: "TODO" } };
+
+    expect(codeFilterTargetsFor(profile).maxYearsRequired).toBe(4);
   });
 });

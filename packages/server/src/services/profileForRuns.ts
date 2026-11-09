@@ -12,6 +12,7 @@ import {
   type RunWritableSection,
   type SaveProfileSectionOutput,
 } from "@jobgoblin/schemas";
+import { codeFilterTargetsFor } from "@jobgoblin/core";
 import { getProfile as readProfile, saveProfileSection } from "@jobgoblin/storage";
 import type { ServerContext } from "../context";
 import { announceProfileChange } from "./changes";
@@ -25,7 +26,7 @@ export function getProfileForRun(ctx: ServerContext): GetProfileOutput {
   return {
     facts: { workAuthorization: profile.workAuthorization, employment: profile.employment },
     missing: findMissingValues(profile).filter((value) => !personal.includes(value.section)),
-    targets: profile.targets,
+    targets: codeFilterTargetsFor(profile), // the years limit a run sees is the one the filter uses
     rules: profile.rules,
   };
 }

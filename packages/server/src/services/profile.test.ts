@@ -9,23 +9,34 @@ describe("getProfile", () => {
   it("lists the values Alex still has to fill in", () => {
     const ctx = createTestContext();
 
-    expect(getProfile(ctx).missing).toEqual([{ section: "compensation", key: "expectedBase", label: "Expected base salary" }]);
+    expect(getProfile(ctx).missing).toEqual([
+      { section: "compensation", key: "byRegion.US", label: "Expected base salary (US)" },
+      { section: "compensation", key: "byRegion.REMOTE", label: "Expected base salary (REMOTE)" },
+    ]);
   });
 
-  it("lists everything for a fresh profile, including the US work authorization answers", () => {
+  it("lists everything for a fresh profile, and asks where to work before asking about any region", () => {
     const ctx = createTestContext({ withAlexRivera: false });
 
     const keys = getProfile(ctx).missing.map((value) => `${value.section}.${value.key}`);
 
     expect(keys).toEqual(
-      expect.arrayContaining([
-        "contact.fullName",
-        "contact.phone",
-        "workAuthorization.regions.US.authorized",
-        "employment.noticePeriod",
-        "compensation.expectedBase",
-      ]),
+      expect.arrayContaining(["contact.fullName", "contact.phone", "targets.regions", "employment.noticePeriod"]),
     );
+    expect(keys.filter((key) => key.startsWith("workAuthorization"))).toEqual([]);
+  });
+
+  it("asks work authorization and pay for each region the person chose, and for no other", () => {
+    const ctx = createTestContext({ withAlexRivera: false });
+    updateProfileSection(ctx, "targets", { ...getProfile(ctx).profile.targets, regions: ["IN"] });
+
+    const keys = getProfile(ctx).missing.map((value) => `${value.section}.${value.key}`);
+
+    expect(keys).toEqual(
+      expect.arrayContaining(["workAuthorization.regions.IN.authorized", "compensation.byRegion.IN"]),
+    );
+    expect(keys).not.toContain("targets.regions");
+    expect(keys.some((key) => key.includes(".US."))).toBe(false);
   });
 });
 
@@ -35,7 +46,7 @@ describe("updateProfileSection", () => {
     const events: string[] = [];
     ctx.bus.subscribe((event) => events.push(event.type));
 
-    const response = updateProfileSection(ctx, "compensation", { expectedBase: "$120,000" });
+    const response = updateProfileSection(ctx, "compensation", { expectedBase: "$120,000", byRegion: {} });
 
     expect(response.profile.compensation.expectedBase).toBe("$120,000");
     expect(response.missing).toEqual([]);

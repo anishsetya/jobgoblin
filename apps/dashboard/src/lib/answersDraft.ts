@@ -120,7 +120,8 @@ export function sectionsFromDraft(draft: AnswersDraft, savedProfile: Profile): P
       earliestStartDate: toTodo(draft.employment.earliestStartDate),
       yearsExperience: toTodo(draft.employment.yearsExperience),
     },
-    compensation: { expectedBase: toTodo(draft.compensation.expectedBase) },
+    // The form has one pay box. Pay saved for a single region is kept as it was, rather than wiped on save.
+    compensation: { expectedBase: toTodo(draft.compensation.expectedBase), byRegion: savedProfile.compensation.byRegion },
     eeo: { ...draft.eeo },
   };
 }

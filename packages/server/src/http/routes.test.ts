@@ -37,7 +37,7 @@ describe("the read routes", () => {
 
     expect(today.needsYou.map((item) => item.kind)).toEqual(["review"]);
     expect(pipeline).toHaveLength(1);
-    expect(profile.missing.map((value) => value.key)).toEqual(["expectedBase"]);
+    expect(profile.missing.map((value) => value.key)).toEqual(["byRegion.US", "byRegion.REMOTE"]);
     expect(story).toHaveLength(22);
     expect(settings.setupComplete).toBe(true);
     expect(backups).toEqual([]);

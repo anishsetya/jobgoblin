@@ -23,8 +23,11 @@ const AUTHORIZATION_LABELS = {
   willingToRelocate: "Willing to relocate",
 } as const;
 
-// A region the person has not set up still gets asked about, because the data sheet falls back to US.
-const DEFAULT_REGION = "US";
+// The regions the person applies in: the ones they chose, plus any they already gave answers for. No region
+// is assumed; until one is chosen there is nothing to ask about work authorization or pay.
+function regionsOf(profile: Profile): string[] {
+  return [...new Set([...profile.targets.regions, ...Object.keys(profile.workAuthorization.regions)])];
+}
 
 function isStillToDo(value: unknown): boolean {
   return value === TODO || (typeof value === "string" && value.trim() === "");
@@ -42,11 +45,9 @@ function missingFromSection<Section extends ProfileSectionName>(
 
 function missingAuthorization(profile: Profile): MissingValue[] {
   const regions = profile.workAuthorization.regions;
-  const regionNames = Object.keys(regions);
-  if (!regionNames.includes(DEFAULT_REGION)) regionNames.unshift(DEFAULT_REGION);
 
   const missing: MissingValue[] = [];
-  for (const region of regionNames) {
+  for (const region of regionsOf(profile)) {
     const answers: Record<string, unknown> = { ...regions[region] };
     for (const [key, label] of Object.entries(AUTHORIZATION_LABELS)) {
       if (answers[key] === undefined || isStillToDo(answers[key])) {
@@ -57,11 +58,34 @@ function missingAuthorization(profile: Profile): MissingValue[] {
   return missing;
 }
 
+// Pay is asked for each region. A region with no pay of its own can use the older single answer.
+function missingPay(profile: Profile): MissingValue[] {
+  const { byRegion, expectedBase } = profile.compensation;
+  if (!isStillToDo(expectedBase)) return [];
+
+  return regionsOf(profile)
+    // A region with no entry at all is as unanswered as one still marked TODO.
+    .filter((region) => byRegion[region] === undefined || isStillToDo(byRegion[region]))
+    .map((region) => ({
+      section: "compensation",
+      key: `byRegion.${region}`,
+      label: `Expected base salary (${region})`,
+    }));
+}
+
+// Everything about work authorization and pay hangs on the places the person applies in, so not having
+// chosen any is the first thing to ask.
+function missingPlaces(profile: Profile): MissingValue[] {
+  if (regionsOf(profile).length > 0) return [];
+  return [{ section: "targets", key: "regions", label: "Where you want to work" }];
+}
+
 export function findMissingValues(profile: Profile): MissingValue[] {
   return [
     ...missingFromSection("contact", profile.contact, CONTACT_LABELS),
+    ...missingPlaces(profile),
     ...missingAuthorization(profile),
     ...missingFromSection("employment", profile.employment, EMPLOYMENT_LABELS),
-    ...missingFromSection("compensation", profile.compensation, { expectedBase: "Expected base salary" }),
+    ...missingPay(profile),
   ];
 }
