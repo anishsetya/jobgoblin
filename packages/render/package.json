@@ -8,7 +8,7 @@
     },
     "scripts": {
         "typecheck": "tsc -p tsconfig.json",
-        "fixtures": "tsx scripts/buildResumeFixtures.ts"
+        "fixtures": "tsx scripts/buildResumeFixtures.ts && tsx scripts/buildBrokenResumeFixtures.ts"
     },
     "dependencies": {
         "@jobgoblin/schemas": "workspace:*",

@@ -90,6 +90,22 @@ describe("the import-resume route", () => {
     expect(getRun(ctx.db, runId ?? "")).toMatchObject({ kind: "setup", status: "queued" });
   });
 
+  it("answers a password-protected PDF with plain words and a 400", async () => {
+    const { call } = createTestApp({ withAlexRivera: false });
+    const form = new FormData();
+    form.set("kind", "resume");
+    form.set("file", new File([fs.readFileSync(path.join(repoRoot(), "fixtures", "resumes", "broken", "password-protected.pdf"))], "password-protected.pdf"));
+
+    const response = await call("/api/import-resume", { method: "POST", body: form });
+
+    expect(response.status).toBe(400);
+    expect(await response.json()).toEqual({
+      code: "password-protected",
+      message: "This PDF is protected with a password.",
+      action: "Open it, save a copy without a password, and choose that copy.",
+    });
+  });
+
   it("asks for a file in plain words when none was sent", async () => {
     const { call } = createTestApp();
 
