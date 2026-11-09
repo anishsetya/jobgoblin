@@ -39,7 +39,9 @@ describe("findPathInsideFolder", () => {
   let outsideFolder: string;
 
   beforeEach(() => {
-    workDir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "jobgoblin-desktop-")));
+    // The native realpath, like the fs.promises.realpath the code uses, so both expand an 8.3 short name
+    // (C:\Users\RUNNER~1 on GitHub's Windows runners) to the full one. The JS fs.realpathSync keeps it short.
+    workDir = fs.realpathSync.native(fs.mkdtempSync(path.join(os.tmpdir(), "jobgoblin-desktop-")));
     personFolder = path.join(workDir, "Jobgoblin");
     outsideFolder = path.join(workDir, "Elsewhere");
     fs.mkdirSync(path.join(personFolder, "Applications"), { recursive: true });

@@ -1,0 +1,75 @@
+# Runs every unit test (Vitest, all packages) and every end-to-end test (Playwright: the dashboard in Chromium
+# and the desktop app in Electron). Both jobs run on Windows because the app's process handling (taskkill,
+# Windows paths) and the e2e harness are written for Windows, and that is where they are developed.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    name: Unit tests
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      # pnpm's version comes from the "packageManager" field in package.json. It must be set up before
+      # setup-node so that setup-node can cache the pnpm store.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Some unit tests start the built fake Claude, so it has to be built first.
+      - run: pnpm --filter @jobgoblin/fake-claude build
+
+      - run: pnpm test
+
+  e2e:
+    name: End-to-end tests
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      # Installing also downloads the Electron binary (electron is listed in pnpm-workspace.yaml).
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium for Playwright
+        run: pnpm --filter @jobgoblin/e2e exec playwright install chromium
+
+      # The e2e global setup builds the dashboard, server, fake Claude and desktop app before the first test.
+      - run: pnpm test:e2e
+
+      - name: Upload Playwright report and traces
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            e2e/playwright-report/
+            e2e/test-results/
+          retention-days: 7
+          if-no-files-found: ignore
