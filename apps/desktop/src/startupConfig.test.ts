@@ -25,6 +25,23 @@ describe("resolveStartupConfig", () => {
     expect(config.serverBundlePath).toBe(path.join(path.resolve("/tmp/resources"), "packages", "server", "dist", "server.mjs"));
   });
 
+  it("keeps demo data in Jobgoblin-demo when it runs on the demo board and no folder was chosen", () => {
+    const env = { JOBGOBLIN_FEED_FIXTURES: path.resolve("/repo/fixtures/feeds/demo") };
+
+    const config = resolveStartupConfig({ env, systemAppDataDir, appPath });
+
+    expect(config.appDataDir).toBe(path.join(systemAppDataDir, "Jobgoblin-demo"));
+    expect(config.electronDataDir).toBe(path.join(systemAppDataDir, "Jobgoblin-demo", "electron"));
+    expect(config.logFilePath).toBe(path.join(systemAppDataDir, "Jobgoblin-demo", "logs", "desktop.log"));
+    expect(config.serverEnvironment.JOBGOBLIN_APP_DATA).toBe(config.appDataDir);
+  });
+
+  it("uses JOBGOBLIN_APP_DATA on the demo board too", () => {
+    const env = { JOBGOBLIN_FEED_FIXTURES: path.resolve("/repo/fixtures/feeds/demo"), JOBGOBLIN_APP_DATA: path.resolve("/tmp/demo") };
+
+    expect(resolveStartupConfig({ env, systemAppDataDir, appPath }).appDataDir).toBe(path.resolve("/tmp/demo"));
+  });
+
   it("treats empty variables as not set", () => {
     const env = { JOBGOBLIN_APP_DATA: "", JOBGOBLIN_RESOURCES_DIR: "" };
 

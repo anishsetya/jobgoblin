@@ -1,5 +1,6 @@
-// Starts the whole server: opens the database, checks the approved files, builds the context, binds
-// 127.0.0.1, writes server.json, and returns a handle to stop it. Both main.ts (the real program) and the
+// Starts the whole server: checks the demo job board folder (in demo mode), opens the database, checks the
+// approved files, builds the context, binds 127.0.0.1, writes server.json, and returns a handle to stop it.
+// Both main.ts (the real program) and the
 // tests start the server through this one function.
 // Spec: ARCHITECTURE.md sections 7 (startup checks), 11 (server entry), decision D14, and tech spec "Processes and startup".
 import fs from "node:fs";
@@ -19,7 +20,7 @@ import { createApp } from "./http/app";
 import { BIND_ADDRESS, listenOnFreePort } from "./http/listen";
 import { createLogger, type Logger } from "./logger";
 import { startRunner } from "./runner/startRunner";
-import { seedCompaniesIfEmpty } from "./services/feeds";
+import { readSeedCompanies, seedCompaniesIfEmpty } from "./services/feeds";
 import { cancelRunsForShutdown } from "./services/runShutdown";
 import { openServerDatabase } from "./services/serverDatabase";
 
@@ -35,6 +36,9 @@ export type RunningServer = {
 };
 
 export async function startServer(options: StartOptions): Promise<RunningServer> {
+  // Before anything is created: a demo job board folder without a usable companies.json stops the start here,
+  // in one plain line, and leaves no empty database behind.
+  readSeedCompanies(options.feedFixturesDir);
   fs.mkdirSync(options.appDataDir, { recursive: true });
   const logger = createLogger(options.appDataDir);
 
