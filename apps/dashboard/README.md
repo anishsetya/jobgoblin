@@ -10,7 +10,7 @@ Read first: `src/router.tsx` (the map of every screen), `src/api/client.ts` (how
 | --- | --- | --- |
 | `/` | sends the person to `/setup/1` or `/today` | `router.tsx` |
 | `/setup/:step` | Setup wizard, 8 steps (7 tasks plus Finish) | `screens/setup/` (loaded on demand) |
-| `/today` | Today: Find jobs, Add a job, Needs you, Running, Done today | `screens/TodayScreen.tsx` |
+| `/today` | Today: Find jobs, Add a job, Needs you (each item offers the one step the server chose, such as Try again or Check settings), Running, Done today | `screens/TodayScreen.tsx` |
 | `/review/:id` | Review one application (keys A, E, S, J, K) | `screens/ReviewScreen.tsx`, `screens/review/` |
 | `/apply/:id` | Open application: frozen data sheet, answers, "I submitted" | `screens/ApplyScreen.tsx`, `screens/apply/` |
 | `/pipeline` | Board or list, search and filters (kept in the address) | `screens/PipelineScreen.tsx`, `screens/pipeline/` |

@@ -1,6 +1,7 @@
-// One run as a card: what it is doing in plain words, a progress bar, and Cancel. When a run has
-// stopped, the card says how it ended and offers Retry (if that can help) and Dismiss.
-// Spec: PRD R1, R4 and "Runs never block the app", ARCHITECTURE.md section 10.
+// One run as a card: what it is doing in plain words, a progress bar while it works, and Cancel. A queued run has
+// no bar, because nothing is happening yet; its step says why it waits when the queue is held by a blocked run.
+// When a run has stopped, the card says how it ended and offers Try again (if that can help) and Dismiss.
+// Spec: PRD R1, R2, R4 and "Runs never block the app", ARCHITECTURE.md section 10.
 import type { Run } from "@jobgoblin/schemas";
 import { useTranslation } from "react-i18next";
 import { useCancelRun, useDismissRun, useRetryRun } from "@/api/runs";
@@ -8,7 +9,8 @@ import { ErrorNotice } from "./ErrorNotice";
 import { Button } from "./ui/Button";
 import { ProgressBar } from "./ui/ProgressBar";
 
-const RETRYABLE_STATUSES: readonly Run["status"][] = ["failed", "blocked", "interrupted"];
+// The same list as the server's (runLifecycle.ts). A cancelled run can be tried again: it does the work that was left.
+const RETRYABLE_STATUSES: readonly Run["status"][] = ["failed", "blocked", "interrupted", "cancelled"];
 
 type RunCardProps = {
   run: Run;
@@ -79,7 +81,7 @@ export function RunCard({ run, headingLevel = 3, onRetried }: RunCardProps) {
         </div>
       </div>
 
-      {isActive && (
+      {run.status === "running" && (
         <div className="mt-3 space-y-1">
           <ProgressBar value={run.progressDone} max={run.progressTotal} label={title} />
           {run.progressTotal !== null && (

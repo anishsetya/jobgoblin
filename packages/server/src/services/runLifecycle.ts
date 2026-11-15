@@ -3,7 +3,7 @@
 // Cancel has a terminal state of its own (D11); a retry is a new run that does only the work that was left.
 // Spec: ARCHITECTURE.md sections 5.8 and 11 (POST /api/runs, /retry, /dismiss, DELETE /api/runs/:id).
 import type { Run } from "@jobgoblin/schemas";
-import { atomically, getSetting, listRunTasks, updateRun } from "@jobgoblin/storage";
+import { atomically, getSetting, listRunsByStatus, listRunTasks, updateRun } from "@jobgoblin/storage";
 import type { ServerContext } from "../context";
 import { OUTCOME_MESSAGES } from "../runner/outcome";
 import { announceRun } from "./changes";
@@ -13,11 +13,15 @@ import { conflict } from "./serviceError";
 
 const RETRYABLE_STATUSES = ["failed", "blocked", "interrupted", "cancelled"];
 
-// The "Find jobs" button.
+// The "Find jobs" button. Pressed while the last hunt is blocked (a plan limit, say), it tries that hunt again.
+// A second hunt would only wait behind the blocked one, and trying the blocked one again would then be refused,
+// because only one hunt may be queued or running.
 export function startHunt(ctx: ServerContext): Run {
   if (!getSetting(ctx.db, "setupComplete")) {
     throw conflict("setup-incomplete", "Finish setting up Jobgoblin before looking for jobs.", "Open the setup steps from Today.");
   }
+  const blockedHunt = listRunsByStatus(ctx.db, ["blocked"]).find((run) => run.kind === "hunt" && run.dismissedAt === null);
+  if (blockedHunt !== undefined) return retryRun(ctx, blockedHunt.id);
   return queueRun(ctx, { kind: "hunt", applicationIds: [], input: {} });
 }
 
@@ -80,7 +84,7 @@ export function retryRun(ctx: ServerContext, runId: string): Run {
   return run;
 }
 
-// Clears a finished run's card from Today.
+// Clears a finished run's card from Today. A blocked run holds the queue, so clearing it lets the queue go on.
 export function dismissRun(ctx: ServerContext, runId: string): Run {
   const run = loadRunOrFail(ctx, runId);
   if (run.status === "queued" || run.status === "running") {
@@ -88,5 +92,6 @@ export function dismissRun(ctx: ServerContext, runId: string): Run {
   }
   const dismissed = updateRun(ctx.db, runId, { dismissedAt: ctx.now().toISOString() }) ?? run;
   announceRun(ctx, dismissed);
+  if (run.status === "blocked") ctx.launcher?.wake();
   return dismissed;
 }

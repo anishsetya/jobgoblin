@@ -82,8 +82,8 @@ Your data lives in two places. The database is in `%APPDATA%\Jobgoblin` and you 
   - **Question:** a run needs a fact only you know. Answer it here; only that one application waits, and the rest carry on.
   - **Ready to submit:** approved, with screening answers written.
   - **Follow-up due:** an application has had no reply by its follow-up date.
-  - **Couldn't tailor:** the limit of 3 open applications per company was reached, or the resume could not pass the truth check.
-  - **Run attention:** a run stopped (plan limit reached, signed out, interrupted). Use Retry or Dismiss.
+  - **Couldn't tailor:** the limit of 3 open applications per company was reached, or the resume could not pass the truth check. A strong match also shows here as "No resume yet" when nothing is tailoring it any more, for example after you cancelled the run. Open it and choose Tailor a resume, or press Try again on the stopped run.
+  - **Run attention:** a run stopped. Each one offers the step that helps: **Try again** after a plan limit, a crash or a run that ran out of turns; **Check settings** when Claude Code is signed out, missing or needs an update. Runs waiting behind a stopped run say what they wait for.
 - **Done today** counts jobs found, resumes tailored, approvals and applications.
 
 How jobs are sorted: fit 75 or higher is **apply**, 60–74 is **stretch** (both tailored automatically), 50–59 is **long shot**, and under 50 is skipped. Roles to avoid, jobs asking too many years, and duplicates are dropped before Claude ever sees them. Each job is shown only once.

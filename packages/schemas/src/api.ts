@@ -23,7 +23,8 @@ export const ApiError = z.object({
 export type ApiError = z.infer<typeof ApiError>;
 
 // One thing waiting on the person, shown in Today's "Needs you" list.
-//   not-tailored  the application could not be tailored (for example the per-company cap), see tailorError
+//   not-tailored  the application has no resume: it could not be tailored (for example the per-company cap,
+//                 see tailorError), or it was left without one when its run was cancelled or blocked
 export const NeedsYouKind = z.enum([
   "review",
   "question",
@@ -35,6 +36,11 @@ export const NeedsYouKind = z.enum([
 ]);
 export type NeedsYouKind = z.infer<typeof NeedsYouKind>;
 
+// The one thing that helps with a run that stopped. Settings can fix Claude Code itself (missing, too old,
+// signed out). Anything else (a plan limit, a crash, a safety stop, an interruption) needs the run tried again.
+export const RunNextStep = z.enum(["open-settings", "try-again"]);
+export type RunNextStep = z.infer<typeof RunNextStep>;
+
 export const NeedsYouItem = z.object({
   kind: NeedsYouKind,
   // The id of the thing that needs the person: the question's id for "question", the run's id for
@@ -44,6 +50,7 @@ export const NeedsYouItem = z.object({
   runId: z.string().nullable(),
   title: z.string(),
   detail: z.string(),
+  nextStep: RunNextStep.nullable(), // set for "run-attention" only
   createdAt: z.iso.datetime(),
 });
 export type NeedsYouItem = z.infer<typeof NeedsYouItem>;

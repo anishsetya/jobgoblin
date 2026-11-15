@@ -1,7 +1,8 @@
 // The run queue's engine. `wake()` starts the oldest queued runs while there is room (settings.concurrency, default 1);
 // each run is launched by launchRun.ts and followed by afterRun.ts. `cancel(runId)` stops a running run and waits
 // until its end is recorded. A run that ends "blocked" (signed out, plan limit, Claude Code missing) pauses the queue
-// until the person retries it or signs in again.
+// until the person retries it, dismisses it or signs in again. While paused, every queued run's step says which run
+// it waits for and what helps, so a card never says only "Waiting for its turn" when its turn cannot come.
 // Nothing here knows how a process is started; it only decides WHICH run goes WHEN.
 // Spec: ARCHITECTURE.md section 10 (Queue, Cancel); packages/server/README.md ("How runs are queued").
 import type { Run } from "@jobgoblin/schemas";
@@ -12,6 +13,7 @@ import { afterRun } from "./afterRun";
 import { createClaudeCli, type ClaudeCli } from "./claudeCli";
 import { launchRun, type RunHandle } from "./launchRun";
 import { removeOldRunDirectories } from "./runFolderCleanup";
+import { waitingStep } from "./runText";
 
 // A run this launcher started and has not finished with yet.
 type ActiveRun = { handle: RunHandle; finished: Promise<void> };
@@ -19,13 +21,13 @@ type ActiveRun = { handle: RunHandle; finished: Promise<void> };
 export function createLauncher(ctx: ServerContext): Launcher {
   const claudeCli = createClaudeCliFor(ctx);
   const activeRuns = new Map<string, ActiveRun>();
-  let isPaused = false;
+  let pausedBy: Run | null = null; // the blocked run that holds the queue
 
   removeOldRunFolders(ctx);
 
   function wake(): void {
     try {
-      resumeIfABlockedRunWasRetried();
+      resumeIfTheBlockedRunWasHandled();
       startQueuedRuns();
     } catch (error) {
       // The database may be closing (shutdown). Nothing to start then, and nothing to show the person.
@@ -34,10 +36,27 @@ export function createLauncher(ctx: ServerContext): Launcher {
   }
 
   function startQueuedRuns(): void {
-    if (isPaused) return;
-    for (const queued of listRunsByStatus(ctx.db, ["queued"])) {
-      if (activeRuns.size >= concurrencyLimit(ctx)) return;
-      if (!activeRuns.has(queued.id)) start(queued);
+    const queuedRuns = listRunsByStatus(ctx.db, ["queued"]);
+    if (pausedBy !== null) {
+      setStepOfQueuedRuns(queuedRuns, waitingStep(pausedBy));
+      return;
+    }
+    const stillWaiting: Run[] = [];
+    for (const queued of queuedRuns) {
+      if (activeRuns.has(queued.id)) continue;
+      if (activeRuns.size < concurrencyLimit(ctx)) start(queued);
+      else stillWaiting.push(queued);
+    }
+    // A step left from a pause no longer says why these wait: their turn simply has not come yet.
+    setStepOfQueuedRuns(stillWaiting, null);
+  }
+
+  // Saved and announced only where it changes, so a wake that changes nothing sends nothing.
+  function setStepOfQueuedRuns(queuedRuns: Run[], step: string | null): void {
+    for (const queued of queuedRuns) {
+      if (queued.step === step) continue;
+      const updated = updateRun(ctx.db, queued.id, { step });
+      if (updated !== null) announceRun(ctx, updated);
     }
   }
 
@@ -55,7 +74,7 @@ export function createLauncher(ctx: ServerContext): Launcher {
   }
 
   function handleEnd(ended: Run): void {
-    if (ended.status === "blocked") isPaused = true;
+    if (ended.status === "blocked") pausedBy = ended;
     activeRuns.delete(ended.id);
     try {
       afterRun(ctx, ended);
@@ -65,13 +84,16 @@ export function createLauncher(ctx: ServerContext): Launcher {
     wake();
   }
 
-  // Retry makes a new queued run whose retryOf is the blocked run: that is the person saying "try again now".
-  function resumeIfABlockedRunWasRetried(): void {
-    if (!isPaused) return;
+  // The person acted on a blocked run. Retry makes a new queued run whose retryOf is the blocked run: that is the
+  // person saying "try again now". Dismiss clears the run that holds the queue, so the runs behind it would wait
+  // for a card that is no longer shown: they go, and are blocked in turn if the problem is still there.
+  function resumeIfTheBlockedRunWasHandled(): void {
+    if (pausedBy === null) return;
     const retriesABlockedRun = listRunsByStatus(ctx.db, ["queued"]).some(
       (queued) => queued.retryOf !== null && getRun(ctx.db, queued.retryOf)?.status === "blocked",
     );
-    if (retriesABlockedRun) isPaused = false;
+    const wasDismissed = getRun(ctx.db, pausedBy.id)?.dismissedAt != null;
+    if (retriesABlockedRun || wasDismissed) pausedBy = null;
   }
 
   async function cancel(runId: string): Promise<void> {
@@ -83,7 +105,7 @@ export function createLauncher(ctx: ServerContext): Launcher {
   }
 
   function resume(): void {
-    isPaused = false;
+    pausedBy = null;
     wake();
   }
 

@@ -1,10 +1,11 @@
 // Today: the screen that answers "what do I do now?". It lists everything waiting on the person (Needs you),
 // the runs that are going or just ended (each shown as a card), and a small count of what got done today.
 // Spec: ARCHITECTURE.md section 5.9 (TodayResponse, NeedsYouItem) and PRD "Screens: Today".
-import type { Application, NeedsYouItem, Run, RunKind, TodayResponse } from "@jobgoblin/schemas";
+import type { Application, NeedsYouItem, Run, TodayResponse } from "@jobgoblin/schemas";
 import {
   countApplicationsCreatedSince,
   countStatusChangesSince,
+  findActiveRunForApplication,
   formatLocalDay,
   getApplication,
   getLiveApproval,
@@ -13,13 +14,17 @@ import {
   listFollowUpsDue,
   listOpenQuestions,
   listRecentRuns,
+  listRunsByStatus,
 } from "@jobgoblin/storage";
 import type { ServerContext } from "../context";
+import { nextStepFor, RUN_TITLES } from "../runner/runText";
 import { startOfLocalDay } from "./dates";
+import { ACTIVE_STATUSES } from "./runs";
 
 const RECENT_RUNS_LOOKED_AT = 50;
 const ENDED_RUN_CARD_HOURS = 24; // a finished run's card stays on Today this long, unless it is dismissed
 const MILLISECONDS_PER_HOUR = 60 * 60 * 1000;
+const NO_RESUME_YET = "No resume yet. Open it and choose Tailor a resume.";
 
 // What comes first in Needs you: a question blocks work, then reviews, then the rest.
 const KIND_ORDER: NeedsYouItem["kind"][] = [
@@ -31,15 +36,6 @@ const KIND_ORDER: NeedsYouItem["kind"][] = [
   "follow-up-due",
   "long-shot",
 ];
-
-const RUN_TITLES: Record<RunKind, string> = {
-  setup: "Reading your resume",
-  hunt: "Finding jobs",
-  paste: "Scoring a job you added",
-  tailor: "Making resumes",
-  answers: "Writing answers",
-  ask: "Your question",
-};
 
 export function getToday(ctx: ServerContext): TodayResponse {
   const settings = getSettings(ctx.db);
@@ -79,7 +75,7 @@ function applicationItem(
   detail: string,
   createdAt: string = application.updatedAt,
 ): NeedsYouItem {
-  return { kind, id: application.id, applicationId: application.id, runId: null, title: describe(application), detail, createdAt };
+  return { kind, id: application.id, applicationId: application.id, runId: null, title: describe(application), detail, nextStep: null, createdAt };
 }
 
 function questionItems(ctx: ServerContext): NeedsYouItem[] {
@@ -95,6 +91,7 @@ function questionItems(ctx: ServerContext): NeedsYouItem[] {
       runId: question.runId,
       title: describe(application),
       detail: question.text,
+      nextStep: null,
       createdAt: question.askedAt,
     });
   }
@@ -121,10 +118,24 @@ function readyToSubmitItems(ctx: ServerContext): NeedsYouItem[] {
     );
 }
 
+// Applications with no resume that nothing is working on. Either tailoring failed or was refused (the reason is
+// the tailor error), or a strong match was left without a resume because its run was cancelled or blocked.
+// While a hunt or a paste run is going, its scored jobs are about to be admitted to tailoring, so they are not
+// listed yet. An application held by a run (queued, running, or waiting for an answer) is not listed either.
 function notTailoredItems(ctx: ServerContext): NeedsYouItem[] {
-  return listApplicationsByStatus(ctx.db, ["Scored", "Long shot"])
+  const refused = listApplicationsByStatus(ctx.db, ["Scored", "Long shot"])
     .filter((application) => application.tailorError !== null)
     .map((application) => applicationItem("not-tailored", application, application.tailorError ?? ""));
+  if (isAdmissionComing(ctx)) return refused;
+
+  const leftWithoutResume = listApplicationsByStatus(ctx.db, ["Scored"])
+    .filter((application) => application.tailorError === null && findActiveRunForApplication(ctx.db, application.id) === null)
+    .map((application) => applicationItem("not-tailored", application, NO_RESUME_YET));
+  return [...refused, ...leftWithoutResume];
+}
+
+function isAdmissionComing(ctx: ServerContext): boolean {
+  return listRunsByStatus(ctx.db, ACTIVE_STATUSES).some((run) => run.kind === "hunt" || run.kind === "paste");
 }
 
 function longShotItems(ctx: ServerContext): NeedsYouItem[] {
@@ -153,6 +164,7 @@ function runAttentionItems(ctx: ServerContext): NeedsYouItem[] {
       runId: run.id,
       title: RUN_TITLES[run.kind],
       detail: run.outcomeMessage ?? "This run stopped before it finished.",
+      nextStep: nextStepFor(run),
       createdAt: run.endedAt ?? run.queuedAt,
     }));
 }
