@@ -206,6 +206,45 @@ test.describe("As a job seeker, an approval only counts for the details I approv
   });
 });
 
+test.describe("As a job seeker, a double-click does what one click does", () => {
+  test("double-clicking Approve and Record as applied sends each once and shows no error", async ({ page, startServer }) => {
+    const server = await startServer({ seed: "alex-rivera", seedOptions: { usageNoticeSeen: true } });
+    const sent = { approve: 0, submitted: 0 };
+    page.on("request", (request) => {
+      if (request.method() !== "POST") return;
+      if (request.url().endsWith("/approve")) sent.approve += 1;
+      if (request.url().endsWith("/submitted")) sent.submitted += 1;
+    });
+    await page.goto(server.url);
+    await findJobsAndWaitForReview(page);
+    const applicationId = await openReview(page, ACME);
+
+    await test.step("a double-click on Approve approves once and moves on to the next application", async () => {
+      await page.getByRole("button", { name: "Approve" }).dblclick();
+      await expect(page.getByRole("heading", { level: 1, name: "Platform Engineer" })).toBeVisible();
+      expect((await server.api<ApplicationJson>(`/api/apps/${applicationId}`)).application.status).toBe("Approved");
+      await expect(page.getByRole("alert")).toHaveCount(0);
+      expect(sent.approve).toBe(1);
+    });
+
+    await test.step("a double-click on Record as applied records it once and shows Applied", async () => {
+      await page.goto(`${server.origin}/today`);
+      const ready = needsYouItem(page, ACME);
+      await expect(ready).toContainText("Ready to send");
+      await ready.getByRole("link", { name: "Open application" }).click();
+      await page.getByRole("button", { name: "I submitted" }).click();
+      const dialog = page.getByRole("dialog", { name: "Record that you applied" });
+      await dialog.getByLabel("Web address of the confirmation page").fill("https://boards.greenhouse.io/acmecloud/confirmation");
+      await dialog.getByRole("button", { name: "Record as applied" }).dblclick();
+
+      await expect(page).toHaveURL(new RegExp(`/apps/${applicationId}$`));
+      await expect(page.getByText("Applied", { exact: true }).first()).toBeVisible();
+      await expect(page.getByRole("alert")).toHaveCount(0);
+      expect(sent.submitted).toBe(1);
+    });
+  });
+});
+
 async function applicationFolderOf(server: { api<T>(route: string): Promise<T> }, applicationId: string): Promise<string> {
   const detail = await server.api<ApplicationJson>(`/api/apps/${applicationId}`);
   return detail.application.folder ?? "";
