@@ -26,7 +26,7 @@ src/
   components/   parts shared by screens; ui/ holds the small shadcn-style primitives
   screens/      one file per screen (plus a folder for its parts)
   i18n/         index.ts and en/<area>.json
-  lib/          small helpers: class names, dates, downloads, shortcuts, page title, focus
+  lib/          small helpers: class names, dates, downloads, shortcuts, page title, focus, one request at a time
   router.tsx  queryClient.ts  App.tsx  main.tsx  styles.css
 ```
 
@@ -111,6 +111,7 @@ Checks: `pnpm --filter @jobgoblin/dashboard typecheck` and `pnpm --filter @jobgo
 14. **Dialogs, tabs and the focus trap come from Radix**; everything else is native HTML (`select`, radio and checkbox inputs, `details`) because the browser already makes those accessible.
 15. **Moving between screens moves keyboard focus to the main area**, and each screen sets the page title, so a screen reader announces where the person is. Switching Profile tabs keeps focus on the tab.
 16. **Plain text only.** Job postings, resumes, answers and Ask results are rendered as text by React. Nothing uses `dangerouslySetInnerHTML`; `JobText` and `ResumePreview` say why in a comment.
+17. **A decision is sent once per click.** Approve, Skip, Request edit and Record as applied go through `useOneAtATime` (`lib/oneAtATime.ts`), which ignores a repeat while the request is in flight. A disabled button takes effect only on the next render, and TanStack Query runs only the latest call's callbacks, so before this a double-click lost the first success and showed the second call's refusal.
 
 ## Gaps in the shared schemas
 
