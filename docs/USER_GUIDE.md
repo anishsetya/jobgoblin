@@ -68,8 +68,8 @@ Your data lives in two places. The database is in `%APPDATA%\Jobgoblin` and you 
 | 3 Your folder | Pick a folder | It creates `Applications`, `Resumes`, `Backups` and the tracker. If you pick a folder with backups, it offers Restore. This is how you move to a new computer. |
 | 4 Your resume | Drop a PDF or Word resume in the box (or choose it), then choose **Read my resume**. You can add a LinkedIn PDF in the box below first. | Your name, email, phone and links are removed by the app first. Claude reads the rest and drafts your Your story items. **Continue** opens when it is done and says what is missing until then. If a file cannot be read, the message says why (a password, a damaged file, or a type Jobgoblin does not read) and what to do next. |
 | 5 Your story | Confirm, edit or drop each experience, achievement, project, skill and headline | Only confirmed items can ever appear on a resume or count toward a fit score. Add anything the resume left out. |
-| 6 Form answers | Fill in work authorization, notice period, start date, salary and EEO answers | Anything missing is marked. Salary and EEO answers are never shown to Claude; the app fills them in itself. |
-| 7 Targets | Roles you want, regions, the most years of experience a job may ask for, roles to avoid, hard skips, flags | These change the next job search. |
+| 6 Form answers | Tick where you can work (countries, Remote jobs, and optionally cities), then fill in work authorization for those places, notice period, start date, salary and EEO answers | Remote is a way of working: a remote job is done from where you live, so Remote asks the questions for that country. Anything missing is marked. Salary and EEO answers are never shown to Claude; the app fills them in itself. |
+| 7 Targets | Roles you want, roles to avoid, hard skips, flags | Where you can work and the most years of experience a job may ask for (your years + 2) are shown here and come from Form answers. These change the next job search, and they also apply to jobs found earlier that you have not been shown yet. |
 | Finish | | Your main resume is built from Your story. You land on Today. |
 
 ## 2. Today: your daily home
@@ -150,7 +150,7 @@ Jobgoblin/
 
 1. Install and sign in to Claude Code.
 2. Start Real mode (`pnpm dev:desktop`) and do the wizard with your real resume.
-3. In Targets, set your roles and regions.
+3. In Form answers, tick where you can work. In Targets, set your roles.
 4. Click Find jobs. The app watches a starter list of about 100 companies on Greenhouse, Lever and Ashby, plus HN, YC, RemoteOK and We Work Remotely. Paste anything else you find with Add a job.
 5. Review, approve, submit, and record proof. Then repeat daily.
 

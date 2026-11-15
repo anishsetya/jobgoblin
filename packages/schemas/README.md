@@ -18,7 +18,7 @@ Each file starts with a comment saying what it covers. The numbers are sections 
 | --- | --- | --- |
 | `status.ts` | `ApplicationStatus`, `Actor`, `TransitionVia`, `TERMINAL_STATUSES`, `CAP_STATUSES`, `STATUS_GROUPS` | 5.1 |
 | `story.ts` | `StoryItem`, `StoryItemData`, `ProposedStoryItem`, `UploadKind` and the enums | 5.2 |
-| `profile.ts` | `TODO`, the seven profile sections, `Profile`, `ProfileResponse`, `PERSONAL_SECTIONS`, `MissingValue` | 5.3 |
+| `profile.ts` | `TODO`, the seven profile sections, `Profile`, `ProfileResponse` (with `homeRegion` and `yearsLimit`), `YearsLimit`, `PERSONAL_SECTIONS`, `MissingValue` | 5.3 |
 | `job.ts` | `Job`, `FeedPosting`, `Company`, `Region`, `JobSource`, `HttpUrl` | 5.4 |
 | `fit.ts` | `Band`, `FitInput`, `Fit` | 5.5 |
 | `resume.ts` | `ResumeBody`, `ResumeHeader`, `ResumeCheckError`, `ResumeVersion`, `ApplicationResume`, `ResumeDiff`, hash and version id formats | 5.6 |

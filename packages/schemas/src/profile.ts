@@ -3,6 +3,7 @@
 // so a brand-new profile (Profile.parse({})) is simply "everything is TODO".
 // Spec: "Data model and storage" (profile). ARCHITECTURE.md section 5.3.
 import { z } from "zod";
+import { Region } from "./job";
 
 // A value the person still has to fill in. The Form answers screen lists every TODO as a missing value,
 // and an application cannot be approved while a required one is still TODO.
@@ -38,8 +39,10 @@ export const ContactSection = z.object({
 });
 export type ContactSection = z.infer<typeof ContactSection>;
 
-// One answer set per region the person applies in, keyed by region code ("US", "IN", "REMOTE", ...).
-// A data sheet reads the job's region, and falls back to "US" when the person has no answers for it.
+// One answer set per country the person can work in, keyed by region code ("US", "IN").
+// A data sheet reads the answers for the job's country. A remote job that names no country is done from
+// where the person lives, so it reads the answers for that country. Answers are never borrowed from another
+// country: a country the person never answered for stays missing.
 export const RegionAuthorization = z.object({
   authorized: YesNoOrTodo,
   requiresSponsorship: YesNoOrTodo,
@@ -86,13 +89,21 @@ export const DEFAULT_HARD_SKIPS: readonly string[] = ["An active security cleara
 export const DEFAULT_FLAGS: readonly string[] = ["Relocation required", "Graduation-year window"];
 
 // Which jobs to look for, and what to do about the risks in them.
-//   maxYearsRequired  the highest "years of experience required" that still passes the code filter.
+//   regions           where the person can work: countries ("US", "IN", "OTHER" for somewhere else) and
+//                     "REMOTE" for remote jobs, which is a way of working, not a place. Chosen on the Form
+//                     answers screen, above the work authorization questions it decides. None means any place.
+//   cities            on-site jobs must be in one of these (such as "Austin"). None means any city. Remote
+//                     jobs always count. Chosen on the Form answers screen too.
+//   maxYearsRequired  the limit on "years of experience required" while the person's years of experience is
+//                     missing. Once it is given, the limit is that number + 2 (core's yearsLimitFor), so this
+//                     is not asked for on any screen.
 //   rolesToAvoid      title words that drop a posting before any run reads it (such as "QA").
 //   hardSkips         reasons a run must skip a job whatever its score (FitInput.hardSkip).
 //   flags             risks a run reports in a fit, for the person to weigh; they never skip a job.
 export const TargetsSection = z.object({
   roles: z.array(z.string()).default([]),
   regions: z.array(z.string()).default([]),
+  cities: z.array(z.string()).default([]),
   tracks: z.array(z.string()).default([]),
   maxYearsRequired: z.number().int().nonnegative().default(4),
   rolesToAvoid: z.array(z.string()).default([]),
@@ -128,9 +139,24 @@ export const MissingValue = z.object({
 });
 export type MissingValue = z.infer<typeof MissingValue>;
 
-// The response of GET /api/profile and PUT /api/profile/:section.
+// The most years of experience a job may ask for before the code filter leaves it out. `experience` is the
+// person's own years of experience, or null while that answer is missing (then the limit is the stored
+// targets.maxYearsRequired).
+export const YearsLimit = z.object({
+  limit: z.number().int().nonnegative(),
+  experience: z.number().int().nonnegative().nullable(),
+});
+export type YearsLimit = z.infer<typeof YearsLimit>;
+
+// The response of GET /api/profile and PUT /api/profile/:section. Next to the profile, what the server
+// works out from it, so the screens need no rules of their own:
+//   homeRegion  the country of "Where you live" when Jobgoblin can tell it ("US", "IN", "OTHER"), or null.
+//               A remote job is done from there, so it decides which questions Remote jobs asks.
+//   yearsLimit  the years limit the code filter uses, as shown on the Targets screen.
 export const ProfileResponse = z.object({
   profile: Profile,
   missing: z.array(MissingValue),
+  homeRegion: Region.nullable(),
+  yearsLimit: YearsLimit,
 });
 export type ProfileResponse = z.infer<typeof ProfileResponse>;

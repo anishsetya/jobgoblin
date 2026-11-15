@@ -101,7 +101,7 @@ The run token is never on the command line or in a file. `mcp.json` holds `Beare
 11. **`spawnRun` takes a line callback, not a stream.** The listener exists before any output can arrive, so no line is ever lost.
 12. **Playbook line endings are normalised to `\n`** so line 1 and 2 are the same on every system.
 13. **There is no `index.ts`.** `launcher.ts` and the services import the module they need.
-14. **`playbooks/rubric.md` starts with `<!-- rubric-version: 1 -->`.** The server can read that for `Fit.rubricVersion`.
+14. **`playbooks/rubric.md` starts with `<!-- rubric-version: 2 -->`.** The server can read that for `Fit.rubricVersion`.
 15. **Run directory clean-up (transcripts kept 14 days) is `runFolderCleanup.ts`,** called once when the launcher is created.
 16. **A cancel wins over the safety check.** Cancel takes the run's token away first, so a run cancelled before its `init` line can show the tool server as `failed`; that is recorded as `cancelled`, not as a safety stop.
 17. **A safety stop kills at once** (no polite attempt), and revokes the run's token so the process cannot make more tool calls while it dies.

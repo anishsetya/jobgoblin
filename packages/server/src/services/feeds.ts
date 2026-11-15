@@ -1,22 +1,25 @@
 // Fetching job feeds before a hunt run starts. Code reads every watched company's board and the open boards
 // (through packages/sources), then each new posting is run through the person's code filter and the dedupe
 // key, and stored in the jobs table. The run itself only reads that table (search_jobs).
-// A posting the filter drops, or that repeats a role already found elsewhere, is still stored with the
-// reason, so it is never shown and never looked at again.
+// A posting the filter drops, or that repeats a role already found elsewhere, is stored with the reason, so
+// it is not shown. Targets change, so before the new postings are stored, every job nobody has been shown
+// yet is checked again against the current targets: a change reaches the jobs found before too.
 // Spec: ARCHITECTURE.md section 10 (refreshFeedsIfHunt) and 6 (jobFilters).
 import fs from "node:fs";
 import path from "node:path";
 import { Company, type FeedPosting, type Job } from "@jobgoblin/schemas";
-import { classifyRegion, codeFilter, dedupeKey } from "@jobgoblin/core";
+import { classifyRegion, codeFilter, codeFilterTargetsFor, dedupeKey, type CodeFilterTargets } from "@jobgoblin/core";
 import { fetchFeeds, type FeedFailure } from "@jobgoblin/sources";
 import {
   deleteFeedCacheEntriesBefore,
   getJob,
-  getProfileSection,
+  getProfile as readProfile,
   insertCompanyIfMissing,
   insertJobIfNew,
   listCompanies,
   listJobsByDedupeKey,
+  listJobsNotYetSeen,
+  setJobFilteredReason,
 } from "@jobgoblin/storage";
 import { z } from "zod";
 import seedCompanies from "../seed/companies.json";
@@ -32,6 +35,8 @@ export type RefreshFeedsReport = {
   added: number; // new jobs a run may be shown
   filtered: number; // new jobs the person's targets ruled out
   duplicates: number; // new postings that repeat a role already found
+  restored: number; // jobs found before that the current targets let through again
+  setAside: number; // jobs found before, not shown yet, that the current targets now rule out
   failures: FeedFailure[]; // feeds that could not be read; the others were still used
 };
 
@@ -46,22 +51,59 @@ export async function refreshFeeds(ctx: ServerContext): Promise<RefreshFeedsRepo
     now: ctx.now,
   });
 
-  const report = { ...storeNewPostings(ctx, result.postings), failures: result.failures };
+  const targets = codeFilterTargetsFor(readProfile(ctx.db));
+  const rechecked = recheckUnseenJobs(ctx, targets);
+  const report = { ...storeNewPostings(ctx, result.postings, targets), ...rechecked, failures: result.failures };
   forgetOldFeedResponses(ctx);
   logReport(ctx, report);
   return report;
 }
 
 // ---------------------------------------------------------------------------------------------
+// Checking the jobs found before
+// ---------------------------------------------------------------------------------------------
+
+type RecheckCounts = Pick<RefreshFeedsReport, "restored" | "setAside">;
+
+// A job an old target ruled out comes back, and one the new targets rule out is put aside. A job that was
+// already shown keeps its verdict (PRD D3): it is not in this list. Of the jobs that pass, a repeat of a role
+// already in play (shown before, or kept earlier in this check) is a duplicate, so no role shows twice.
+function recheckUnseenJobs(ctx: ServerContext, targets: CodeFilterTargets): RecheckCounts {
+  const counts: RecheckCounts = { restored: 0, setAside: 0 };
+
+  ctx.db.transaction(() => {
+    const keptRoles = new Set<string>();
+    for (const job of listJobsNotYetSeen(ctx.db)) {
+      const verdict = codeFilter(job, targets);
+      const isRepeat = verdict.passes && (keptRoles.has(job.dedupeKey) || wasShownAsAnotherPosting(ctx, job));
+      const reason = !verdict.passes ? verdict.reason : isRepeat ? DUPLICATE_REASON : null;
+      if (reason === null) keptRoles.add(job.dedupeKey);
+      if (reason === job.filteredReason) continue;
+
+      setJobFilteredReason(ctx.db, job.jobId, reason);
+      if (reason === null) counts.restored += 1;
+      else if (job.filteredReason === null) counts.setAside += 1;
+    }
+  });
+  return counts;
+}
+
+// Another posting of the same role was shown to a run already, and the code filter let it through.
+function wasShownAsAnotherPosting(ctx: ServerContext, job: Job): boolean {
+  return listJobsByDedupeKey(ctx.db, job.dedupeKey).some(
+    (other) => other.jobId !== job.jobId && other.seenAt !== null && other.filteredReason === null,
+  );
+}
+
+// ---------------------------------------------------------------------------------------------
 // Storing postings
 // ---------------------------------------------------------------------------------------------
 
-type Counts = Omit<RefreshFeedsReport, "failures">;
+type NewPostingCounts = Pick<RefreshFeedsReport, "added" | "filtered" | "duplicates">;
 
-function storeNewPostings(ctx: ServerContext, postings: FeedPosting[]): Counts {
-  const targets = getProfileSection(ctx.db, "targets");
+function storeNewPostings(ctx: ServerContext, postings: FeedPosting[], targets: CodeFilterTargets): NewPostingCounts {
   const now = ctx.now().toISOString();
-  const counts: Counts = { added: 0, filtered: 0, duplicates: 0 };
+  const counts: NewPostingCounts = { added: 0, filtered: 0, duplicates: 0 };
 
   // One transaction: thousands of postings are one commit, and a failure stores none of them.
   ctx.db.transaction(() => {
@@ -102,7 +144,14 @@ function forgetOldFeedResponses(ctx: ServerContext): void {
 
 function logReport(ctx: ServerContext, report: RefreshFeedsReport): void {
   ctx.logger.info(
-    { added: report.added, filtered: report.filtered, duplicates: report.duplicates, failedFeeds: report.failures.length },
+    {
+      added: report.added,
+      filtered: report.filtered,
+      duplicates: report.duplicates,
+      restored: report.restored,
+      setAside: report.setAside,
+      failedFeeds: report.failures.length,
+    },
     "Checked job boards.",
   );
   for (const failure of report.failures) {

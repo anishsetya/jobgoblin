@@ -1,5 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { classifyRegion, codeFilter, dedupeKey, normalizeCompanyName, yearsRequired } from "./jobFilters";
+import { Profile } from "@jobgoblin/schemas";
+import {
+  classifyRegion,
+  codeFilter,
+  codeFilterTargetsFor,
+  dedupeKey,
+  homeRegionOf,
+  isRemoteLocation,
+  normalizeCompanyName,
+  parseYearsExperience,
+  regionName,
+  yearsLimitFor,
+  yearsRequired,
+} from "./jobFilters";
 import { alexRiveraProfile } from "./testing/alexRivera";
 
 const ALEX_TARGETS = alexRiveraProfile().targets;
@@ -45,6 +58,44 @@ describe("classifyRegion", () => {
 
   it("reads a place in India before a US word, as the prototype did", () => {
     expect(classifyRegion("Remote - US / Bengaluru")).toBe("IN");
+  });
+});
+
+describe("isRemoteLocation", () => {
+  it.each([
+    ["Remote - US", true],
+    ["US Remote", true],
+    ["us-remote", true],
+    ["Remote (Canada)", true],
+    ["Remote - US / Bengaluru", true],
+    ["Anywhere", true],
+    ["Global", true],
+    ["", true],
+    ["Austin, TX", false],
+    ["New York, NY", false],
+    ["London, United Kingdom", false],
+  ] as const)("reads %j as remote: %s", (location, isRemote) => {
+    expect(isRemoteLocation(location)).toBe(isRemote);
+  });
+});
+
+describe("homeRegionOf", () => {
+  it("reads the country of where the person lives", () => {
+    expect(homeRegionOf("Austin, TX")).toBe("US");
+    expect(homeRegionOf("Pune, India")).toBe("IN");
+    expect(homeRegionOf("London, United Kingdom")).toBe("OTHER");
+  });
+
+  it("is null while where the person lives is missing, or when it names no place", () => {
+    expect(homeRegionOf("TODO")).toBeNull();
+    expect(homeRegionOf("  ")).toBeNull();
+    expect(homeRegionOf("Remote")).toBeNull();
+  });
+});
+
+describe("regionName", () => {
+  it("gives each region code the name the screens use", () => {
+    expect(["US", "IN", "REMOTE", "OTHER"].map(regionName)).toEqual(["United States", "India", "Remote", "Somewhere else"]);
   });
 });
 
@@ -173,17 +224,123 @@ describe("codeFilter, with Alex Rivera's targets", () => {
     expect(codeFilter(fiveYears, { ...ALEX_TARGETS, maxYearsRequired: 6 }).passes).toBe(true);
   });
 
-  it("drops a role in a region outside the targets, and says which regions the person chose", () => {
+  it("drops a role in a place outside the targets, and names the places the person chose in plain words", () => {
     const result = codeFilter(aPosting("Backend Engineer", "Bengaluru, India"), ALEX_TARGETS);
 
-    expect(result).toEqual({ passes: false, reason: expect.stringContaining("US, REMOTE") });
+    expect(result).toEqual({
+      passes: false,
+      reason: 'The location "Bengaluru, India" is not in a place you chose (United States, Remote).',
+    });
   });
 
-  it("does not filter by region when the person chose none", () => {
+  it("does not filter by place when the person chose none", () => {
     expect(codeFilter(aPosting("Backend Engineer", "Paris, France"), { ...ALEX_TARGETS, regions: [] }).passes).toBe(true);
   });
 
   it("does not drop a role just because it is not one of the person's target roles, so the run can score it", () => {
     expect(codeFilter(aPosting("Data Analyst", "San Francisco, CA"), ALEX_TARGETS).passes).toBe(true);
+  });
+});
+
+describe("codeFilter, where the person can work", () => {
+  function passes(location: string, regions: string[]): boolean {
+    return codeFilter(aPosting("Backend Engineer", location), { ...ALEX_TARGETS, regions }).passes;
+  }
+
+  it("with only Remote jobs chosen, keeps every remote job, whatever country it names, and drops on-site jobs", () => {
+    expect(passes("Remote - US", ["REMOTE"])).toBe(true);
+    expect(passes("Remote (Canada)", ["REMOTE"])).toBe(true);
+    expect(passes("Remote", ["REMOTE"])).toBe(true);
+    expect(passes("San Francisco, CA", ["REMOTE"])).toBe(false);
+    expect(passes("New York, NY", ["REMOTE"])).toBe(false);
+  });
+
+  it("with Remote jobs and a country, keeps remote jobs in that country or with no country, and not remote jobs for another one", () => {
+    expect(passes("Remote - India", ["IN", "REMOTE"])).toBe(true);
+    expect(passes("Remote", ["IN", "REMOTE"])).toBe(true);
+
+    const usOnly = codeFilter(aPosting("Backend Engineer", "Remote - US"), { ...ALEX_TARGETS, regions: ["IN", "REMOTE"] });
+    expect(usOnly).toEqual({
+      passes: false,
+      reason: 'The location "Remote - US" is a remote job outside the places you chose (India, Remote).',
+    });
+  });
+
+  it("keeps a remote job in a chosen country even when Remote jobs is not chosen, but not one with no country", () => {
+    expect(passes("Remote - US", ["US"])).toBe(true);
+    expect(passes("Remote", ["US"])).toBe(false);
+  });
+
+  it("keeps an on-site job only in a chosen country", () => {
+    expect(passes("Austin, TX", ["US"])).toBe(true);
+    expect(passes("London, United Kingdom", ["OTHER"])).toBe(true);
+    expect(codeFilter(aPosting("Backend Engineer", "Austin, TX"), { ...ALEX_TARGETS, regions: ["IN"] })).toEqual({
+      passes: false,
+      reason: 'The location "Austin, TX" is not in a place you chose (India).',
+    });
+  });
+});
+
+describe("codeFilter, cities the person can work from", () => {
+  const inAustin = { ...ALEX_TARGETS, cities: ["Austin"] };
+
+  it("keeps an on-site job only in a chosen city, and keeps every remote job", () => {
+    expect(codeFilter(aPosting("Backend Engineer", "Austin, TX"), inAustin).passes).toBe(true);
+    expect(codeFilter(aPosting("Backend Engineer", "Remote - US"), inAustin).passes).toBe(true);
+    expect(codeFilter(aPosting("Backend Engineer", "New York, NY"), inAustin)).toEqual({
+      passes: false,
+      reason: 'The location "New York, NY" is not in a city you chose (Austin).',
+    });
+  });
+
+  it("keeps an on-site job in a chosen city even when only Remote jobs is chosen as a place", () => {
+    const remoteAndAustin = { ...inAustin, regions: ["REMOTE"] };
+
+    expect(codeFilter(aPosting("Backend Engineer", "Austin, TX"), remoteAndAustin).passes).toBe(true);
+    expect(codeFilter(aPosting("Backend Engineer", "Seattle, WA"), remoteAndAustin).passes).toBe(false);
+  });
+
+  it("matches a city as whole words only, and ignores empty lines", () => {
+    expect(codeFilter(aPosting("Backend Engineer", "Austinville, TX"), inAustin).passes).toBe(false);
+    expect(codeFilter(aPosting("Backend Engineer", "New York, NY"), { ...ALEX_TARGETS, cities: ["  ", ""] }).passes).toBe(true);
+  });
+});
+
+describe("the years limit follows the person's experience", () => {
+  function withYears(yearsExperience: string, maxYearsRequired = 4): Profile {
+    const alex = alexRiveraProfile();
+    return Profile.parse({ ...alex, employment: { ...alex.employment, yearsExperience }, targets: { ...alex.targets, maxYearsRequired } });
+  }
+
+  it("allows two years more than the person has", () => {
+    expect(yearsLimitFor(alexRiveraProfile())).toEqual({ limit: 4, experience: 2 }); // Alex has 2 years
+    expect(yearsLimitFor(withYears("5"))).toEqual({ limit: 7, experience: 5 });
+  });
+
+  it.each([
+    ["3 years", 3],
+    ["5+", 5],
+    ["1.5", 1],
+    ["TODO", null],
+    ["a few", null],
+  ] as const)("reads the years in the answer %j as %s", (answer, years) => {
+    expect(parseYearsExperience(answer)).toBe(years);
+  });
+
+  it("uses the stored limit while the years of experience are missing", () => {
+    expect(yearsLimitFor(withYears("TODO", 6))).toEqual({ limit: 6, experience: null });
+  });
+
+  it("gives the code filter the person's places, cities, roles to avoid and the years limit", () => {
+    const targets = codeFilterTargetsFor(withYears("5"));
+    const askingSeven = aPosting("Backend Engineer", "Remote - US", "Requirements:\n7+ years of experience with Python.");
+    const askingEight = aPosting("Backend Engineer", "Remote - US", "Requirements:\n8+ years of experience with Python.");
+
+    expect(targets).toEqual({ rolesToAvoid: ALEX_TARGETS.rolesToAvoid, regions: ["US", "REMOTE"], cities: [], maxYearsRequired: 7 });
+    expect(codeFilter(askingSeven, targets).passes).toBe(true);
+    expect(codeFilter(askingEight, targets)).toEqual({
+      passes: false,
+      reason: "It asks for 8 years of experience, and your limit is 7.",
+    });
   });
 });
