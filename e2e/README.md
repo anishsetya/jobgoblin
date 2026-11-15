@@ -64,7 +64,7 @@ PRD requirement ids as in the PRD (S setup, P profile, D discover, F fit, T tail
 | `runs-cancel-and-outcomes.spec.ts` | Cancel a slow run; "Your Claude plan limit is reached" with Try again; signed out shows sign-in needed and blocks a run | R1 R3 R4 S2 S3 |
 | `crash-recovery.spec.ts` | A slow hunt, the server killed hard, a new server on the same data: "This run was interrupted", Try again works, no Claude process is left | R4 |
 | `accessibility.spec.ts` | axe (WCAG 2.1 A and AA) on Today, Review, Open application, Pipeline (board and list), Application, Profile (four tabs), Settings, every wizard step and every dialog, in light and dark | the PRD's accessibility target |
-| `truthful-resumes.spec.ts` | A made-up bullet and an inflated verb never reach the resume; a banned word is left out | T1 P5 |
+| `truthful-resumes.spec.ts` | A made-up bullet and an inflated verb never reach the resume; a line dropped from Your story after the resume was made can't be approved; a banned word is left out | T1 P5 |
 | `electron-smoke.spec.ts` (project `electron`) | The desktop window shows the wizard, `window.jobgoblin` has a token, an outside link and an outside navigation do not move the window, Quit exits 0 and the server cleans up. The resume step reads a PDF and names a password-protected one. A second pass runs each feature that uses a library inside Electron's utility process: Find jobs (Typst render, pdf.js read-back), approve (final PDF), the xlsx export and Back up now | ARCHITECTURE 13; RCA 2026-11-01 |
 
 ## Notes for whoever writes the next test

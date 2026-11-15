@@ -133,6 +133,15 @@ export const ApplicationActions = z.object({
 });
 export type ApplicationActions = z.infer<typeof ApplicationActions>;
 
+// A line on the application's current resume that no longer traces to a confirmed item in Your story,
+// because the person dropped or changed that item after the draft was made. While there is one, the
+// resume can't be approved (PRD T1: every line comes from something the person confirmed).
+export const UntracedResumeLine = z.object({
+  path: z.string(), // where it is on the resume, such as "sections.experience[0].bullets[2]"
+  text: z.string(), // the line as the resume shows it
+});
+export type UntracedResumeLine = z.infer<typeof UntracedResumeLine>;
+
 // Everything the Review, Open application and Application screens need, in one response.
 export const ApplicationDetail = z.object({
   application: Application,
@@ -143,6 +152,7 @@ export const ApplicationDetail = z.object({
   versions: z.array(ApplicationResume), // every resume this application has used
   diff: ResumeDiff.nullable(), // the current resume against the master resume
   storyItems: z.array(StoryItem), // the items the resume cites, plus the items the fit matched
+  untracedLines: z.array(UntracedResumeLine), // empty unless Your story changed after the resume was made
   dataSheet: DataSheet.nullable(),
   dataSheetHash: Sha256Hex.nullable(), // sent back on approve, so approval covers exactly this sheet
   approval: Approval.nullable(),
