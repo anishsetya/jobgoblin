@@ -113,11 +113,11 @@ Settings (environment variables read by main):
 
 | Variable | Effect |
 | --- | --- |
-| `JOBGOBLIN_APP_DATA` | App data folder. Default `%APPDATA%\Jobgoblin`. Tests use a temporary folder, which also gives them their own single-instance lock. |
+| `JOBGOBLIN_APP_DATA` | App data folder. Default `%APPDATA%\Jobgoblin`, or `%APPDATA%\Jobgoblin-demo` when `JOBGOBLIN_FEED_FIXTURES` is set, so demo data never mixes with real data. Tests use a temporary folder, which also gives them their own single-instance lock. |
 | `JOBGOBLIN_RESOURCES_DIR` | Folder that holds `packages/server/dist/server.mjs` and the other resources. Default: the repository root, two levels above `apps/desktop`. |
 | `JOBGOBLIN_CLAUDE_COMMAND`, `JOBGOBLIN_FEED_FIXTURES`, `JOBGOBLIN_PORT`, ... | Passed on to the server untouched. |
 
-**Logs.** `electron.exe` has no console on Windows, so read `%APPDATA%\Jobgoblin\logs\desktop.log` (main's lines, plus the server's stdout and stderr). It is moved to `desktop.log.1` at start when it is over 1 MB.
+**Logs.** `electron.exe` has no console on Windows, so read `%APPDATA%\Jobgoblin\logs\desktop.log` (`Jobgoblin-demo` in demo mode; main's lines, plus the server's stdout and stderr). It is moved to `desktop.log.1` at start when it is over 1 MB.
 
 ## Try it with the stand-in server
 
