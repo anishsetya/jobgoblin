@@ -539,7 +539,7 @@ React 19 + Vite + Tailwind 4 + TanStack Query + TanStack Router (code-based rout
 | `/today` | Find jobs, Add a job (link or text; asks for company, title and text when a link needs a login), usage notice before the first run, Needs you, Running (cards with step, progress, Cancel), Done today |
 | `/review/:id` | Role, company, fit, band, reason, flags, gaps, matched items; changes vs master; HTML resume preview with reworded lines highlighted; data sheet; Approve (the only accent button), Request edit (asks for a note), Skip; keys A, E, S, J, K |
 | `/apply/:id` | Posting link (opens in the browser), a copy button for every field of the **frozen** `approval.dataSheet` and every answer, Open resume file, I submitted (proof type and proof); "Your details changed since you approved. Review it again." when the approval is void |
-| `/pipeline` | Board by status group and list view, search, filters, overdue follow-ups in amber |
+| `/pipeline` | Board by status group (columns at least 15rem wide that share the width and wrap onto a new row, so none is hidden sideways) and list view, search, filters, overdue follow-ups in amber |
 | `/apps/:id` | Job description, fit, resume versions, answers, history, status change (only `allowedStatusMoves`), Withdraw, Undo skip, Tailor, Ask about this application |
 | `/profile/:tab` | Your story, Form answers, Targets (including hard skips and flags), Banned words |
 | `/settings` | Claude connection, folder, limits, tracker status and Open tracker, backups (last backup time, Back up now, Restore), export CSV and xlsx |
@@ -549,6 +549,7 @@ React 19 + Vite + Tailwind 4 + TanStack Query + TanStack Router (code-based rout
 - `src/api/token.ts`: `readSessionToken()` (preload, then `sessionStorage`, then the `#token=` fragment, which it removes from the address bar).
 - `src/api/desktop.ts`: `chooseFolder()` and `openPath()` through `window.jobgoblin` when present; in a browser, a text field for the folder path.
 - Theme: CSS variables for neutral grays and one accent; amber only for flags, green only for success; dark mode follows `prefers-color-scheme`; hairline borders; no shadows.
+- Text from a posting (role, company, place, description) may break inside a word (`wrap-anywhere`), so one long word never makes a screen wider than the window. An e2e story checks it at 1280 and 640 px.
 - Every interactive element has an accessible name; Playwright runs axe on every screen.
 
 ## 13. Desktop (`apps/desktop`)

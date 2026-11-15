@@ -1,5 +1,6 @@
 // One application as a card on the board: the role, the company, its status and fit, and the follow-up day.
-// An overdue follow-up is the one thing shown in amber (PRD K2).
+// An overdue follow-up is the one thing shown in amber (PRD K2). The role and company come from the posting, so a
+// word longer than the card is broken (wrap-anywhere) instead of running out of it.
 import type { PipelineRow } from "@jobgoblin/schemas";
 import { Link } from "@tanstack/react-router";
 import { Clock } from "lucide-react";
@@ -15,8 +16,8 @@ export function PipelineCard({ row }: { row: PipelineRow }) {
   return (
     <li data-testid="pipeline-card" className="rounded-lg border border-line bg-surface p-3 hover:bg-surface-muted">
       <Link to="/apps/$id" params={{ id: row.id }} className="block space-y-2">
-        <span className="block text-sm font-semibold">{row.title}</span>
-        <span className="block text-sm text-muted">{row.company}</span>
+        <span className="block text-sm font-semibold wrap-anywhere">{row.title}</span>
+        <span className="block text-sm text-muted wrap-anywhere">{row.company}</span>
         <span className="flex flex-wrap items-center gap-2">
           <StatusBadge status={row.status} />
           {row.band !== null && <BandBadge band={row.band} />}
