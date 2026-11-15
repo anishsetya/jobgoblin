@@ -27,7 +27,12 @@ export type TestServerOptions = {
   // Use this person's folder (holding another server's backups, say) with a brand-new app data folder:
   // what moving to a new computer looks like.
   personFolder?: string;
+  // What Install Claude Code runs. Default: FAILING_INSTALLER, so no test can ever start the real winget.
+  claudeInstallCommand?: string[];
 };
+
+// An install command that always fails with exit code 1, the way a broken installer would.
+export const FAILING_INSTALLER = [process.execPath, "-e", "process.exit(1)"];
 
 export type TestServer = {
   url: string; // http://127.0.0.1:<port>/#token=<session token>: what a person would open
@@ -60,7 +65,11 @@ export async function startTestServer(options: TestServerOptions = {}): Promise<
 
   const child = spawn(process.execPath, [SERVER_BUNDLE], {
     cwd: REPO_ROOT,
-    env: buildServerEnvironment({ appDataDir, fakeClaudeEnv: options.fakeClaudeEnv ?? {} }),
+    env: buildServerEnvironment({
+      appDataDir,
+      fakeClaudeEnv: options.fakeClaudeEnv ?? {},
+      claudeInstallCommand: options.claudeInstallCommand ?? FAILING_INSTALLER,
+    }),
     stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true,
   });
@@ -117,7 +126,11 @@ function assertBuildsExist(): void {
 
 // The server sees the machine's environment (it needs PATH), minus anything that could leak into a run,
 // plus the settings every test needs. FAKE_CLAUDE_* from the developer's shell never leaks in.
-function buildServerEnvironment(input: { appDataDir: string; fakeClaudeEnv: Record<string, string> }): NodeJS.ProcessEnv {
+function buildServerEnvironment(input: {
+  appDataDir: string;
+  fakeClaudeEnv: Record<string, string>;
+  claudeInstallCommand: string[];
+}): NodeJS.ProcessEnv {
   const inherited: NodeJS.ProcessEnv = {};
   for (const [name, value] of Object.entries(process.env)) {
     if (name.startsWith("FAKE_CLAUDE_") || name.startsWith("JOBGOBLIN_")) continue;
@@ -129,6 +142,7 @@ function buildServerEnvironment(input: { appDataDir: string; fakeClaudeEnv: Reco
     JOBGOBLIN_RESOURCES_DIR: REPO_ROOT,
     JOBGOBLIN_FEED_FIXTURES: DEMO_FEEDS_DIR,
     JOBGOBLIN_CLAUDE_COMMAND: JSON.stringify([process.execPath, FAKE_CLAUDE_CLI]),
+    JOBGOBLIN_CLAUDE_INSTALL_COMMAND: JSON.stringify(input.claudeInstallCommand),
     JOBGOBLIN_PORT: "0",
     ...input.fakeClaudeEnv,
   };

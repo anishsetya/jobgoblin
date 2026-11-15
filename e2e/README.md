@@ -28,7 +28,7 @@ Two Playwright projects: `chromium` (every story except the last) and `electron`
 
 `support/server.ts` `startTestServer(...)` (handed to tests as the `startServer` fixture in `support/fixtures.ts`, which also stops everything afterwards, even when the test fails):
 
-- spawns `node packages/server/dist/server.mjs` with a **fresh temporary app data folder** and person's folder, `JOBGOBLIN_PORT=0`, `JOBGOBLIN_RESOURCES_DIR` = the repository, **`JOBGOBLIN_FEED_FIXTURES` = `fixtures/feeds/demo`** (the 7-posting demo board, no network) and **`JOBGOBLIN_CLAUDE_COMMAND` = node + `fixtures/fake-claude/dist/cli.mjs`** (no Claude plan);
+- spawns `node packages/server/dist/server.mjs` with a **fresh temporary app data folder** and person's folder, `JOBGOBLIN_PORT=0`, `JOBGOBLIN_RESOURCES_DIR` = the repository, **`JOBGOBLIN_FEED_FIXTURES` = `fixtures/feeds/demo`** (the 7-posting demo board, no network), **`JOBGOBLIN_CLAUDE_COMMAND` = node + `fixtures/fake-claude/dist/cli.mjs`** (no Claude plan) and **`JOBGOBLIN_CLAUDE_INSTALL_COMMAND` = `FAILING_INSTALLER`**, a command that always exits 1, so Install never runs winget (`claudeInstallCommand` sets another);
 - reads the `JOBGOBLIN_READY` line for the address, `#token` included, which the test opens in the browser;
 - `seed: "alex-rivera"` sets the demo person up first, through the public HTTP API only (`support/seed.ts`: folder, profile sections, story items added and confirmed, `setup/finish`), so a story that is not about setup starts at Today. `seedOptions.usageNoticeSeen` marks the usage notice as read. `seed: "none"` leaves the app empty, as on a first run;
 - `fakeClaudeEnv` sets the fake's switches for that one server; `reuseDataOf` starts a new server on the data of a crashed one; `personFolder` points a new app at an old person's folder (a new computer);
@@ -43,7 +43,7 @@ The server launches the fake exactly as it would launch Claude Code. The fake co
 - fit scores come from `fixtures/fake-claude/data/scores.json`: Acme Cloud 86 (apply), Brightpath 68 (stretch), Copperleaf Applied AI 55 (long shot), Data Analyst 20 (skip), the pasted Gridline job 78;
 - the tailored resume is the master resume with matching bullets first; **with `FAKE_CLAUDE_REWORD=1` one bullet is also reworded** so Review has a line to highlight; an edit note drops a bullet;
 - the answers come from the data sheet, with `{placeholders}` for personal values;
-- the switches turn failures on: `FAKE_CLAUDE_MODE=slow | usage-limit | signed-out`, `FAKE_CLAUDE_ASK_FIRST=1`, `FAKE_CLAUDE_INVENT_BULLET=1`.
+- the switches turn failures on: `FAKE_CLAUDE_MODE=slow | usage-limit | signed-out | not-installed | outdated`, `FAKE_CLAUDE_ASK_FIRST=1`, `FAKE_CLAUDE_INVENT_BULLET=1`.
 
 The code filter and dedupe key run in the server before any run starts, which is why the QA role, the Senior Staff role and the repeated Hacker News posting never appear.
 
@@ -62,6 +62,7 @@ PRD requirement ids as in the PRD (S setup, P profile, D discover, F fit, T tail
 | `pipeline-and-status.spec.ts` | Applied to Online assessment to Phone screen to Interview round to Offer to Accepted using only the offered moves; an overdue follow-up is amber and on Today; Withdraw; search and filters, board and list; Ask about an application | K1 K2 |
 | `settings-backups-export.spec.ts` | Back up now shows the last backup time; Restore returns to an earlier state; a new computer finds its backups from the wizard; limits are validated, saved and used; CSV (header first) and Excel downloads | S4 S5 K3 T4 |
 | `runs-cancel-and-outcomes.spec.ts` | Cancel a slow run; "Your Claude plan limit is reached" with Try again; signed out shows sign-in needed and blocks a run | R1 R3 R4 S2 S3 |
+| `claude-install.spec.ts` | A failed install on the Connect step and a failed update in Settings say what happened and what to do next, and open the command to run by hand; Continue stays disabled | S2 |
 | `crash-recovery.spec.ts` | A slow hunt, the server killed hard, a new server on the same data: "This run was interrupted", Try again works, no Claude process is left | R4 |
 | `accessibility.spec.ts` | axe (WCAG 2.1 A and AA) on Today, Review, Open application, Pipeline (board and list), Application, Profile (four tabs), Settings, every wizard step and every dialog, in light and dark | the PRD's accessibility target |
 | `truthful-resumes.spec.ts` | A made-up bullet and an inflated verb never reach the resume; a banned word is left out | T1 P5 |

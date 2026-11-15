@@ -192,7 +192,7 @@ describe("install and signIn", () => {
   });
 
   it("runs Anthropic's installer script on macOS", async () => {
-    const { runner, calls } = scriptedRunner(() => undefined);
+    const { runner, calls } = installedClaude("2.1.99 (Claude Code)\n", SIGNED_IN);
 
     await aCli({ platform: "darwin", runCommand: runner }).install();
 
@@ -200,7 +200,7 @@ describe("install and signIn", () => {
   });
 
   it("runs the install command from the start options instead of the default", async () => {
-    const { runner, calls } = scriptedRunner(() => undefined);
+    const { runner, calls } = installedClaude("2.1.99 (Claude Code)\n", SIGNED_IN);
 
     await aCli({ claudeInstallCommand: ["installer", "--now"], runCommand: runner }).install();
 
@@ -224,6 +224,83 @@ describe("install and signIn", () => {
 
     expect(status.state).toBe("not-installed");
     expect(calls).toEqual([]);
+  });
+});
+
+describe("install, when Claude Code is still missing or too old afterwards", () => {
+  // The winget command answers with `installer` (undefined: it could not start). Afterwards `claude --version`
+  // prints `versionText` (undefined: the program does not run, so it counts as not installed).
+  function afterInstalling(installer: Partial<CommandResult> | undefined, versionText: string | undefined) {
+    return scriptedRunner((command) => {
+      if (command[0] === "winget") return installer;
+      if (command.at(-1) === "--version") return versionText === undefined ? undefined : { stdout: versionText };
+      return { stdout: SIGNED_OUT, exitCode: 1 };
+    });
+  }
+
+  it("says the installer couldn't start, and points to the command instead of the button", async () => {
+    const { runner } = afterInstalling(undefined, undefined);
+
+    await expect(aCli({ runCommand: runner }).install()).rejects.toMatchObject({
+      kind: "unavailable",
+      code: "claude-install-failed",
+      message: "Jobgoblin couldn't start the Claude Code install.",
+      action: 'You can run the command under "See exactly what this does" yourself, then press Check again.',
+    });
+  });
+
+  it("names the error code the installer stopped with, and offers to try again", async () => {
+    const { runner } = afterInstalling({ exitCode: 1 }, undefined);
+
+    await expect(aCli({ runCommand: runner }).install()).rejects.toMatchObject({
+      code: "claude-install-failed",
+      message: "The Claude Code install stopped with an error (code 1).",
+      action:
+        'Press Install Claude Code to try again. If it fails again, run the command under "See exactly what this does" yourself, then press Check again.',
+    });
+  });
+
+  it("says the install took too long when it was stopped by the timeout", async () => {
+    const { runner } = afterInstalling({ exitCode: null, timedOut: true }, undefined);
+
+    await expect(aCli({ runCommand: runner }).install()).rejects.toMatchObject({
+      message: "The Claude Code install took longer than 10 minutes, so Jobgoblin stopped it.",
+    });
+  });
+
+  it("says Claude Code still can't be found when the installer reported success", async () => {
+    const { runner } = afterInstalling({ exitCode: 0 }, undefined);
+
+    await expect(aCli({ runCommand: runner }).install()).rejects.toMatchObject({
+      message: "The install finished, but Jobgoblin still can't find Claude Code.",
+    });
+  });
+
+  it("calls it an update, and offers the Update button, when the copy is still too old", async () => {
+    const { runner } = afterInstalling({ exitCode: 1 }, "2.0.9 (Claude Code)\n");
+
+    await expect(aCli({ runCommand: runner }).install()).rejects.toMatchObject({
+      code: "claude-update-failed",
+      message: "The Claude Code update stopped with an error (code 1).",
+      action: expect.stringMatching(/^Press Update Claude Code to try again\./),
+    });
+  });
+
+  it("names the old version when an update reported success but changed nothing", async () => {
+    const { runner } = afterInstalling({ exitCode: 0 }, "2.0.9 (Claude Code)\n");
+
+    await expect(aCli({ runCommand: runner }).install()).rejects.toMatchObject({
+      code: "claude-update-failed",
+      message: `The update finished, but Claude Code is still version 2.0.9. Jobgoblin needs ${MINIMUM_CLAUDE_VERSION} or newer.`,
+    });
+  });
+
+  it("trusts the status over the exit code: Claude Code that is there afterwards is a success", async () => {
+    const { runner } = afterInstalling({ exitCode: 1 }, "2.1.99 (Claude Code)\n");
+
+    const status = await aCli({ runCommand: runner }).install();
+
+    expect(status.state).toBe("signed-out");
   });
 });
 
