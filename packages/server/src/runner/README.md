@@ -73,7 +73,8 @@ The run token is never on the command line or in a file. `mcp.json` holds `Beare
 | [outcome.ts](outcome.ts) | How a run ended, and `OUTCOME_MESSAGES`: every sentence a run card shows |
 | [processes.ts](processes.ts) | The only file that imports `node:child_process` |
 | [recovery.ts](recovery.ts) | Leftover runs after a crash or restart |
-| [launcher.ts](launcher.ts) | The queue: which run goes when, how many at once, pausing after `blocked`, cancel |
+| [runText.ts](runText.ts) | The words about a run outside its card: `RUN_TITLES` (the dashboard's card names), `nextStepFor` (Try again or Settings), `waitingStep` (why a queued run waits) |
+| [launcher.ts](launcher.ts) | The queue: which run goes when, how many at once, pausing after `blocked` (and saying so on the waiting runs), cancel |
 | [launchRun.ts](launchRun.ts) | One run from claim to final status, step by step as above |
 | [finishRun.ts](finishRun.ts) | Saving how a run ended (tasks never reached, status, message, token revoked) |
 | [afterRun.ts](afterRun.ts) | Admit to tailoring after a hunt or paste; the one tailor retry on sonnet |

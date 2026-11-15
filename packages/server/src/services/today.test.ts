@@ -5,7 +5,8 @@ import { getApplicationDetail } from "./applicationDetail";
 import { markSubmitted } from "./submissions";
 import { getProfile, updateProfileSection } from "./profile";
 import { changeStatus } from "./decisions";
-import { startHunt } from "./runLifecycle";
+import { cancelRun, startHunt } from "./runLifecycle";
+import { queueRun } from "./runs";
 import { getToday } from "./today";
 import { aScoredApplication, anApplicationAwaitingApproval, advanceTime, closeTestContexts, createTestContext } from "./testSupport";
 import type { ServerContext } from "../context";
@@ -85,6 +86,46 @@ describe("getToday", () => {
 
     expect(today.needsYou).toMatchObject([{ kind: "run-attention", id: run.id, applicationId: null, runId: run.id, title: "Finding jobs" }]);
     expect(today.running.map((card) => card.id)).toEqual([run.id]);
+  });
+
+  it("offers Try again for a run that stopped, and Settings only when Claude Code itself is the problem", () => {
+    const ctx = createTestContext();
+    const run = startHunt(ctx);
+    const planLimit = "Your Claude plan limit is reached. It resets at 10:00 PM.";
+    updateRun(ctx.db, run.id, { status: "blocked", endedAt: ctx.now().toISOString(), outcomeMessage: planLimit });
+    expect(getToday(ctx).needsYou).toMatchObject([{ kind: "run-attention", detail: planLimit, nextStep: "try-again" }]);
+
+    updateRun(ctx.db, run.id, { outcomeMessage: "Sign in with Claude again" });
+    expect(getToday(ctx).needsYou).toMatchObject([{ kind: "run-attention", nextStep: "open-settings" }]);
+
+    updateRun(ctx.db, run.id, { status: "failed", outcomeMessage: "This run was stopped for safety" });
+    expect(getToday(ctx).needsYou).toMatchObject([{ kind: "run-attention", nextStep: "try-again" }]);
+  });
+
+  it("names each run the way its card does", () => {
+    const ctx = createTestContext();
+    const applicationId = aScoredApplication(ctx);
+    const run = queueRun(ctx, { kind: "tailor", applicationIds: [applicationId], input: {} });
+    updateRun(ctx.db, run.id, { status: "failed", endedAt: ctx.now().toISOString(), outcomeMessage: "This run stopped before finishing" });
+
+    expect(getToday(ctx).needsYou.find((item) => item.kind === "run-attention")?.title).toBe("Tailoring resumes");
+  });
+
+  it("keeps a strong match left without a resume on Today, but not while a run works on it or a hunt may admit it", async () => {
+    const ctx = createTestContext();
+    const applicationId = aScoredApplication(ctx);
+    expect(getToday(ctx).needsYou).toMatchObject([
+      { kind: "not-tailored", id: applicationId, detail: "No resume yet. Open it and choose Tailor a resume.", nextStep: null },
+    ]);
+
+    const tailoring = queueRun(ctx, { kind: "tailor", applicationIds: [applicationId], input: {} });
+    expect(kindsOf(ctx)).toEqual([]);
+
+    await cancelRun(ctx, tailoring.id);
+    expect(kindsOf(ctx)).toEqual(["not-tailored"]);
+
+    startHunt(ctx);
+    expect(kindsOf(ctx)).toEqual([]);
   });
 
   it("shows queued and running runs as cards, and drops a finished one after a day", () => {
