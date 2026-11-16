@@ -5,6 +5,7 @@ import {
   addRunTask,
   countRunTasksByState,
   findActiveRunForApplication,
+  findLatestRunTaskOfKind,
   findOldestQueuedRun,
   getNextPendingRunTask,
   getRun,
@@ -210,6 +211,46 @@ describe("findActiveRunForApplication", () => {
     setRunTaskState(db, { runId: "run-1", applicationId: "app-1", state: "waiting" });
 
     expect(findActiveRunForApplication(db, "app-1")?.id).toBe("run-1");
+    db.close();
+  });
+});
+
+describe("findLatestRunTaskOfKind", () => {
+  it("finds the application's newest task in a run of that kind, with the run's status", () => {
+    const db = openTestDatabase();
+    saveTwoApplications(db);
+    insertRun(db, aRun({ id: "run-1", kind: "answers", status: "failed" }), ["app-1"]);
+    insertRun(db, aRun({ id: "run-2", kind: "tailor", status: "running" }), ["app-1"]);
+    insertRun(db, aRun({ id: "run-3", kind: "answers", status: "queued" }), ["app-1", "app-2"]);
+
+    expect(findLatestRunTaskOfKind(db, "app-1", "answers")).toEqual({
+      task: { runId: "run-3", applicationId: "app-1", state: "pending", note: null },
+      runStatus: "queued",
+    });
+    expect(findLatestRunTaskOfKind(db, "app-1", "tailor")?.task.runId).toBe("run-2");
+    db.close();
+  });
+
+  it("goes by when the task was added, not when its run was queued, so a task that joined an older run counts", () => {
+    const db = openTestDatabase();
+    saveTwoApplications(db);
+    insertRun(db, aRun({ id: "run-older", kind: "answers", queuedAt: "2026-11-01T09:00:00.000Z" }), ["app-2"]);
+    insertRun(db, aRun({ id: "run-newer", kind: "answers", status: "waiting", queuedAt: "2026-11-01T10:00:00.000Z" }), ["app-1"]);
+    setRunTaskState(db, { runId: "run-newer", applicationId: "app-1", state: "done", note: "Continued in a new run." });
+
+    addRunTask(db, "run-older", "app-1"); // an answered question joins the oldest queued run (D8)
+
+    expect(findLatestRunTaskOfKind(db, "app-1", "answers")?.task).toMatchObject({ runId: "run-older", state: "pending" });
+    db.close();
+  });
+
+  it("is null when no run of that kind ever had the application", () => {
+    const db = openTestDatabase();
+    saveTwoApplications(db);
+    insertRun(db, aRun({ kind: "tailor" }), ["app-1"]);
+
+    expect(findLatestRunTaskOfKind(db, "app-1", "answers")).toBeNull();
+    expect(findLatestRunTaskOfKind(db, "app-2", "tailor")).toBeNull();
     db.close();
   });
 });

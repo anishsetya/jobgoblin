@@ -12,7 +12,7 @@ Read first: `src/router.tsx` (the map of every screen), `src/api/client.ts` (how
 | `/setup/:step` | Setup wizard, 8 steps (7 tasks plus Finish) | `screens/setup/` (loaded on demand) |
 | `/today` | Today: Find jobs, Add a job, Needs you, Running, Done today | `screens/TodayScreen.tsx` |
 | `/review/:id` | Review one application (keys A, E, S, J, K) | `screens/ReviewScreen.tsx`, `screens/review/` |
-| `/apply/:id` | Open application: frozen data sheet, answers, "I submitted" | `screens/ApplyScreen.tsx`, `screens/apply/` |
+| `/apply/:id` | Open application: "I submitted" first, then the resume file, the frozen data sheet and the answers (`components/AnswersList.tsx`, shared with `/apps/:id`) | `screens/ApplyScreen.tsx`, `screens/apply/` |
 | `/pipeline` | Board or list, search and filters (kept in the address) | `screens/PipelineScreen.tsx`, `screens/pipeline/` |
 | `/apps/:id` | Application: description, fit, versions, answers, history, status, Ask | `screens/ApplicationDetailScreen.tsx`, `screens/application/` |
 | `/profile/:tab` | Your story, Form answers, Targets, Banned words | `screens/ProfileScreen.tsx`, `screens/profile/` |

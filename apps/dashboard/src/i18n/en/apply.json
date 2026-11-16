@@ -20,7 +20,6 @@
   "answers": {
     "title": "Answers",
     "description": "Written for this job after you approved it.",
-    "none": "Your answers are still being written. They will appear here by themselves.",
     "questionsTitle": "Claude has a question"
   },
   "resume": {

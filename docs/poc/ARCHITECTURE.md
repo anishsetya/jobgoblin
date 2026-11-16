@@ -205,7 +205,8 @@ NeedsYouItem = { kind, id, applicationId, runId, title, detail, createdAt }
 TodayResponse = { needsYou: NeedsYouItem[], running: Run[], doneToday: { found, tailored, approved, applied }, setupComplete: boolean, usageNoticeSeen: boolean }
 PipelineRow = Application + { overdue: boolean, location, region }
 ApplicationActions = { canApprove, canSkip, canUndoSkip, canRequestEdit, canTailor, canWithdraw, canMarkSubmitted, canAsk }   // booleans computed by the server with core
-ApplicationDetail = { application, job, fit, resume: ResumeVersion | null, resumeHeader: ResumeHeader | null, versions: ApplicationResume[], diff: ResumeDiff | null, storyItems: StoryItem[] /* items the resume cites plus items the fit matched */, dataSheet: DataSheet | null, dataSheetHash: string | null, approval: Approval | null, answers: Answer[], submission: Submission | null, questions: Question[], history: HistoryEvent[], askResults: { question, answer, at }[], allowedStatusMoves: ApplicationStatus[], actions: ApplicationActions }
+AnswersState = "waiting-for-approval" | "being-written" | "waiting-for-answer" | "written" | "no-questions" | "not-written"   // see 8.5
+ApplicationDetail = { application, job, fit, resume: ResumeVersion | null, resumeHeader: ResumeHeader | null, versions: ApplicationResume[], diff: ResumeDiff | null, storyItems: StoryItem[] /* items the resume cites plus items the fit matched */, dataSheet: DataSheet | null, dataSheetHash: string | null, approval: Approval | null, answers: Answer[], answersState: AnswersState, submission: Submission | null, questions: Question[], history: HistoryEvent[], askResults: { question, answer, at }[], allowedStatusMoves: ApplicationStatus[], actions: ApplicationActions }
 ApproveRequest = { dataSheetHash, submitMode: "manual" }
 SubmittedRequest = { proofType, proof, attachedSha256: string | null, confirmDifferentFile?: boolean }
 StatusChangeRequest = { to, followUpOn?: string | null, note?: string }
@@ -401,6 +402,17 @@ Draft previews live in `<appData>/previews/<versionId>.pdf`, rebuilt freely and 
 3. One transaction: insert the approval; set `application_resumes.state = approved` with `pdf_sha256` and `pdf_bytes`; move Awaiting approval → Approved (or, for an Approved application with no live approval, no move and a `re-approved` event); history event.
 4. After commit: write `Resumes/<shortId>.pdf`, the application folder with `First Last - Resume.pdf` and `Job description.md`; schedule the tracker and a backup; queue an answers run.
 
+`ApplicationDetail.answersState` (`server/services/answersState.ts`) says where the answers stand, so Open application and the Application page never guess from an empty list. It comes from the approval, the saved answers and the application's newest answers task (newest by when the task was added, because an answered question can join an older queued run, D8):
+
+| `answersState` | When |
+| --- | --- |
+| `waiting-for-approval` | No approval yet |
+| `written` | Answers are saved |
+| `being-written` | The newest task is pending in a run that is queued, running or waiting |
+| `waiting-for-answer` | The newest task is waiting: the run asked the person first |
+| `no-questions` | The newest task is done, nothing was saved and the job has no screening questions (the playbook's "No screening questions") |
+| `not-written` | The task failed, its run ended before it, the run marked it done while skipping the job's questions, or no answers run was queued |
+
 A profile change voids every live approval whose data sheet hash no longer matches (event `approval-voided`); the Open application screen then asks the person to review again.
 
 ### 8.6 I submitted (`server/services/submissions.ts`)
@@ -538,9 +550,9 @@ React 19 + Vite + Tailwind 4 + TanStack Query + TanStack Router (code-based rout
 | `/setup/:step` | 1 Welcome, 2 Connect Claude (status, Install, Sign in), 3 Your folder (offers Restore when backups are found), 4 Your resume (upload, optional LinkedIn PDF, then the setup run's progress), 5 Your story (confirm, edit, drop), 6 Form answers (missing values marked; values a run suggested are shown for the person to confirm), 7 Targets, then Finish |
 | `/today` | Find jobs, Add a job (link or text; asks for company, title and text when a link needs a login), usage notice before the first run, Needs you, Running (cards with step, progress, Cancel), Done today |
 | `/review/:id` | Role, company, fit, band, reason, flags, gaps, matched items; changes vs master; HTML resume preview with reworded lines highlighted; data sheet; Approve (the only accent button), Request edit (asks for a note), Skip; keys A, E, S, J, K |
-| `/apply/:id` | Posting link (opens in the browser), a copy button for every field of the **frozen** `approval.dataSheet` and every answer, Open resume file, I submitted (proof type and proof); "Your details changed since you approved. Review it again." when the approval is void |
+| `/apply/:id` | Posting link (opens in the browser), I submitted (proof type and proof) right under the introduction so it is in view on arrival, Open resume file, a copy button for every field of the **frozen** `approval.dataSheet` and every answer (or a sentence for `answersState` when there are none); "Your details changed since you approved. Review it again." when the approval is void |
 | `/pipeline` | Board by status group and list view, search, filters, overdue follow-ups in amber |
-| `/apps/:id` | Job description, fit, resume versions, answers, history, status change (only `allowedStatusMoves`), Withdraw, Undo skip, Tailor, Ask about this application |
+| `/apps/:id` | Job description, fit, resume versions, answers (or the same `answersState` sentence as `/apply/:id`), history, status change (only `allowedStatusMoves`), Withdraw, Undo skip, Tailor, Ask about this application |
 | `/profile/:tab` | Your story, Form answers, Targets (including hard skips and flags), Banned words |
 | `/settings` | Claude connection, folder, limits, tracker status and Open tracker, backups (last backup time, Back up now, Restore), export CSV and xlsx |
 
@@ -562,7 +574,7 @@ Built with `tsup` to `dist/cli.mjs`; tests set `JOBGOBLIN_CLAUDE_COMMAND=["<node
 - `--version` prints `2.1.99 (Claude Code)`; `auth status` prints `{"loggedIn":true,"authMethod":"claude.ai","subscriptionType":"pro"}` (or signed out with `FAKE_CLAUDE_MODE=signed-out`); `auth login` exits 0.
 - `-p`: reads the playbook from stdin, takes the run kind and input from lines 1 and 2 (D6), reads `--mcp-config`, expands `${JOBGOBLIN_RUN_TOKEN}`, connects with the MCP SDK client, prints `system/init` (`session_id`, `tools` = the `--allowedTools` it was given, `mcp_servers: [{ name: "jobgoblin", status: "connected" }]`), one `assistant` line per tool call, and a final `result` line (`subtype`, `is_error`, `result`, `num_turns`).
 - Scripted behaviour per kind: setup (import_resume → propose_story_items from `data/story-items.json` → save_profile_section employment); hunt (search_jobs → get_fit_context → score from `data/scores.json`, else keyword overlap → record_fit each → mark_seen); paste (get_job → get_fit_context → record_fit); tailor (loop next_task → get_tailoring_context → reorder the master resume to put bullets matching must-haves first → submit_resume_draft → on errors drop the failing parts and resubmit once → complete_task); answers (loop next_task → get_approved → save_answers using `{fullName}`-style placeholders → complete_task); ask (get_application → result text).
-- Switches through env: `FAKE_CLAUDE_MODE=signed-out | usage-limit | crash | slow | max-turns | extra-tools`; `FAKE_CLAUDE_ASK_FIRST=1` (call ask_person on the first application of a tailor run); `FAKE_CLAUDE_INVENT_BULLET=1` (submit one untraced and one inflated bullet first).
+- Switches through env: `FAKE_CLAUDE_MODE=signed-out | usage-limit | crash | slow | max-turns | extra-tools`; `FAKE_CLAUDE_ASK_FIRST=1` (call ask_person on the first application of a tailor run); `FAKE_CLAUDE_INVENT_BULLET=1` (submit one untraced and one inflated bullet first); `FAKE_CLAUDE_NO_QUESTIONS=1` (an answers run saves nothing for a job with no screening questions and completes the task as done with "No screening questions", as the playbook says; without it the fake answers one made-up question).
 
 ## 15. Tests
 

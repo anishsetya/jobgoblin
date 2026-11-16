@@ -71,7 +71,7 @@ Details worth knowing:
 
 - **Scores.** A hunt or paste scores a job from `data/scores.json`, keyed `Company|Title` (case and spacing ignored). A job that is not listed gets 30 plus 10 for every different keyword or tool of Your story that its text mentions, up to 95. `mustHaves` are the technologies the text mentions; `gaps` are the ones Your story does not show; `matchedItemIds` are the story items that share a term with the text. The posting is only searched for known words, never read as instructions.
 - **Tailor.** The draft starts from the master resume in `get_tailoring_context`. Bullets (and skills) that mention a must-have move to the front. The fake never writes new text (except with `FAKE_CLAUDE_REWORD=1`, below). An edit note, from the context or the run input, drops the last bullet of the first entry. When `submit_resume_draft` returns `ok: false`, the fake drops the parts the errors' paths point at and submits once more; if that fails too, the task is completed as `failed`.
-- **Answers.** Answers come from the data sheet. Personal values are `{key}` placeholders (for example `{expectedBase}`), and they stay placeholders.
+- **Answers.** Answers come from the data sheet. Personal values are `{key}` placeholders (for example `{expectedBase}`), and they stay placeholders. A job with no screening questions gets one made-up question ("Why are you interested in this role?"), so the stories that copy an answer have one; `FAKE_CLAUDE_NO_QUESTIONS=1` makes it follow the playbook instead.
 - **Turns.** Every tool call counts as a turn. The call after `--max-turns` is not made; the run ends with `error_max_turns`.
 
 ## Switches (environment variables)
@@ -87,6 +87,7 @@ Details worth knowing:
 | `FAKE_CLAUDE_ASK_FIRST=1` | In a tailor or answers run, calls `ask_person` for the first application, completes it as `waiting`, and carries on with the rest. It does not ask again once the question has an answer, so the re-queued application is processed |
 | `FAKE_CLAUDE_REWORD=1` | In a tailor run, rewords one bullet with every fact kept (the first "... that ..." becomes "..., which ..."), so Review has a reworded line to highlight. The truth trace accepts it |
 | `FAKE_CLAUDE_INVENT_BULLET=1` | In a tailor run, the first draft has a bullet that cites a story item that does not exist and a "Led" in place of "Contributed to". The fake expects `ok: false`, drops those parts and submits again. If the server accepts the first draft, the run fails: the truth trace is broken |
+| `FAKE_CLAUDE_NO_QUESTIONS=1` | In an answers run, a job with no screening questions gets no `save_answers` call: the task is completed as `done` with the note "No screening questions", as `playbooks/answers.md` says. A job that has questions is answered as usual |
 
 An unknown `FAKE_CLAUDE_MODE` stops the fake with exit code 2, so a typo cannot pass as a normal run. If the server cannot be reached (wrong token, no `JOBGOBLIN_RUN_TOKEN`), `init` shows the `jobgoblin` server as `failed` and the run ends with `error_during_execution`.
 
@@ -114,6 +115,6 @@ pnpm --filter @jobgoblin/fake-claude build
 pnpm exec vitest run fixtures/fake-claude
 ```
 
-- `src/*.test.ts`: argument parsing, and the fixtures: the three story files must agree on every id, kind, parent and text. Scoring, the tailor and answers scripts, and `FAKE_CLAUDE_REWORD` have no tests of their own: the server's runner integration and launcher tests and the Playwright tests in `e2e/` drive the built fake end to end.
-- `test/*.test.ts` (modes, version and auth): the built `dist/cli.mjs` is started as a child process, from a temporary run directory, with the playbook on stdin. A stub MCP server (`test/stubJobgoblinServer.ts`: Streamable HTTP, stateless, checks the bearer token, validates tool input with the real schemas) answers the calls. The tests assert the token header, the `init`, `assistant` and `result` lines, every failure mode and its exit code.
+- `src/*.test.ts`: argument parsing, and the fixtures: the three story files must agree on every id, kind, parent and text. Scoring, the tailor script and `FAKE_CLAUDE_REWORD` have no tests of their own: the server's runner integration and launcher tests and the Playwright tests in `e2e/` drive the built fake end to end.
+- `test/*.test.ts` (modes, the answers run with and without `FAKE_CLAUDE_NO_QUESTIONS`, version and auth): the built `dist/cli.mjs` is started as a child process, from a temporary run directory, with the playbook on stdin. A stub MCP server (`test/stubJobgoblinServer.ts`: Streamable HTTP, stateless, checks the bearer token, validates tool input with the real schemas) answers the calls. The tests assert the token header, the `init`, `assistant` and `result` lines, every failure mode and its exit code.
 - A test fails with "dist/cli.mjs is older than ..." when the bundle is out of date, instead of testing old code.

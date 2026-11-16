@@ -1,5 +1,7 @@
-// Open application: the posting link, a copy button for every field of the FROZEN data sheet the person
-// approved and for every answer, the approved resume file, and "I submitted" with proof.
+// Open application: "I submitted" with proof, the posting link, the approved resume file, a copy button for
+// every field of the FROZEN data sheet the person approved, and the answers (or where they stand).
+// "I submitted" comes right after the introduction, so it is in view on arrival and a few Tab presses away;
+// the values to copy follow it.
 // The person fills in the company's form themselves and clicks Submit there; Jobgoblin never does.
 // If the profile changed after approval, the approval is void and the screen asks for another review.
 // Spec: PRD U1 and U4, ARCHITECTURE.md sections 8.5, 8.6 and 12.
@@ -7,8 +9,8 @@ import type { ApplicationDetail } from "@jobgoblin/schemas";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { AnswersList } from "@/components/AnswersList";
 import { ApplicationHeader } from "@/components/ApplicationHeader";
-import { CopyButton } from "@/components/CopyButton";
 import { DataSheetTable } from "@/components/DataSheetTable";
 import { EmptyState } from "@/components/EmptyState";
 import { QuestionAnswerForm } from "@/components/QuestionAnswerForm";
@@ -21,7 +23,7 @@ import { usePageTitle } from "@/lib/pageTitle";
 
 export function ApplyContent({ detail }: { detail: ApplicationDetail }) {
   const { t } = useTranslation();
-  const { application, job, approval, answers, questions, versions, actions } = detail;
+  const { application, job, approval, answers, answersState, questions, versions, actions } = detail;
   usePageTitle(t("apply:pageTitle", { company: application.company, title: application.title }));
 
   const navigate = useNavigate();
@@ -93,6 +95,15 @@ export function ApplyContent({ detail }: { detail: ApplicationDetail }) {
 
       <p className="text-sm text-muted">{t("apply:intro")}</p>
 
+      {!isAlreadySubmitted && (
+        <div className="flex flex-wrap items-center gap-3">
+          <Button variant="accent" disabled={!actions.canMarkSubmitted} onClick={() => setIsSubmittedOpen(true)}>
+            {t("apply:submitted.open")}
+          </Button>
+          <p className="text-sm text-muted">{t("apply:submitted.openHint")}</p>
+        </div>
+      )}
+
       <ResumeFileCard
         applicationId={application.id}
         applicationFolder={application.folder}
@@ -105,20 +116,8 @@ export function ApplyContent({ detail }: { detail: ApplicationDetail }) {
         <DataSheetTable dataSheet={approval.dataSheet} showCopyButtons />
       </Card>
 
-      <Card title={t("apply:answers.title")} description={t("apply:answers.description")}>
-        {answers.length === 0 ? (
-          <p className="text-sm text-muted">{t("apply:answers.none")}</p>
-        ) : (
-          <ul className="space-y-5">
-            {answers.map((answer) => (
-              <li key={answer.question} className="space-y-1">
-                <h3 className="text-sm font-medium">{answer.question}</h3>
-                <p className="text-sm whitespace-pre-wrap">{answer.answer}</p>
-                <CopyButton text={answer.answer} label={answer.question} />
-              </li>
-            ))}
-          </ul>
-        )}
+      <Card title={t("apply:answers.title")} description={answers.length > 0 ? t("apply:answers.description") : undefined}>
+        <AnswersList answers={answers} state={answersState} />
         {openQuestions.length > 0 && (
           <div className="mt-6 space-y-2 border-t border-line pt-4">
             <h3 className="text-sm font-medium">{t("apply:answers.questionsTitle")}</h3>
@@ -128,15 +127,6 @@ export function ApplyContent({ detail }: { detail: ApplicationDetail }) {
           </div>
         )}
       </Card>
-
-      {!isAlreadySubmitted && (
-        <div className="flex flex-wrap items-center gap-3">
-          <Button variant="accent" disabled={!actions.canMarkSubmitted} onClick={() => setIsSubmittedOpen(true)}>
-            {t("apply:submitted.open")}
-          </Button>
-          <p className="text-sm text-muted">{t("apply:submitted.openHint")}</p>
-        </div>
-      )}
 
       <SubmittedDialog
         open={isSubmittedOpen}

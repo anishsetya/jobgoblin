@@ -26,7 +26,7 @@ Each file starts with a comment saying what it covers. The numbers are sections 
 | `dataSheet.ts` | `DataSheetKey`, `DataSheetField`, `DataSheet`, `Approval` | 5.7 |
 | `submission.ts` | `Submission`, `ProofType`, `Answer` | 5.7 |
 | `run.ts` | `Run`, `RunInput`, `RunTask`, `Question`, `StartRunRequest`, `RUN_KIND_SETTINGS` | 5.8, 10 |
-| `api.ts` | `ApiError`, `TodayResponse`, `PipelineRow`, `ApplicationDetail`, `ApplicationActions`, the person's requests, `Settings`, `SettingsResponse`, `HistoryEvent` | 5.9 |
+| `api.ts` | `ApiError`, `TodayResponse`, `PipelineRow`, `ApplicationDetail`, `ApplicationActions`, `AnswersState`, the person's requests, `Settings`, `SettingsResponse`, `HistoryEvent` | 5.9 |
 | `events.ts` | `ServerEvent` | 5.10 |
 | `mcp.ts` | Re-exports everything in `mcp/` (no logic) | 5.11, 9 |
 | `mcp/toolNames.ts`, `mcp/toolReply.ts` | `MCP_TOOL_NAMES`, `RUN_KIND_TOOLS`; `ToolError`, `ToolReply` | 5.11, 9 |
