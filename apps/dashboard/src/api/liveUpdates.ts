@@ -2,10 +2,13 @@
 // The server says what changed ("run.updated", "application.updated", ...) and this file marks the
 // matching cached data stale; React Query then fetches it again for whichever screens are showing it.
 // The events carry no data of their own beyond a run's progress: the facts always come from the normal routes.
+// It also returns the state of the connection (see connection.ts), so every screen can say when Jobgoblin
+// cannot be reached instead of looking normal until the next click.
 // Spec: ARCHITECTURE.md sections 5.10 and 12.
 import type { Run, ServerEvent } from "@jobgoblin/schemas";
 import { useQueryClient, type QueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import type { ConnectionState } from "./connection";
 import { subscribeToServerEvents } from "./events";
 import {
   invalidateApplication,
@@ -19,8 +22,9 @@ import { rememberRun } from "./runs";
 const ACTIVE_RUN_STATUSES: readonly Run["status"][] = ["queued", "running"];
 
 // Call once, near the top of the app.
-export function useLiveUpdates(): void {
+export function useLiveUpdates(): ConnectionState {
   const queryClient = useQueryClient();
+  const [connection, setConnection] = useState<ConnectionState>("connected");
 
   useEffect(() => {
     let hasConnectedBefore = false;
@@ -31,9 +35,14 @@ export function useLiveUpdates(): void {
         // Updates sent while the connection was down are gone, so after a reconnect refresh everything.
         if (hasConnectedBefore) void invalidateEverything(queryClient);
         hasConnectedBefore = true;
+        setConnection("connected");
       },
+      onDisconnected: () => setConnection("lost"),
+      onRefused: () => setConnection("old-token"),
     });
   }, [queryClient]);
+
+  return connection;
 }
 
 function refreshForEvent(queryClient: QueryClient, event: ServerEvent): void {

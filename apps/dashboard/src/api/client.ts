@@ -58,6 +58,12 @@ function localProblem(code: LocalProblemCode, status: number): ApiProblem {
   );
 }
 
+// "Jobgoblin could not be reached": what a request that got no answer at all throws. A screen whose file
+// could not be fetched (lib/lazyScreen.tsx) throws it too, so both say the same thing.
+export function networkProblem(): ApiProblem {
+  return localProblem("network", 0);
+}
+
 function buildHeaders(options: RequestOptions): Headers {
   const headers = new Headers(options.headers);
   const token = readSessionToken();
@@ -78,7 +84,7 @@ async function sendRequest(path: string, options: RequestOptions): Promise<Respo
   } catch (error) {
     // Cancelling a request on purpose (leaving a screen, closing the event stream) is not a failure.
     if (error instanceof DOMException && error.name === "AbortError") throw error;
-    throw localProblem("network", 0);
+    throw networkProblem();
   }
 }
 

@@ -45,6 +45,16 @@
   "routeError": {
     "title": "This screen could not open"
   },
+  "connection": {
+    "lost": {
+      "message": "Jobgoblin could not be reached.",
+      "action": "Check that Jobgoblin is still open on your computer. This page keeps trying, and updates by itself when Jobgoblin is back."
+    },
+    "old-token": {
+      "message": "This page is out of date. Jobgoblin was restarted, or the page was opened without its link.",
+      "action": "Open Jobgoblin again from the link it printed when it started."
+    }
+  },
   "notFound": {
     "title": "We could not find that page",
     "description": "The address may be old or mistyped.",

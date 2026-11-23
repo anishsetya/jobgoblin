@@ -2,7 +2,9 @@
 // It uses `fetch` and a stream reader, not the browser's EventSource, because EventSource cannot
 // send the Authorization header (decision D5). If the connection drops it waits, then tries again,
 // waiting longer after each failure so a stopped server is not asked every second.
-// Spec: ARCHITECTURE.md sections 2 (D5) and 5.10.
+// It also says how the connection itself is doing (connected, cannot reach Jobgoblin, key refused),
+// which is how every screen learns that Jobgoblin has gone (api/connection.ts).
+// Spec: ARCHITECTURE.md sections 2 (D5), 5.10 and 12.
 import { ServerEvent } from "@jobgoblin/schemas";
 import { ApiProblem, apiRequest } from "./client";
 
@@ -15,27 +17,50 @@ export type ServerEventHandlers = {
   // Called each time the stream (re)connects. Events sent while it was down are lost,
   // so the caller refreshes its data when this is not the first connection.
   onConnected?(): void;
+  // Called each time an attempt to connect fails: Jobgoblin cannot be reached. Listening goes on,
+  // so onConnected follows once Jobgoblin answers again. A stream that drops is not reported by
+  // itself: only the attempt after it is, so a stream that reconnects at once shows nothing.
+  onDisconnected?(): void;
+  // Called once when the server refuses this page's key (HTTP 401). Every start of the server makes
+  // a new key, so this is what a browser tab opened before a restart gets. Listening stops for good.
+  onRefused?(): void;
 };
 
+// Opens the event stream. Tests pass their own in place of the real request.
+export type OpenEventStream = (signal: AbortSignal) => Promise<Response>;
+
+function openEventStream(signal: AbortSignal): Promise<Response> {
+  return apiRequest("/api/events", { headers: { Accept: "text/event-stream" }, signal });
+}
+
 // Starts listening. Returns a function that stops listening.
-export function subscribeToServerEvents(handlers: ServerEventHandlers): () => void {
+export function subscribeToServerEvents(
+  handlers: ServerEventHandlers,
+  openStream: OpenEventStream = openEventStream,
+): () => void {
   const stopper = new AbortController();
-  void keepListening(handlers, stopper.signal);
+  void keepListening(handlers, openStream, stopper.signal);
   return () => stopper.abort();
 }
 
-async function keepListening(handlers: ServerEventHandlers, signal: AbortSignal): Promise<void> {
+async function keepListening(handlers: ServerEventHandlers, openStream: OpenEventStream, signal: AbortSignal): Promise<void> {
   let retryDelayMs = FIRST_RETRY_DELAY_MS;
 
   while (!signal.aborted) {
+    let opened = false;
     try {
-      await readOneConnection(handlers, signal, () => {
+      await readOneConnection(handlers, openStream, signal, () => {
+        opened = true;
         retryDelayMs = FIRST_RETRY_DELAY_MS; // a connection that opened is a healthy one
       });
     } catch (error) {
       if (signal.aborted) return;
-      // A refused key will not become valid by waiting; the person must reopen the app.
-      if (error instanceof ApiProblem && error.status === HTTP_UNAUTHORIZED) return;
+      // A refused key will not become valid by waiting; the person must open the page again.
+      if (error instanceof ApiProblem && error.status === HTTP_UNAUTHORIZED) {
+        handlers.onRefused?.();
+        return;
+      }
+      if (!opened) handlers.onDisconnected?.();
     }
 
     await waitFor(retryDelayMs, signal);
@@ -45,10 +70,11 @@ async function keepListening(handlers: ServerEventHandlers, signal: AbortSignal)
 
 async function readOneConnection(
   handlers: ServerEventHandlers,
+  openStream: OpenEventStream,
   signal: AbortSignal,
   onOpened: () => void,
 ): Promise<void> {
-  const response = await apiRequest("/api/events", { headers: { Accept: "text/event-stream" }, signal });
+  const response = await openStream(signal);
   if (response.body === null) return;
 
   onOpened();
@@ -104,13 +130,14 @@ function parseEventBlock(block: string): ServerEvent | null {
 }
 
 // Waits, but wakes up at once when the caller stops listening.
+// (The global setTimeout, not window.setTimeout, so the unit tests can run this outside a browser.)
 function waitFor(milliseconds: number, signal: AbortSignal): Promise<void> {
   return new Promise((resolve) => {
-    const timer = window.setTimeout(done, milliseconds);
+    const timer = setTimeout(done, milliseconds);
     signal.addEventListener("abort", done, { once: true });
 
     function done(): void {
-      window.clearTimeout(timer);
+      clearTimeout(timer);
       signal.removeEventListener("abort", done);
       resolve();
     }

@@ -8,6 +8,8 @@
 //
 // A route component here only reads the address and hands plain props to a screen in src/screens,
 // so the screens themselves know nothing about routing and are easy to read on their own.
+// A screen that cannot open shows RouteErrorScreen: inside the sidebar frame for the screens in it (each of them
+// has its own errorComponent, so the frame stays), and as the whole page for the rest.
 // Spec: ARCHITECTURE.md section 12.
 import type { QueryClient } from "@tanstack/react-query";
 import {
@@ -16,13 +18,16 @@ import {
   createRoute,
   createRouter,
   redirect,
+  useRouter,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { Suspense, lazy, type ReactElement } from "react";
+import { Suspense, useEffect, type ReactElement } from "react";
 import { todayQueryOptions } from "@/api/today";
 import { AppShell } from "@/components/AppShell";
 import { LoadingNote } from "@/components/LoadingNote";
 import { NotFoundScreen } from "@/components/NotFoundScreen";
 import { RouteErrorScreen } from "@/components/RouteErrorScreen";
+import { forgetFailedScreenLoads, lazyScreen } from "@/lazyScreen";
 import { TodayScreen } from "@/screens/TodayScreen";
 import { parsePipelineSearch } from "@/screens/pipeline/pipelineSearch";
 import { parseProfileTab } from "@/screens/profile/profileTabs";
@@ -30,21 +35,45 @@ import { parseSetupStep } from "@/screens/setup/setupSteps";
 
 // Today is part of the main download because it is the first screen. Every other screen is loaded the first
 // time the person goes there, which keeps the first load small. (The wizard is used once, on first run.)
-const SetupScreen = lazy(() => import("@/screens/setup/SetupScreen").then((module) => ({ default: module.SetupScreen })));
-const ReviewScreen = lazy(() => import("@/screens/ReviewScreen").then((module) => ({ default: module.ReviewScreen })));
-const ApplyScreen = lazy(() => import("@/screens/ApplyScreen").then((module) => ({ default: module.ApplyScreen })));
-const PipelineScreen = lazy(() => import("@/screens/PipelineScreen").then((module) => ({ default: module.PipelineScreen })));
-const ApplicationDetailScreen = lazy(() =>
-  import("@/screens/ApplicationDetailScreen").then((module) => ({ default: module.ApplicationDetailScreen })),
+const SetupScreen = lazyScreen(() => import("@/screens/setup/SetupScreen").then((module) => module.SetupScreen));
+const ReviewScreen = lazyScreen(() => import("@/screens/ReviewScreen").then((module) => module.ReviewScreen));
+const ApplyScreen = lazyScreen(() => import("@/screens/ApplyScreen").then((module) => module.ApplyScreen));
+const PipelineScreen = lazyScreen(() => import("@/screens/PipelineScreen").then((module) => module.PipelineScreen));
+const ApplicationDetailScreen = lazyScreen(() =>
+  import("@/screens/ApplicationDetailScreen").then((module) => module.ApplicationDetailScreen),
 );
-const ProfileScreen = lazy(() => import("@/screens/ProfileScreen").then((module) => ({ default: module.ProfileScreen })));
-const SettingsScreen = lazy(() => import("@/screens/SettingsScreen").then((module) => ({ default: module.SettingsScreen })));
+const ProfileScreen = lazyScreen(() => import("@/screens/ProfileScreen").then((module) => module.ProfileScreen));
+const SettingsScreen = lazyScreen(() => import("@/screens/SettingsScreen").then((module) => module.SettingsScreen));
+
+// Try again forgets a screen file that could not be fetched, clears the error, and runs the routes' checks
+// again (an error from a beforeLoad, such as the first redirect, is kept by the router until then).
+// Leaving the error screen forgets the file too, so coming back to that screen fetches it again.
+function ScreenError({ error, reset, inFrame }: ErrorComponentProps & { inFrame: boolean }): ReactElement {
+  const router = useRouter();
+  useEffect(() => forgetFailedScreenLoads, []);
+
+  function tryAgain(): void {
+    forgetFailedScreenLoads();
+    reset();
+    void router.invalidate();
+  }
+
+  return <RouteErrorScreen error={error} onRetry={tryAgain} inFrame={inFrame} />;
+}
+
+function PageError(props: ErrorComponentProps): ReactElement {
+  return <ScreenError {...props} inFrame={false} />;
+}
+
+function ErrorInFrame(props: ErrorComponentProps): ReactElement {
+  return <ScreenError {...props} inFrame />;
+}
 
 type RouterContext = { queryClient: QueryClient };
 
 const rootRoute = createRootRouteWithContext<RouterContext>()({
   component: Outlet,
-  errorComponent: ({ error, reset }) => <RouteErrorScreen error={error} reset={reset} />,
+  errorComponent: PageError,
   notFoundComponent: NotFoundScreen,
 });
 
@@ -83,12 +112,14 @@ const shellRoute = createRoute({
 const todayRoute = createRoute({
   getParentRoute: () => shellRoute,
   path: "/today",
+  errorComponent: ErrorInFrame,
   component: TodayScreen,
 });
 
 const reviewRoute = createRoute({
   getParentRoute: () => shellRoute,
   path: "/review/$id",
+  errorComponent: ErrorInFrame,
   component: function ReviewRoute(): ReactElement {
     const { id } = reviewRoute.useParams();
     return <ReviewScreen applicationId={id} />;
@@ -98,6 +129,7 @@ const reviewRoute = createRoute({
 const applyRoute = createRoute({
   getParentRoute: () => shellRoute,
   path: "/apply/$id",
+  errorComponent: ErrorInFrame,
   component: function ApplyRoute(): ReactElement {
     const { id } = applyRoute.useParams();
     return <ApplyScreen applicationId={id} />;
@@ -108,6 +140,7 @@ const pipelineRoute = createRoute({
   getParentRoute: () => shellRoute,
   path: "/pipeline",
   validateSearch: parsePipelineSearch,
+  errorComponent: ErrorInFrame,
   component: function PipelineRoute(): ReactElement {
     const search = pipelineRoute.useSearch();
     const navigate = pipelineRoute.useNavigate();
@@ -119,6 +152,7 @@ const pipelineRoute = createRoute({
 const applicationRoute = createRoute({
   getParentRoute: () => shellRoute,
   path: "/apps/$id",
+  errorComponent: ErrorInFrame,
   component: function ApplicationRoute(): ReactElement {
     const { id } = applicationRoute.useParams();
     return <ApplicationDetailScreen applicationId={id} />;
@@ -132,6 +166,7 @@ const profileRoute = createRoute({
   beforeLoad: ({ params }) => {
     if (parseProfileTab(params.tab) !== params.tab) throw redirect({ to: "/profile/$tab", params: { tab: "story" } });
   },
+  errorComponent: ErrorInFrame,
   component: function ProfileRoute(): ReactElement {
     const { tab } = profileRoute.useParams();
     const navigate = profileRoute.useNavigate();
@@ -144,6 +179,7 @@ const profileRoute = createRoute({
 const settingsRoute = createRoute({
   getParentRoute: () => shellRoute,
   path: "/settings",
+  errorComponent: ErrorInFrame,
   component: SettingsScreen,
 });
 
