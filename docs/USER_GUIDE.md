@@ -46,7 +46,10 @@ Real mode, as a desktop window:
 pnpm dev:desktop
 ```
 
-Or in your browser: run `pnpm dev`, then open the `http://127.0.0.1:…/#token=…` link it prints.
+Or in your browser: run `pnpm dev`, then open the `http://127.0.0.1:…/#token=…` link it prints. Leave that window running while you use the app.
+
+- **If it stops** (you close the window, or press Ctrl+C), every screen says "Jobgoblin could not be reached." Start it again with `pnpm dev`.
+- **After a restart, open the new link it prints.** Each start makes a new key, so a tab you opened before says "This page is out of date" until you do. Your data is not affected.
 
 Demo mode (PowerShell, from the `jobgoblin` folder):
 

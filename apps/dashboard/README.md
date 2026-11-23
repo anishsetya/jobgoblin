@@ -27,7 +27,7 @@ src/
   screens/      one file per screen (plus a folder for its parts)
   i18n/         index.ts and en/<area>.json
   lib/          small helpers: class names, dates, downloads, shortcuts, page title, focus
-  router.tsx  queryClient.ts  App.tsx  main.tsx  styles.css
+  router.tsx  lazyScreen.tsx  queryClient.ts  App.tsx  main.tsx  styles.css
 ```
 
 ## Where data fetching lives
@@ -38,7 +38,8 @@ Only `src/api/`. Components never call `fetch`; they call a hook.
 | --- | --- |
 | `client.ts` | `apiFetch` (adds the session token, checks the answer against its schema, throws `ApiProblem`), `apiFetchBlob`, `withQuery` |
 | `token.ts` | `readSessionToken()` |
-| `events.ts` | `subscribeToServerEvents()`, the fetch-based event stream with reconnect and backoff |
+| `events.ts` | `subscribeToServerEvents()`, the fetch-based event stream with reconnect and backoff; it also says when it connects, cannot connect, or has its key refused |
+| `connection.ts` | `useConnectionState()`: `connected`, `lost` or `old-token`, for the connection banner |
 | `desktop.ts` | `window.jobgoblin` (folder chooser, open file) with browser fallbacks |
 | `today.ts` | `GET /api/today`, `POST /api/jobs` |
 | `applications.ts` | `GET /api/apps/:id`, `resume.pdf`, `approve`, `skip`, `undo-skip`, `withdraw`, `request-edit`, `tailor`, `ask`, `status`, `submitted` |
@@ -69,6 +70,18 @@ Errors reach the screen as `ApiProblem` (`message` and `action` in plain words).
 
 After a reconnect everything is refreshed, because events sent while the stream was down are lost. Each mutation hook also refreshes what it changed, so the screen is right even before the event arrives.
 
+The stream is also how every screen learns that Jobgoblin has gone. `useLiveUpdates()` returns the connection state, `App.tsx` provides it (`api/connection.ts`), and `ConnectionBanner` shows it at the top of the main area:
+
+| State | When | The banner says |
+| --- | --- | --- |
+| `connected` | the stream is open, or nothing has failed yet | nothing |
+| `lost` | an attempt to connect failed (a stream that drops gets one quiet try first) | "Jobgoblin could not be reached." It goes by itself once the stream connects again |
+| `old-token` | the server refused the key (401), as a tab opened before a restart gets | "This page is out of date." and to open the link the server printed. The stream stops |
+
+## When a screen cannot open
+
+Each route inside the sidebar frame has its own `errorComponent`, so `RouteErrorScreen` replaces only the main area and the sidebar stays. Errors outside the frame (the first redirect, the setup wizard) take the whole page, which then brings its own `<main>` and banner. Screens load with `lazyScreen()` (`src/lazyScreen.tsx`): a file that cannot be fetched fails with the same `network` problem as a request that got no answer, and Try again, or leaving the error screen, fetches the file again.
+
 The server has no route to fetch one run, so a run's live state lives only in the cache, filled by `run.updated` events and by the run a click returns (`useLiveRun` in `runs.ts` never fetches).
 
 ## Run it against a local server
@@ -91,7 +104,7 @@ pnpm --filter @jobgoblin/dashboard dev
 
 Then open `http://localhost:5173/#token=<the token from the JOBGOBLIN_READY line>`. Vite proxies `/api` to `http://127.0.0.1:47615`, so the server must be on its default port (see `vite.config.ts` if it picked another). The server must be started with `JOBGOBLIN_DEV_ORIGIN=http://localhost:5173`, because it refuses requests whose `Origin` is not its own address or that one. Vite uses `strictPort`, so it will fail rather than move to 5174 and be refused.
 
-Checks: `pnpm --filter @jobgoblin/dashboard typecheck` and `pnpm --filter @jobgoblin/dashboard build`. The Playwright tests in `e2e/` drive these screens; they rely on `data-testid="run-card"`, `"needs-you-item"` and `"pipeline-card"` and on roles and labels everywhere else.
+Checks: `pnpm --filter @jobgoblin/dashboard typecheck` and `pnpm --filter @jobgoblin/dashboard build`. The unit tests (`src/**/*.test.ts` and `.test.tsx`) run in Node with the root `pnpm test`, so they cover only what needs no browser: the event stream, screen loading, and what the error screen says (rendered to HTML). The Playwright tests in `e2e/` drive these screens; they rely on `data-testid="run-card"`, `"needs-you-item"`, `"pipeline-card"` and `"connection-banner"` and on roles and labels everywhere else.
 
 ## Decisions
 
@@ -101,7 +114,7 @@ Checks: `pnpm --filter @jobgoblin/dashboard typecheck` and `pnpm --filter @jobgo
 4. **The router is created after the session token is read** (`createAppRouter` in `main.tsx`), so the router never sees the `#token=` fragment.
 5. **Files are saved with a clicked `<a download>`**, never `window.open(blob:)`, because Electron refuses blob addresses in new windows. So "Open PDF" is "Download PDF" (Review and Application) and the CSV and Excel exports download the same way. "Open resume file" and "Open tracker" go through `window.jobgoblin.openPath` in the desktop app (a rejected promise means refused) or `POST /api/open` in a browser; if neither can open the file the screen shows its path.
 6. **Pipeline filters pick one status and one band.** Each query parameter then holds one value, so the request means the same whether the server reads repeated or comma-separated values. The filters live in the address (`?view=list&status=Applied`).
-7. **Every screen except Today is loaded on demand** with `React.lazy`; `Suspense` sits in `AppShell` and in the setup route. The wizard, Review and Profile are the largest.
+7. **Every screen except Today is loaded on demand** with `lazyScreen` (React's `use` on one remembered load, in place of `React.lazy`, which keeps a failed load for good); `Suspense` sits in `AppShell` and in the setup route. The wizard, Review and Profile are the largest.
 8. **The usage notice is a dialog shown before the first run** (Find jobs, Add a job, or reading the resume in setup), then remembered in settings (`useUsageNotice`).
 9. **After Approve, Skip or Request edit, Review moves to the next application waiting for review**, or back to Today when none is left.
 10. **"I submitted" can check the attached file.** The person may pick the file they uploaded; its SHA-256 is computed in the browser and compared with the approved file. A mismatch needs an explicit "Record it anyway". The file never leaves the computer.
