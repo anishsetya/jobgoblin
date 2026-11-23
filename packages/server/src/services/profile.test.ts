@@ -89,6 +89,11 @@ describe("getProfile", () => {
 
     expect(getProfile(ctx)).toMatchObject({ homeRegion: null, yearsLimit: { limit: 4, experience: null } });
   });
+
+  it("has no warnings for Alex's details, or for a fresh profile", () => {
+    expect(getProfile(createTestContext()).warnings).toEqual([]);
+    expect(getProfile(createTestContext({ withAlexRivera: false })).warnings).toEqual([]);
+  });
 });
 
 describe("updateProfileSection", () => {
@@ -102,6 +107,45 @@ describe("updateProfileSection", () => {
     expect(response.profile.compensation.expectedBase).toBe("$120,000");
     expect(response.missing).toEqual([]);
     expect(events).toContain("profile.updated");
+  });
+
+  it("refuses a banned word in the contact details, naming the field, and saves none of the section", () => {
+    const ctx = createTestContext();
+    const contact = getProfile(ctx).profile.contact;
+
+    expect(() => updateProfileSection(ctx, "contact", { ...contact, phone: "+1 555 0199", fullName: "Alex Rockstar Rivera" })).toThrowError(
+      expect.objectContaining({ code: "banned-in-profile", field: "contact.fullName" }),
+    );
+    expect(getProfile(ctx).profile.contact).toMatchObject({ fullName: "Alex Rivera", phone: "+1 555 0100" });
+  });
+
+  it("refuses a contact value too long to use", () => {
+    const ctx = createTestContext();
+    const contact = getProfile(ctx).profile.contact;
+
+    expect(() => updateProfileSection(ctx, "contact", { ...contact, location: "Austin, TX ".repeat(20) })).toThrowError(
+      expect.objectContaining({ code: "too-long", field: "contact.location" }),
+    );
+    expect(getProfile(ctx).profile.contact.location).toBe("Austin, TX");
+  });
+
+  it("saves an email address that doesn't look like one, and says so next to it", () => {
+    const ctx = createTestContext();
+    const contact = getProfile(ctx).profile.contact;
+
+    const response = updateProfileSection(ctx, "contact", { ...contact, email: "not-an-email" });
+
+    expect(response.profile.contact.email).toBe("not-an-email");
+    expect(response.warnings).toEqual([{ section: "contact", key: "email", message: expect.stringContaining("doesn't look like an email address") }]);
+    expect(getProfile(ctx).warnings).toEqual(response.warnings);
+  });
+
+  it("checks only the contact details on save: banning a word that is already in them is allowed", () => {
+    const ctx = createTestContext();
+
+    const response = updateProfileSection(ctx, "rules", { bannedTerms: ["rockstar", "ninja", "Rivera"] });
+
+    expect(response.profile.rules.bannedTerms).toContain("Rivera");
   });
 });
 
