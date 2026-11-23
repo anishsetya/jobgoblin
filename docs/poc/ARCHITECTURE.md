@@ -129,12 +129,19 @@ PERSONAL_SECTIONS = [contact, compensation, eeo]
 Profile = all seven sections (Profile.parse({}) gives a fresh profile)
 MissingValue = { section, key, label }
 YearsLimit = { limit: number, experience: number | null }
-ProfileResponse = { profile: Profile, missing: MissingValue[], homeRegion: Region | null, yearsLimit: YearsLimit }
+ProfileWarning = { section, key, message }   // a saved value that looks wrong, shown next to its field
+ProfileResponse = { profile: Profile, missing: MissingValue[], homeRegion: Region | null, yearsLimit: YearsLimit, warnings: ProfileWarning[] }
 ```
 
 `hardSkips` defaults to `["An active security clearance is required"]`; `flags` to `["Relocation required", "Graduation-year window"]`. Targets and rules are rows of the `profile` table like every other section.
 
 Where the person can work is answered on Form answers and saved in `targets.regions` and `targets.cities`. In `regions`, `US`, `IN` and `OTHER` are countries and `REMOTE` means the person wants remote jobs: remote is a way of working, not a place. Work authorization is asked for each chosen country that has questions (`US`, `IN`), and with `REMOTE` also for `homeRegion`, the country of `contact.location` (`core.homeRegionOf`). The years limit is `employment.yearsExperience` + 2; the stored `maxYearsRequired` is used only while that answer is missing (`core.yearsLimitFor`). `homeRegion` and `yearsLimit` are in `ProfileResponse` because the dashboard may not import core.
+
+Saving the contact section is checked first (`server/services/contactChecks.ts`), so a problem is shown next to its field when it is typed, not at Approve:
+- **Refused** (400, with `field` set to `contact.<key>`): a banned word in any field (`banned-in-profile`, the words Approve uses with the field's name in front), and a value too long to use (`too-long`: full name 100 characters, email 254, phone 40, where you live 100, each link 300).
+- **Saved with a warning** in `ProfileResponse.warnings`: an email address that doesn't look like one (something@something.something, no spaces), and a phone number that doesn't (digits, spaces and `+ ( ) . / -`, an optional extension, at least 7 digits). Formats vary by country, so these never stop a save.
+
+Empty and `TODO` values are left to the missing values. The Approve check on the data sheet stays: a word banned after a value was saved is still caught there.
 
 ### 5.4 `job.ts`
 
@@ -202,7 +209,7 @@ RUN_KIND_SETTINGS: Record<RunKind, { model, maxTurns, timeoutMinutes, builtInToo
 ### 5.9 `api.ts`
 
 ```ts
-ApiError = { code, message, action }
+ApiError = { code, message, action, field? }   // field: the form field a refusal is about, as "section.key"
 NeedsYouKind = "review" | "question" | "ready-to-submit" | "long-shot" | "not-tailored" | "follow-up-due" | "run-attention"
 NeedsYouItem = { kind, id, applicationId, runId, title, detail, createdAt }
 TodayResponse = { needsYou: NeedsYouItem[], running: Run[], doneToday: { found, tailored, approved, applied }, setupComplete: boolean, usageNoticeSeen: boolean }

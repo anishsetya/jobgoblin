@@ -148,15 +148,26 @@ export const YearsLimit = z.object({
 });
 export type YearsLimit = z.infer<typeof YearsLimit>;
 
+// A saved value that looks wrong, such as an email address with no "@". It was saved anyway, because formats
+// vary by country, and the Form answers screen shows `message` next to the field.
+export const ProfileWarning = z.object({
+  section: ProfileSectionName,
+  key: z.string(), // the field name inside the section, such as "email"
+  message: z.string(), // plain words for the screen, such as "This doesn't look like an email address."
+});
+export type ProfileWarning = z.infer<typeof ProfileWarning>;
+
 // The response of GET /api/profile and PUT /api/profile/:section. Next to the profile, what the server
 // works out from it, so the screens need no rules of their own:
 //   homeRegion  the country of "Where you live" when Jobgoblin can tell it ("US", "IN", "OTHER"), or null.
 //               A remote job is done from there, so it decides which questions Remote jobs asks.
 //   yearsLimit  the years limit the code filter uses, as shown on the Targets screen.
+//   warnings    saved values that look wrong, for the fields they belong to.
 export const ProfileResponse = z.object({
   profile: Profile,
   missing: z.array(MissingValue),
   homeRegion: Region.nullable(),
   yearsLimit: YearsLimit,
+  warnings: z.array(ProfileWarning),
 });
 export type ProfileResponse = z.infer<typeof ProfileResponse>;

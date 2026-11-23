@@ -25,7 +25,11 @@
     "yes": "Yes",
     "no": "No",
     "saved": "Saved",
-    "workAuthorizationHint": "What you will say when a form asks about working in each country you chose.",
+    "savedCheck_one": "Saved. Check the note under {{labels}} above.",
+    "savedCheck_other": "Saved. Check the notes under {{labels}} above.",
+    "savedCheckThenGoOn_one": "Saved. Check the note under {{labels}} above, then save again to go on.",
+    "savedCheckThenGoOn_other": "Saved. Check the notes under {{labels}} above, then save again to go on.",
+    "workAuthorizationHint":"What you will say when a form asks about working in each country you chose.",
     "eeoHint": "Optional questions some forms ask. Decline to self-identify is a fine answer.",
     "places": {
       "hint": "Jobgoblin only looks for jobs you can do from here. Remote is a way of working: a remote job is done from where you live.",

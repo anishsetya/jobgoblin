@@ -53,7 +53,7 @@ Everything under `/api` needs the session token. The dashboard's own files (`app
 | Queue a run; the tasks inside a run | `runs.ts`, `runTasks.ts` | many (see below), the tool adapters |
 | Find Jobs, cancel, retry, dismiss a run | `runLifecycle.ts` | `/api/runs` |
 | Ask about this application | `askRuns.ts`, `askReadModels.ts` | `POST .../ask`; `list_ready`, `get_pipeline`, `get_application` |
-| Profile (the person's view; the run's view) | `profile.ts`; `profileForRuns.ts`, `missingValues.ts` | `/api/profile`; `get_profile`, `save_profile_section` |
+| Profile (the person's view; the run's view) | `profile.ts`, `contactChecks.ts` (refusals and warnings on contact details); `profileForRuns.ts`, `missingValues.ts` | `/api/profile`; `get_profile`, `save_profile_section` |
 | Your story | `story.ts`; `storyProposals.ts` for a run | `/api/story`; `propose_story_items` |
 | Setup: import a resume, finish | `setup.ts` | `POST /api/import-resume`, `/api/setup/finish`; `import_resume` |
 | Settings and the person's folder | `settings.ts` | `/api/settings` |

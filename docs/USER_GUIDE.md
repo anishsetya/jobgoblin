@@ -126,6 +126,8 @@ The status becomes **Applied** and a follow-up date is set (7 days by default). 
 ## 6. Profile and Settings
 
 - **Profile:** Your story, form answers, targets and banned words. A banned word fails any resume, answer or data sheet that contains it, and names the word.
+  - Form answers checks your contact details when you save. A banned word, or a value far too long for a form, isn't saved: the reason shows under its box.
+  - An email address or phone number that doesn't look like one is saved, with a note under its box, because formats differ between countries. Check it before you apply.
 - **Settings:**
   - Claude connection.
   - Your folder, and Open tracker (`Tracker.xlsx`).
