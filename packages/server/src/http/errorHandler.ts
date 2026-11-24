@@ -23,8 +23,9 @@ const STATUS_OF_KIND: Record<ServiceErrorKind, ContentfulStatusCode> = {
   "our-fault": 500,
 };
 
-export function apiError(code: string, message: string, action: string): ApiError {
-  return { code, message, action };
+// `field` is added only when there is one, so every other refusal keeps the plain { code, message, action }.
+export function apiError(code: string, message: string, action: string, field?: string): ApiError {
+  return field === undefined ? { code, message, action } : { code, message, action, field };
 }
 
 export const INTERNAL_ERROR = apiError(
@@ -41,7 +42,7 @@ export function describeError(error: unknown): DescribedError & { isUnexpected: 
 
 function describeKnownError(error: unknown): DescribedError | null {
   if (error instanceof ServiceError) {
-    return { status: STATUS_OF_KIND[error.kind], body: apiError(error.code, error.message, error.action) };
+    return { status: STATUS_OF_KIND[error.kind], body: apiError(error.code, error.message, error.action, error.field) };
   }
   if (error instanceof ZodError) return { status: 400, body: describeZodError(error) };
   if (error instanceof HTTPException) return describeHttpException(error);

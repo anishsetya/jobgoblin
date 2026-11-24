@@ -122,16 +122,26 @@ WorkAuthorizationSection = { regions: Record<string, { authorized, requiresSpons
 EmploymentSection = { currentEmployer, currentTitle, noticePeriod, earliestStartDate, yearsExperience }
 CompensationSection = { expectedBase }                                                                   // personal
 EeoSection = { gender, raceEthnicity, veteranStatus, disability }   // default "Decline to self-identify"; personal
-TargetsSection = { roles: string[], regions: string[], tracks: string[], maxYearsRequired: number /* 4 */, rolesToAvoid: string[], hardSkips: string[], flags: string[] }
+TargetsSection = { roles: string[], regions: string[], cities: string[], tracks: string[], maxYearsRequired: number /* 4 */, rolesToAvoid: string[], hardSkips: string[], flags: string[] }
 RulesSection = { bannedTerms: string[] }
 ProfileSectionName = contact | workAuthorization | employment | compensation | eeo | targets | rules
 PERSONAL_SECTIONS = [contact, compensation, eeo]
 Profile = all seven sections (Profile.parse({}) gives a fresh profile)
 MissingValue = { section, key, label }
-ProfileResponse = { profile: Profile, missing: MissingValue[] }
+YearsLimit = { limit: number, experience: number | null }
+ProfileWarning = { section, key, message }   // a saved value that looks wrong, shown next to its field
+ProfileResponse = { profile: Profile, missing: MissingValue[], homeRegion: Region | null, yearsLimit: YearsLimit, warnings: ProfileWarning[] }
 ```
 
 `hardSkips` defaults to `["An active security clearance is required"]`; `flags` to `["Relocation required", "Graduation-year window"]`. Targets and rules are rows of the `profile` table like every other section.
+
+Where the person can work is answered on Form answers and saved in `targets.regions` and `targets.cities`. In `regions`, `US`, `IN` and `OTHER` are countries and `REMOTE` means the person wants remote jobs: remote is a way of working, not a place. Work authorization is asked for each chosen country that has questions (`US`, `IN`), and with `REMOTE` also for `homeRegion`, the country of `contact.location` (`core.homeRegionOf`). The years limit is `employment.yearsExperience` + 2; the stored `maxYearsRequired` is used only while that answer is missing (`core.yearsLimitFor`). `homeRegion` and `yearsLimit` are in `ProfileResponse` because the dashboard may not import core.
+
+Saving the contact section is checked first (`server/services/contactChecks.ts`), so a problem is shown next to its field when it is typed, not at Approve:
+- **Refused** (400, with `field` set to `contact.<key>`): a banned word in any field (`banned-in-profile`, the words Approve uses with the field's name in front), and a value too long to use (`too-long`: full name 100 characters, email 254, phone 40, where you live 100, each link 300).
+- **Saved with a warning** in `ProfileResponse.warnings`: an email address that doesn't look like one (something@something.something, no spaces), and a phone number that doesn't (digits, spaces and `+ ( ) . / -`, an optional extension, at least 7 digits). Formats vary by country, so these never stop a save.
+
+Empty and `TODO` values are left to the missing values. The Approve check on the data sheet stays: a word banned after a value was saved is still caught there.
 
 ### 5.4 `job.ts`
 
@@ -199,7 +209,7 @@ RUN_KIND_SETTINGS: Record<RunKind, { model, maxTurns, timeoutMinutes, builtInToo
 ### 5.9 `api.ts`
 
 ```ts
-ApiError = { code, message, action }
+ApiError = { code, message, action, field? }   // field: the form field a refusal is about, as "section.key"
 NeedsYouKind = "review" | "question" | "ready-to-submit" | "long-shot" | "not-tailored" | "follow-up-due" | "run-attention"
 NeedsYouItem = { kind, id, applicationId, runId, title, detail, createdAt }
 TodayResponse = { needsYou: NeedsYouItem[], running: Run[], doneToday: { found, tailored, approved, applied }, setupComplete: boolean, usageNoticeSeen: boolean }
@@ -257,10 +267,10 @@ No file or network access. Rule failures the caller must show are returned as va
 | `truthTrace.ts` | `traceResume(body, storyItems)` → `ResumeCheckError[]` (section 8.2); `STRONG_VERBS`; `extractFacts(text, vocabulary)` |
 | `bannedTerms.ts` | `findBannedTerms(texts: { path, text }[], bannedTerms)` → `ResumeCheckError[]` (code `banned`, or the code passed in, so the PDF check reports `banned-in-pdf`) |
 | `versionId.ts` | `canonicalJson(value)`, `sha256Hex(stringOrBytes)`, `resumeVersionId(body, headerHash, templateVersion)`, `shortVersionId(id)`, `headerHash(header)` |
-| `dataSheet.ts` | `buildDataSheet({ applicationId, profile, region, resumeVersion })`, `hashDataSheet(sheet)`, `requiredMissing(sheet)`, `placeholderDataSheet(sheet)` (personal values replaced by `{key}`), `fillPlaceholders(text, sheet)` |
+| `dataSheet.ts` | `buildDataSheet({ applicationId, profile, region, resumeVersion })`, `hashDataSheet(sheet)`, `requiredMissing(sheet)`, `placeholderDataSheet(sheet)` (personal values replaced by `{key}`), `fillPlaceholders(text, sheet)`. Work authorization comes from the job's own country; a `REMOTE` job (no country named) uses the country the person lives in. Another country's answers are never borrowed: a country never answered stays Missing |
 | `masterResume.ts` | `buildMasterResume(storyItems)`: confirmed items only; experiences newest first with up to 4 achievements each; up to 2 projects with up to 2 achievements; the first confirmed headline; up to 12 skills; all education |
 | `resumeDiff.ts` | `diffAgainstMaster(tailored, master)` → `ResumeDiff` |
-| `jobFilters.ts` | `dedupeKey(company, title, location)`, `classifyRegion(location)`, `codeFilter(posting, targets)` → `{ passes: true } | { passes: false, reason }` (roles to avoid by title, years required above the limit, region outside targets) |
+| `jobFilters.ts` | `dedupeKey(company, title, location)`, `classifyRegion(location)`, `isRemoteLocation(location)`, `homeRegionOf(location)`, `regionName(code)`, `yearsLimitFor(profile)`, `codeFilterTargetsFor(profile)`, `codeFilter(posting, targets)` → `{ passes: true } | { passes: false, reason }` (roles to avoid by title, years required above the limit, outside the places chosen, on-site outside the cities chosen). Places: none chosen passes everything; a job in a chosen country passes, on-site or remote; a remote job also passes when `REMOTE` is chosen and it names no country, or when `REMOTE` is the only choice; an on-site job in a chosen city passes. Cities: with cities chosen, an on-site job must name one as a whole word; remote jobs always pass. Reasons name places in words ("United States"), never codes |
 | `redaction.ts` | `redactContactDetails(text)` → `{ redacted, found: Partial<ContactSection> }` (D10) |
 | `stepText.ts` | `stepForTool(toolName)` and `STEP_CHECKING_JOB_BOARDS`: plain words for run cards |
 
@@ -465,7 +475,7 @@ type StartOptions = { appDataDir; resourcesDir; port; claudeCommand: string[] | 
 
 Launch (`launchRun.ts`), each step a named function:
 
-1. `fetchJobBoards(ctx, run)`: hunt runs first call `services/feeds.refreshFeeds(ctx)` (step "Checking job boards"), which fetches feeds through `packages/sources`, applies `core.codeFilter` and `core.dedupeKey`, and inserts new jobs. `search_jobs` only reads the database.
+1. `fetchJobBoards(ctx, run)`: hunt runs first call `services/feeds.refreshFeeds(ctx)` (step "Checking job boards"), which fetches feeds through `packages/sources`, applies `core.codeFilter` and `core.dedupeKey`, and inserts new jobs. Before that it checks every job not shown yet (`seen_at` empty) again against the current targets: a job an old target ruled out comes back, one the new targets rule out is put aside, and a job that comes back as a repeat of a role already in play is marked a duplicate. Jobs already shown keep their verdict (D3). `search_jobs` only reads the database.
 2. `whyClaudeIsBlocked(claudeCli)`: the Claude Code status; anything but connected (not installed, needs an update, signed out) → blocked.
 3. `createRunDirectory(run)`: `<appData>/runs/<runId>/` with `PLAYBOOK.md`, `.claude/agents/*.md` (hunt: the screener, listing only `mcp__jobgoblin__*` tools), `.claude/settings.json` (hunt: `WebFetch` permission rules limited to job-board domains), and `mcp.json`: `{"mcpServers":{"jobgoblin":{"type":"http","url":"http://127.0.0.1:<port>/mcp","headers":{"Authorization":"Bearer ${JOBGOBLIN_RUN_TOKEN}"}}}}`.
 4. `buildClaudeArgs(run)`: `-p`, `--output-format stream-json`, `--verbose`, `--model <tier>`, `--mcp-config mcp.json`, `--strict-mcp-config`, `--tools <list or "">`, `--allowedTools <mcp__jobgoblin__… + built-ins + domain-limited WebFetch>`, `--setting-sources project`, `--permission-mode dontAsk`, `--max-turns <n>`.
@@ -491,7 +501,7 @@ Cancel: `taskkill /PID <pid> /T` (Windows) or `SIGTERM`, then after 5 s `taskkil
 
 After a run (`afterRun.ts`): hunt or paste → admit to tailoring (section 8.3); tailor → applications whose drafts never passed get one retry run on sonnet (`tailor_attempts`), then `tailor_error` = "Couldn't tailor this one: <reason>"; answers → nothing extra.
 
-Claude Code CLI (`claudeCli.ts`; finding the program is `findClaudeProgram.ts`): `detect()` checks `claudeCommand` from start options, then `claude.exe` on PATH and in `%USERPROFILE%\.local\bin` (never `claude.cmd`, which Node cannot start without a shell), then `~/.local/bin/claude`; `version()`; `authStatus()` (`claude auth status`, JSON, `authMethod` must be `claude.ai`); `install()` runs `claudeInstallCommand` (default `winget install Anthropic.ClaudeCode` or the macOS script); `signIn()` runs `claude auth login`. `MINIMUM_CLAUDE_VERSION = "2.1.0"`.
+Claude Code CLI (`claudeCli.ts`; finding the program is `findClaudeProgram.ts`): `detect()` checks `claudeCommand` from start options, then `claude.exe` on PATH and in `%USERPROFILE%\.local\bin` (never `claude.cmd`, which Node cannot start without a shell), then `~/.local/bin/claude`; `version()`; `authStatus()` (`claude auth status`, JSON, `authMethod` must be `claude.ai`); `install()` runs `claudeInstallCommand` (default `winget install Anthropic.ClaudeCode` or the macOS script), then reads the status: when Claude Code is still not installed or still too old, it refuses with `claude-install-failed` or `claude-update-failed` and says what happened (the installer couldn't start, stopped with an error code, ran past 10 minutes, or finished without effect). The status decides, not the exit code. The Connect card shows the message and opens the command so the person can run it by hand; `signIn()` runs `claude auth login`. `MINIMUM_CLAUDE_VERSION = "2.1.0"`.
 
 ## 11. HTTP API (`packages/server/src/http`)
 
@@ -520,7 +530,7 @@ Middleware: `hostCheck` (Host must be `127.0.0.1:<port>` or `localhost:<port>`) 
 | `GET /api/story`; `POST /api/story`; `PUT /api/story/:id`; `POST /api/story/:id/confirm`, `/reject` | → `StoryItem[]` / `StoryItem` |
 | `POST /api/import-resume` | multipart `file` (≤ 10 MB, PDF or Word) and `kind` (resume or linkedin) → `{ runId }` (the setup run starts after the resume upload) |
 | `POST /api/setup/finish` | → `SettingsResponse` (builds the master resume, marks setup complete) |
-| `GET /api/claude/status`; `POST /api/claude/install`, `/sign-in` | → `ClaudeStatus` |
+| `GET /api/claude/status`; `POST /api/claude/install`, `/sign-in` | → `ClaudeStatus`; install answers 409 `claude-install-failed` / `claude-update-failed` when Claude Code is still missing or too old |
 | `GET /api/settings`; `PUT /api/settings` | `Partial<Settings>` → `SettingsResponse` |
 | `POST /api/settings/folder` | `{ path }` → `ChooseFolderResponse` |
 | `GET /api/export/csv`, `/xlsx` | → file |

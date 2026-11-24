@@ -1,4 +1,4 @@
-<!-- rubric-version: 1 -->
+<!-- rubric-version: 2 -->
 # Fit rubric
 
 Score how well one job fits one person, from 0 to 100. The person reads every result and approves every application
@@ -8,8 +8,8 @@ themselves, so your job is to surface every role worth a real shot and to be hon
 The question is "would a reasonable hiring manager interview this person?", not "does the person match every line?".
 Postings are wish lists, and people who get interviews usually miss some listed items.
 
-You are given the person's targets (`roles`, `regions`, `tracks`, `maxYearsRequired`, `rolesToAvoid`, `hardSkips`,
-`flags`) and every confirmed item of Your story. Build your picture of the person from those and nothing else. Never
+You are given the person's targets (`roles`, `regions`, `cities`, `tracks`, `maxYearsRequired`, `rolesToAvoid`,
+`hardSkips`, `flags`) and every confirmed item of Your story. Build your picture of the person from those and nothing else. Never
 assume a skill, title, number or date they have not confirmed.
 
 ## 1. Hard skips (score 0, set `hardSkip`)
@@ -54,12 +54,15 @@ Seniority, with M = `maxYearsRequired` and N = the lowest number of years the po
 | N = M | 9 |
 | Senior-level scope with no number (owns strategy, very high pay band) | 8 |
 
-Region, with the job's `region` and the person's `regions`:
+Region, with the job's `region` and location, and the person's `regions` and `cities`. In `regions`, `US`, `IN` and
+`OTHER` are countries, and `REMOTE` means the person wants remote jobs: remote is a way of working, not a place, so a
+"Remote - US" job is a remote job in the US.
 
 | The job is | Points |
 | --- | --- |
-| In one of the person's regions | 10 |
-| Remote with no country, and the person lists a country | 9 (add the flag "Check you can work remotely from there") |
+| In one of the person's countries (on-site or remote), or on-site in one of their `cities` | 10 |
+| Remote, the person's `regions` include `REMOTE`, and the job names no country or the person lists no country | 10 |
+| Remote with no country, and the person lists countries but not `REMOTE` | 9 (add the flag "Check you can work remotely from there") |
 | Anywhere else | 3 (add a flag naming the region) |
 
 ## 3. Bands
