@@ -30,6 +30,7 @@ import { buildCurrentDataSheet, type CurrentDataSheet } from "./dataSheets";
 import { recordHistory } from "./history";
 import { loadApplicationOrFail, loadJobOfApplication } from "./loaders";
 import { moveApplication } from "./moves";
+import { findUntracedLines } from "./resumeTrace";
 import { chooseShortId } from "./resumeVersions";
 import { announceQueuedRun, insertQueuedRun } from "./runs";
 import { conflict, invalid, unavailable } from "./serviceError";
@@ -53,6 +54,7 @@ export async function approveApplication(
   refuseIfSheetChanged(sheet, request.dataSheetHash);
   refuseIfValuesMissing(sheet);
   refuseIfBannedInSheet(ctx, sheet);
+  refuseIfResumeNoLongerTraces(ctx, resume);
 
   const pdf = await freezeFinalPdf(ctx, resume);
   const shortId = chooseShortId(ctx.db, resume.versionId);
@@ -116,6 +118,23 @@ function refuseIfBannedInSheet(ctx: ServerContext, sheet: CurrentDataSheet): voi
   const problems = findBannedTerms(texts, getProfileSection(ctx.db, "rules").bannedTerms);
   if (problems.length === 0) return;
   throw invalid("banned-in-data-sheet", problems[0]?.message ?? "A banned word is in your details.", "Change that value under Profile.");
+}
+
+// The draft traced when it was made, but Your story may have changed since (an item dropped, or edited and
+// confirmed again). This runs before the PDF is frozen, so it also covers a re-approval and reused bytes.
+// Truthfulness control (PRD T1): a line the person dropped never reaches an approved resume.
+function refuseIfResumeNoLongerTraces(ctx: ServerContext, resume: CurrentResume): void {
+  const lines = findUntracedLines(ctx, resume.stored.body);
+  const first = lines[0];
+  if (first === undefined) return;
+
+  const others = lines.length - 1;
+  const which = others === 0 ? `"${first.text}"` : `"${first.text}" and ${others} more ${others === 1 ? "line" : "lines"}`;
+  throw conflict(
+    "resume-untraced",
+    `This resume uses something that is no longer confirmed in Your story: ${which}.`,
+    "Request an edit, and Jobgoblin will make a new resume from what you confirmed.",
+  );
 }
 
 // ---------------------------------------------------------------------------------------------

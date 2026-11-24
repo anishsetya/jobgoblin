@@ -2,14 +2,20 @@
 // The app uses them on the "Connect Claude" screen to detect the install, check the version and sign in.
 // Spec: ARCHITECTURE.md section 10 (claudeCli.ts) and section 14.
 import type { FakeSettings } from "./settings";
-import { VERSION_TEXT } from "./version";
+import { OUTDATED_VERSION_TEXT, VERSION_TEXT } from "./version";
 
 export const EXIT_OK = 0;
 export const EXIT_FAILED = 1; // the real CLI's code for "not signed in" and for a run that ended in error
 export const EXIT_USAGE = 2; // the fake was started in a way it does not support
 
-export function printVersion(): number {
-  process.stdout.write(`${VERSION_TEXT}\n`);
+export function printVersion(settings: FakeSettings): number {
+  if (settings.mode === "not-installed") {
+    // A program that can't tell its version is one the runner counts as missing.
+    process.stderr.write("fake-claude: FAKE_CLAUDE_MODE=not-installed, so --version fails\n");
+    return EXIT_FAILED;
+  }
+
+  process.stdout.write(`${settings.mode === "outdated" ? OUTDATED_VERSION_TEXT : VERSION_TEXT}\n`);
   return EXIT_OK;
 }
 

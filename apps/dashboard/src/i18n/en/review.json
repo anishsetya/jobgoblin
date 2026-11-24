@@ -12,6 +12,11 @@
   "shortcuts": "Keys: A approve, E request an edit, S skip, J next, K previous.",
   "missingValues": "Add these before you approve: {{labels}}.",
   "addMissing": "Open Form answers",
+  "untraced": {
+    "title": "This resume uses something that is no longer in Your story",
+    "description": "You dropped or changed these lines after the resume was made, so it can't be approved:",
+    "action": "Request an edit, and Jobgoblin will make a new resume from what you confirmed."
+  },
   "requestEdit": {
     "open": "Request edit",
     "title": "Request an edit",

@@ -28,7 +28,7 @@ Two Playwright projects: `chromium` (every story except the last) and `electron`
 
 `support/server.ts` `startTestServer(...)` (handed to tests as the `startServer` fixture in `support/fixtures.ts`, which also stops everything afterwards, even when the test fails):
 
-- spawns `node packages/server/dist/server.mjs` with a **fresh temporary app data folder** and person's folder, `JOBGOBLIN_PORT=0`, `JOBGOBLIN_RESOURCES_DIR` = the repository, **`JOBGOBLIN_FEED_FIXTURES` = `fixtures/feeds/demo`** (the 7-posting demo board, no network) and **`JOBGOBLIN_CLAUDE_COMMAND` = node + `fixtures/fake-claude/dist/cli.mjs`** (no Claude plan);
+- spawns `node packages/server/dist/server.mjs` with a **fresh temporary app data folder** and person's folder, `JOBGOBLIN_PORT=0`, `JOBGOBLIN_RESOURCES_DIR` = the repository, **`JOBGOBLIN_FEED_FIXTURES` = `fixtures/feeds/demo`** (the 7-posting demo board, no network), **`JOBGOBLIN_CLAUDE_COMMAND` = node + `fixtures/fake-claude/dist/cli.mjs`** (no Claude plan) and **`JOBGOBLIN_CLAUDE_INSTALL_COMMAND` = `FAILING_INSTALLER`**, a command that always exits 1, so Install never runs winget (`claudeInstallCommand` sets another);
 - reads the `JOBGOBLIN_READY` line for the address, `#token` included, which the test opens in the browser;
 - `seed: "alex-rivera"` sets the demo person up first, through the public HTTP API only (`support/seed.ts`: folder, profile sections, story items added and confirmed, `setup/finish`), so a story that is not about setup starts at Today. `seedOptions.usageNoticeSeen` marks the usage notice as read. `seed: "none"` leaves the app empty, as on a first run;
 - `fakeClaudeEnv` sets the fake's switches for that one server; `reuseDataOf` starts a new server on the data of a crashed one; `personFolder` points a new app at an old person's folder (a new computer);
@@ -43,7 +43,7 @@ The server launches the fake exactly as it would launch Claude Code. The fake co
 - fit scores come from `fixtures/fake-claude/data/scores.json`: Acme Cloud 86 (apply), Brightpath 68 (stretch), Copperleaf Applied AI 55 (long shot), Data Analyst 20 (skip), the pasted Gridline job 78;
 - the tailored resume is the master resume with matching bullets first; **with `FAKE_CLAUDE_REWORD=1` one bullet is also reworded** so Review has a line to highlight; an edit note drops a bullet;
 - the answers come from the data sheet, with `{placeholders}` for personal values;
-- the switches turn failures on: `FAKE_CLAUDE_MODE=slow | usage-limit | signed-out`, `FAKE_CLAUDE_ASK_FIRST=1`, `FAKE_CLAUDE_INVENT_BULLET=1`.
+- the switches turn failures on: `FAKE_CLAUDE_MODE=slow | usage-limit | signed-out | not-installed | outdated`, `FAKE_CLAUDE_ASK_FIRST=1`, `FAKE_CLAUDE_INVENT_BULLET=1`.
 
 The code filter and dedupe key run in the server before any run starts, which is why the QA role, the Senior Staff role and the repeated Hacker News posting never appear.
 
@@ -53,18 +53,22 @@ PRD requirement ids as in the PRD (S setup, P profile, D discover, F fit, T tail
 
 | Spec | The story | Requirements |
 | --- | --- | --- |
-| `setup-wizard.spec.ts` | An empty app, every wizard step (Welcome, Connect Claude, folder, resume upload, Your story with an edit and a drop, Form answers with the pay left missing, Targets, Finish), then Find jobs works on what was set up. Profile shows it afterwards; a bad number is explained in plain words | S2 S3 S4 P1 P2 P3 P4 |
+| `setup-wizard.spec.ts` | An empty app, every wizard step (Welcome, Connect Claude, folder, resume upload, Your story with an edit and a drop, Form answers with where you can work and the pay left missing, Targets with where and the years limit shown read-only, Finish), then Find jobs works on what was set up. Profile shows it afterwards | S2 S3 S4 P1 P2 P3 P4 |
 | `find-to-review.spec.ts` | Usage notice before the first run; Find jobs shows plain-language steps and progress; Needs you has Acme Cloud and Brightpath to review and Copperleaf as a long shot; the QA, Senior Staff and repeated postings never reach Pipeline | D1 D3 F1 F2 R1 R3 |
 | `review-approve-apply.spec.ts` | Review (fit, band, reason, gaps, reworded line highlighted, data sheet), key A approves, answers are written, Open application has a copy button for every frozen field and answer, the resume file can be found and downloaded, "I submitted" with proof makes it Applied with a follow-up, Pipeline, the PDF and Answers.md on disk. A changed phone number voids the approval. A double-click on Approve or Record as applied sends one request and shows no error | F1 F2 T1 T2 A1 A2 A3 A4 U1 U4 K1 |
 | `skip-undo-and-edit.spec.ts` | S skips, Undo skip restores Awaiting approval, J and K and E work and ignore typing, Request edit with a note gives a new resume version, a long shot is tailored only on request | A2 T2 F1 |
 | `paste-a-job.spec.ts` | A Greenhouse link is read, scored and reviewed, once; a LinkedIn link asks for company, title and text | D2 |
+| `where-you-can-work.spec.ts` | Only Remote jobs: the "Remote - US" job is found, the on-site ones are not, and it goes from approval to Applied with the answers for where you live. Only India finds nothing; adding the United States brings the same jobs back, each role once | P3 P4 D1 D3 |
+| `form-answers-are-checked.spec.ts` | Issue #29. A banned word in Full name is refused under the box and nothing is saved; changing it clears the refusal. An email address with no @ is saved with a note under the box, which stays after a reload and goes once fixed. In the wizard, a new note keeps you on the step until you save again. axe on both states | P3 |
 | `question-pauses-one-application.spec.ts` | A question about one application waits on Today, the other reaches review, answering re-queues that one | R2 |
 | `pipeline-and-status.spec.ts` | Applied to Online assessment to Phone screen to Interview round to Offer to Accepted using only the offered moves; an overdue follow-up is amber and on Today; Withdraw; search and filters, board and list; Ask about an application | K1 K2 |
 | `settings-backups-export.spec.ts` | Back up now shows the last backup time; Restore returns to an earlier state; a new computer finds its backups from the wizard; limits are validated, saved and used; CSV (header first) and Excel downloads | S4 S5 K3 T4 |
 | `runs-cancel-and-outcomes.spec.ts` | Cancel a slow run; "Your Claude plan limit is reached" with Try again; signed out shows sign-in needed and blocks a run | R1 R3 R4 S2 S3 |
+| `claude-install.spec.ts` | A failed install on the Connect step and a failed update in Settings say what happened and what to do next, and open the command to run by hand; Continue stays disabled | S2 |
 | `crash-recovery.spec.ts` | A slow hunt, the server killed hard, a new server on the same data: "This run was interrupted", Try again works, no Claude process is left | R4 |
 | `accessibility.spec.ts` | axe (WCAG 2.1 A and AA) on Today, Review, Open application, Pipeline (board and list), Application, Profile (four tabs), Settings, every wizard step and every dialog, in light and dark | the PRD's accessibility target |
-| `truthful-resumes.spec.ts` | A made-up bullet and an inflated verb never reach the resume; a banned word is left out | T1 P5 |
+| `truthful-resumes.spec.ts` | A made-up bullet and an inflated verb never reach the resume; a line dropped from Your story after the resume was made can't be approved; a banned word is left out | T1 P5 |
+| `long-names-fit-the-window.spec.ts` | A job pasted with a 151-letter company name and a very long title: at 1280x800, Today, Review, the application page and Pipeline (board and list) never scroll sideways, and all six board columns are inside the window; at 640 px the board still hides no column | issue #28 |
 | `electron-smoke.spec.ts` (project `electron`) | The desktop window shows the wizard, `window.jobgoblin` has a token, an outside link and an outside navigation do not move the window, Quit exits 0 and the server cleans up. The resume step reads a PDF and names a password-protected one. A second pass runs each feature that uses a library inside Electron's utility process: Find jobs (Typst render, pdf.js read-back), approve (final PDF), the xlsx export and Back up now | ARCHITECTURE 13; RCA 2026-11-01 |
 
 ## Notes for whoever writes the next test
