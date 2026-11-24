@@ -1,9 +1,11 @@
 // The frame every setup step sits in: a progress bar, the step's title as the screen's only h1, the step itself,
-// and Back / Continue at the bottom. Setup has no sidebar, so this frame supplies the page's <main> landmark.
+// and Back / Continue at the bottom. Setup has no sidebar, so this frame supplies the page's <main> landmark,
+// and the connection banner that says when Jobgoblin cannot be reached.
 // Continue stays disabled until the step's task is done, so nobody walks past a step by accident.
 import type { ReactNode } from "react";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { ConnectionBanner } from "@/components/ConnectionBanner";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { useFocusOnNavigation } from "@/lib/focusOnNavigation";
@@ -60,6 +62,7 @@ export function SetupFrame({
         </div>
 
         <main ref={mainRef} tabIndex={-1} className="space-y-6">
+          <ConnectionBanner />
           <div className="space-y-2">
             <h1 className="text-2xl font-semibold">{title}</h1>
             {description !== undefined && <p className="text-sm text-muted">{description}</p>}

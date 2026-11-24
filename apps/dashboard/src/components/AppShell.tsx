@@ -1,11 +1,14 @@
 // The frame around every screen except the setup wizard: a sidebar with four places (Today, Pipeline,
 // Profile, Settings) and the main area. Spec: PRD "Navigation: sidebar, four places, always visible".
 // Landmarks: <nav> for the sidebar and <main> for the screen; the first link on the page skips to <main>.
+// The main area starts with the connection banner, which shows only while Jobgoblin cannot be reached.
+// A screen that cannot open shows its error inside the main area too (router.tsx), so the sidebar stays.
 import { Link, Outlet } from "@tanstack/react-router";
 import { Columns3, Inbox, Settings, UserRound } from "lucide-react";
 import { Suspense, useRef, type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useFocusOnNavigation } from "@/lib/focusOnNavigation";
+import { ConnectionBanner } from "./ConnectionBanner";
 import { LoadingNote } from "./LoadingNote";
 
 // Applied to every sidebar link; TanStack Router marks the link of the current screen with data-status="active".
@@ -68,6 +71,7 @@ export function AppShell() {
       </div>
 
       <main id="main" ref={mainRef} tabIndex={-1} className="mx-auto w-full max-w-5xl min-w-0 px-4 py-8 md:px-8">
+        <ConnectionBanner className="mb-6" />
         {/* Screens other than Today are loaded the first time they are visited; this shows while they load. */}
         <Suspense fallback={<LoadingNote />}>
           <Outlet />
