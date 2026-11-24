@@ -5,3 +5,6 @@ export const FAKE_CLAUDE_VERSION = "2.1.99";
 
 // The exact line `claude --version` prints.
 export const VERSION_TEXT = `${FAKE_CLAUDE_VERSION} (Claude Code)`;
+
+// With FAKE_CLAUDE_MODE=outdated: below MINIMUM_CLAUDE_VERSION, so the Connect screen offers an update.
+export const OUTDATED_VERSION_TEXT = "2.0.0 (Claude Code)";

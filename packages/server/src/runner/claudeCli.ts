@@ -1,14 +1,16 @@
 // Checks, installs and signs in the person's own Claude Code. Jobgoblin never modifies, wraps or copies
 // it, and never reads its credential files: it only runs `claude --version`, `claude auth status` and
 // `claude auth login`, and shows the install command before it runs. Where the program is on disk is
-// found by findClaudeProgram.ts.
+// found by findClaudeProgram.ts. An install or update that leaves Claude Code missing or too old is
+// refused with what happened, so the person is never left looking at the same button.
 // Spec: ARCHITECTURE.md section 10 (Claude Code CLI) and decision D21; tech spec "Claude Code integration".
 import path from "node:path";
 import { z } from "zod";
 import type { ClaudeStatus } from "@jobgoblin/schemas";
+import { unavailable, type ServiceError } from "../services/serviceError";
 import { findClaudeProgram } from "./findClaudeProgram";
 import { runCommand } from "./processes";
-import type { CommandRunner } from "./processes";
+import type { CommandResult, CommandRunner } from "./processes";
 import { scrubClaudeEnvironment } from "./runEnvironment";
 
 export const MINIMUM_CLAUDE_VERSION = "2.1.0";
@@ -99,9 +101,13 @@ export function createClaudeCli(options: ClaudeCliOptions): ClaudeCli {
     return buildStatus({ state: "connected", version, plan: auth.plan, installText });
   }
 
+  // The status afterwards decides whether it worked, not the exit code: an installer can report an error and
+  // still have installed Claude Code, or report success and leave it where Jobgoblin can't find it.
   async function install(): Promise<ClaudeStatus> {
-    await run(installCommand, { env: commandEnvironment, timeoutMs: INSTALL_TIMEOUT_MS });
-    return status(); // the status says whether it worked; a failed install simply stays "not installed"
+    const result = await run(installCommand, { env: commandEnvironment, timeoutMs: INSTALL_TIMEOUT_MS });
+    const after = await status();
+    if (after.state === "not-installed" || after.state === "update-needed") throw installFailure(result, after);
+    return after;
   }
 
   async function signIn(): Promise<ClaudeStatus> {
@@ -199,6 +205,31 @@ export function isSignedInWithClaudePlan(auth: ClaudeAuth): boolean {
 
 function defaultInstallCommand(platform: NodeJS.Platform): string[] {
   return platform === "win32" ? WINGET_INSTALL_COMMAND : SCRIPT_INSTALL_COMMAND;
+}
+
+// Why Claude Code is still missing or too old after the install command ran, and what to do next. A copy that
+// is still too old means it was an update, which is the button the person pressed.
+function installFailure(result: CommandResult, after: ClaudeStatus): ServiceError {
+  const isUpdate = after.state === "update-needed";
+  const code = isUpdate ? "claude-update-failed" : "claude-install-failed";
+  const what = isUpdate ? "update" : "install";
+  const byHand = 'run the command under "See exactly what this does" yourself, then press Check again.';
+  const tryAgain = `Press ${isUpdate ? "Update Claude Code" : "Install Claude Code"} to try again. If it fails again, ${byHand}`;
+
+  // Pressing the button again would fail the same way, so the only next step is the command itself.
+  if (!result.started) return unavailable(code, `Jobgoblin couldn't start the Claude Code ${what}.`, `You can ${byHand}`);
+  if (result.timedOut) {
+    const minutes = INSTALL_TIMEOUT_MS / 60_000;
+    return unavailable(code, `The Claude Code ${what} took longer than ${minutes} minutes, so Jobgoblin stopped it.`, tryAgain);
+  }
+  if (result.exitCode !== 0) {
+    return unavailable(code, `The Claude Code ${what} stopped with an error (code ${result.exitCode}).`, tryAgain);
+  }
+  if (isUpdate) {
+    const message = `The update finished, but Claude Code is still version ${after.version}. Jobgoblin needs ${after.minimumVersion} or newer.`;
+    return unavailable(code, message, tryAgain);
+  }
+  return unavailable(code, "The install finished, but Jobgoblin still can't find Claude Code.", tryAgain);
 }
 
 // The command as the person reads it before it runs.

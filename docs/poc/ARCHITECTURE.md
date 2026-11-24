@@ -501,7 +501,7 @@ Cancel: `taskkill /PID <pid> /T` (Windows) or `SIGTERM`, then after 5 s `taskkil
 
 After a run (`afterRun.ts`): hunt or paste → admit to tailoring (section 8.3); tailor → applications whose drafts never passed get one retry run on sonnet (`tailor_attempts`), then `tailor_error` = "Couldn't tailor this one: <reason>"; answers → nothing extra.
 
-Claude Code CLI (`claudeCli.ts`; finding the program is `findClaudeProgram.ts`): `detect()` checks `claudeCommand` from start options, then `claude.exe` on PATH and in `%USERPROFILE%\.local\bin` (never `claude.cmd`, which Node cannot start without a shell), then `~/.local/bin/claude`; `version()`; `authStatus()` (`claude auth status`, JSON, `authMethod` must be `claude.ai`); `install()` runs `claudeInstallCommand` (default `winget install Anthropic.ClaudeCode` or the macOS script); `signIn()` runs `claude auth login`. `MINIMUM_CLAUDE_VERSION = "2.1.0"`.
+Claude Code CLI (`claudeCli.ts`; finding the program is `findClaudeProgram.ts`): `detect()` checks `claudeCommand` from start options, then `claude.exe` on PATH and in `%USERPROFILE%\.local\bin` (never `claude.cmd`, which Node cannot start without a shell), then `~/.local/bin/claude`; `version()`; `authStatus()` (`claude auth status`, JSON, `authMethod` must be `claude.ai`); `install()` runs `claudeInstallCommand` (default `winget install Anthropic.ClaudeCode` or the macOS script), then reads the status: when Claude Code is still not installed or still too old, it refuses with `claude-install-failed` or `claude-update-failed` and says what happened (the installer couldn't start, stopped with an error code, ran past 10 minutes, or finished without effect). The status decides, not the exit code. The Connect card shows the message and opens the command so the person can run it by hand; `signIn()` runs `claude auth login`. `MINIMUM_CLAUDE_VERSION = "2.1.0"`.
 
 ## 11. HTTP API (`packages/server/src/http`)
 
@@ -530,7 +530,7 @@ Middleware: `hostCheck` (Host must be `127.0.0.1:<port>` or `localhost:<port>`) 
 | `GET /api/story`; `POST /api/story`; `PUT /api/story/:id`; `POST /api/story/:id/confirm`, `/reject` | → `StoryItem[]` / `StoryItem` |
 | `POST /api/import-resume` | multipart `file` (≤ 10 MB, PDF or Word) and `kind` (resume or linkedin) → `{ runId }` (the setup run starts after the resume upload) |
 | `POST /api/setup/finish` | → `SettingsResponse` (builds the master resume, marks setup complete) |
-| `GET /api/claude/status`; `POST /api/claude/install`, `/sign-in` | → `ClaudeStatus` |
+| `GET /api/claude/status`; `POST /api/claude/install`, `/sign-in` | → `ClaudeStatus`; install answers 409 `claude-install-failed` / `claude-update-failed` when Claude Code is still missing or too old |
 | `GET /api/settings`; `PUT /api/settings` | `Partial<Settings>` → `SettingsResponse` |
 | `POST /api/settings/folder` | `{ path }` → `ChooseFolderResponse` |
 | `GET /api/export/csv`, `/xlsx` | → file |

@@ -24,10 +24,13 @@ function useClaudeAction(path: "/api/claude/install" | "/api/claude/sign-in") {
   return useMutation({
     mutationFn: () => apiFetch(path, { method: "POST", json: {}, schema: ClaudeStatus }),
     onSuccess: (status) => queryClient.setQueryData(queryKeys.claudeStatus(), status),
+    // A failed install can still have changed something (a copy that is there now but too old), so look again.
+    onError: () => void queryClient.invalidateQueries({ queryKey: queryKeys.claudeStatus() }),
   });
 }
 
-// Installs or updates Claude Code (winget on Windows). Can take a minute.
+// Installs or updates Claude Code (winget on Windows). Can take a minute. When Claude Code is still missing or
+// too old afterwards, the request fails with what happened (claude-install-failed or claude-update-failed).
 export function useInstallClaude() {
   return useClaudeAction("/api/claude/install");
 }
