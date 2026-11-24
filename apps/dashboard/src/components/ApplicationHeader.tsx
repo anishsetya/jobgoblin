@@ -1,5 +1,7 @@
 // The top of an application screen: the role as the one h1, then company, place, any badges, and a button
 // that opens the posting in the person's default browser. Shared by Review, Open application and the Application screen.
+// The role, company and place come from the posting, so a word longer than the line is broken (wrap-anywhere)
+// instead of pushing the page wider than the window.
 import type { Job } from "@jobgoblin/schemas";
 import { ExternalLink } from "lucide-react";
 import type { ReactNode } from "react";
@@ -23,10 +25,10 @@ export function ApplicationHeader({ title, company, job, eyebrow, badges }: Appl
   return (
     <header className="space-y-2">
       {eyebrow !== undefined && <p className="text-sm text-muted">{eyebrow}</p>}
-      <h1 className="text-2xl font-semibold">{title}</h1>
+      <h1 className="text-2xl font-semibold wrap-anywhere">{title}</h1>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
-        <span>{company}</span>
-        {job.location !== "" && <span>{job.location}</span>}
+        <span className="wrap-anywhere">{company}</span>
+        {job.location !== "" && <span className="wrap-anywhere">{job.location}</span>}
         {badges}
         {postingUrl !== null && (
           <Button variant="ghost" size="small" onClick={() => openPostingLink(postingUrl)}>

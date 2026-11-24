@@ -76,6 +76,23 @@ async function currentHash(call: ReturnType<typeof createTestApp>["call"], appli
   return detail.dataSheetHash ?? "";
 }
 
+describe("the profile route", () => {
+  it("refuses a banned word in a contact field with a 400 that names the field", async () => {
+    const { call } = createTestApp();
+    const { profile } = ProfileResponse.parse(await (await call("/api/profile")).json());
+
+    const response = await call("/api/profile/contact", { method: "PUT", json: { ...profile.contact, fullName: "Alex Rockstar Rivera" } });
+
+    expect(response.status).toBe(400);
+    expect(await response.json()).toEqual({
+      code: "banned-in-profile",
+      message: 'Full name: "rockstar" is on your banned words list. Reword this text without it.',
+      action: "Change it, then save again.",
+      field: "contact.fullName",
+    });
+  });
+});
+
 describe("the import-resume route", () => {
   it("reads a multipart upload of the sample PDF and queues the setup run", async () => {
     const { call, ctx } = createTestApp({ withAlexRivera: false });

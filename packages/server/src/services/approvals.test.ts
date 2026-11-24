@@ -44,10 +44,13 @@ describe("approveApplication", () => {
     });
   });
 
-  it("refuses a banned word in the person's own details", async () => {
+  it("refuses a banned word in the person's own details, such as a word banned after they were saved", async () => {
     const ctx = createTestContext();
     const applicationId = await anApplicationAwaitingApproval(ctx);
-    changeContact(ctx, { portfolio: "ninja-portfolio.example.com" });
+    // Saving refuses a word that is already banned (contactChecks.ts), so the word is banned afterwards.
+    changeContact(ctx, { portfolio: "pirate-portfolio.example.com" });
+    const rules = getProfile(ctx).profile.rules;
+    updateProfileSection(ctx, "rules", { bannedTerms: [...rules.bannedTerms, "pirate"] });
 
     await expect(approve(ctx, applicationId)).rejects.toMatchObject({ code: "banned-in-data-sheet" });
   });

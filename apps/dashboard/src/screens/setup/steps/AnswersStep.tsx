@@ -1,6 +1,7 @@
-// Step 6: form answers. These are the things application forms ask: contact details, work authorization,
-// notice period, pay, equal-opportunity answers. Values Claude suggested from the resume are already filled in
-// for the person to check; saving them is what confirms them. Missing values are marked. Spec: PRD P3.
+// Step 6: form answers. These are the things application forms ask: contact details, where you can work, work
+// authorization for those places, notice period, pay, equal-opportunity answers. Values found in the resume are
+// already filled in for the person to check; saving them is what confirms them. Missing values are marked.
+// Spec: PRD P3.
 import { useTranslation } from "react-i18next";
 import { FormAnswersForm } from "@/components/FormAnswersForm";
 import { SetupFrame } from "../SetupFrame";
