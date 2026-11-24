@@ -11,12 +11,13 @@ import type {
   Region,
   RegionAuthorization,
 } from "@jobgoblin/schemas";
+import { homeRegionOf } from "./jobFilters";
 import { canonicalJson, sha256Hex, shortVersionId } from "./versionId";
 
 export type BuildDataSheetInput = {
   applicationId: string;
   profile: Profile;
-  region: Region; // the job's region: work authorization answers come from it
+  region: Region; // the job's region: work authorization answers come from it (see authorizationFor)
   resumeVersion: string; // the full resume version id
 };
 
@@ -68,17 +69,13 @@ const FIELD_SPECS: readonly FieldSpec[] = [
   { key: "resumeVersion", label: "Resume version", personal: false, required: false, read: (s) => s.resumeShortId },
 ];
 
-// The profile has no answers for a region the person never set up, so the US answers are used instead.
-const FALLBACK_REGION = "US";
-
 export function buildDataSheet(input: BuildDataSheetInput): DataSheet {
   const { profile } = input;
   const { firstName, lastName } = splitName(profile.contact.fullName);
-  const regions = profile.workAuthorization.regions;
 
   const source: FieldSource = {
     profile,
-    authorization: regions[input.region] ?? regions[FALLBACK_REGION],
+    authorization: authorizationFor(input.region, profile),
     firstName,
     lastName,
     resumeFileName: resumeFileNameFor(profile.contact.fullName),
@@ -92,6 +89,15 @@ export function buildDataSheet(input: BuildDataSheetInput): DataSheet {
     resumeVersion: input.resumeVersion,
     resumeFileName: source.resumeFileName,
   };
+}
+
+// The answers for the job's country. A remote job that names no country is done from where the person
+// lives, so it takes that country's answers. Nothing is borrowed from another country: "Authorized to work
+// here: Yes" from the US answers on an India job would be a false answer, so a country without answers stays
+// missing for the person to fill in.
+function authorizationFor(region: Region, profile: Profile): RegionAuthorization | undefined {
+  const country = region === "REMOTE" ? homeRegionOf(profile.contact.location) : region;
+  return country === null ? undefined : profile.workAuthorization.regions[country];
 }
 
 function buildField(spec: FieldSpec, source: FieldSource): DataSheetField {

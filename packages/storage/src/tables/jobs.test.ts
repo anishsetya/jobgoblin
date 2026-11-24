@@ -5,8 +5,10 @@ import {
   getJob,
   insertJobIfNew,
   listJobsByDedupeKey,
+  listJobsNotYetSeen,
   listUnseenJobs,
   markJobsSeen,
+  setJobFilteredReason,
 } from "./jobs";
 
 afterEach(removeTempDirs);
@@ -103,6 +105,45 @@ describe("jobs a hunt run may see", () => {
     expect(markedAgain).toBe(0);
     expect(getJob(db, "greenhouse:a:1")?.seenAt).toBe("2026-11-01T08:00:00.000Z");
     expect(listUnseenJobs(db, 10).map((job) => job.jobId)).toEqual(["greenhouse:a:2"]);
+    db.close();
+  });
+});
+
+describe("checking jobs again when the targets change", () => {
+  function saveThreeJobs(db: ReturnType<typeof openTestDatabase>): void {
+    insertJobIfNew(db, aJob({ jobId: "greenhouse:a:1", foundAt: "2026-10-31T08:00:00.000Z", seenAt: "2026-10-31T09:00:00.000Z" }));
+    insertJobIfNew(db, aJob({ jobId: "greenhouse:a:2", foundAt: "2026-10-31T09:00:00.000Z" }));
+    insertJobIfNew(db, aJob({ jobId: "greenhouse:a:3", foundAt: "2026-10-31T10:00:00.000Z", filteredReason: "Not in a place you chose" }));
+  }
+
+  it("lists every job nobody has seen, the dropped ones included, oldest first", () => {
+    const db = openTestDatabase();
+    saveThreeJobs(db);
+
+    expect(listJobsNotYetSeen(db).map((job) => job.jobId)).toEqual(["greenhouse:a:2", "greenhouse:a:3"]);
+    db.close();
+  });
+
+  it("lets a dropped job be shown again, and drops one that was shown to nobody", () => {
+    const db = openTestDatabase();
+    saveThreeJobs(db);
+
+    expect(setJobFilteredReason(db, "greenhouse:a:3", null)).toBe(true);
+    expect(setJobFilteredReason(db, "greenhouse:a:2", "It asks for 8 years of experience")).toBe(true);
+
+    expect(listUnseenJobs(db, 10).map((job) => job.jobId)).toEqual(["greenhouse:a:3"]);
+    expect(getJob(db, "greenhouse:a:2")?.filteredReason).toBe("It asks for 8 years of experience");
+    db.close();
+  });
+
+  it("never changes a job that was already shown, and reports no change when the reason is the same", () => {
+    const db = openTestDatabase();
+    saveThreeJobs(db);
+
+    expect(setJobFilteredReason(db, "greenhouse:a:1", "Not in a place you chose")).toBe(false);
+    expect(setJobFilteredReason(db, "greenhouse:a:3", "Not in a place you chose")).toBe(false);
+
+    expect(getJob(db, "greenhouse:a:1")?.filteredReason).toBeNull();
     db.close();
   });
 });

@@ -38,6 +38,8 @@ pnpm dev
 
 `pnpm dev` prints one line, `JOBGOBLIN_READY {...}`, with the address to open (it ends in `#token=...`).
 
+Demo data stays apart from real data. With `JOBGOBLIN_FEED_FIXTURES` set, the database goes to `%APPDATA%\Jobgoblin-demo`, not `%APPDATA%\Jobgoblin` (set `JOBGOBLIN_APP_DATA` to choose another folder). In the setup wizard, choose a new folder for the demo too, such as `Documents\Jobgoblin-demo`, never the folder you use for real. To remove the demo, close Jobgoblin and delete both folders.
+
 | Command | What it does |
 | --- | --- |
 | `pnpm dev` | Builds the dashboard and starts the server |

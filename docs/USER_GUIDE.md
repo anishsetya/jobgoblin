@@ -62,6 +62,8 @@ $env:JOBGOBLIN_FEED_FIXTURES = "$PWD\fixtures\feeds\demo"; $env:JOBGOBLIN_CLAUDE
 
 Your data lives in two places. The database is in `%APPDATA%\Jobgoblin` and you never touch it. Your documents go in the folder you choose (default `Documents\Jobgoblin`).
 
+Demo mode keeps its own data, so the demo jobs and resumes never mix with yours. Its database is in `%APPDATA%\Jobgoblin-demo`. When the setup wizard asks for a folder, choose a new one for the demo, such as `Documents\Jobgoblin-demo`, not the folder you use for real. To remove the demo, close Jobgoblin and delete both folders.
+
 ## 1. Setup wizard (once, about 15 minutes)
 
 | Step | What you do | What happens |
@@ -71,8 +73,8 @@ Your data lives in two places. The database is in `%APPDATA%\Jobgoblin` and you 
 | 3 Your folder | Pick a folder | It creates `Applications`, `Resumes`, `Backups` and the tracker. If you pick a folder with backups, it offers Restore. This is how you move to a new computer. |
 | 4 Your resume | Drop a PDF or Word resume in the box (or choose it), then choose **Read my resume**. You can add a LinkedIn PDF in the box below first. | Your name, email, phone and links are removed by the app first. Claude reads the rest and drafts your Your story items. **Continue** opens when it is done and says what is missing until then. If a file cannot be read, the message says why (a password, a damaged file, or a type Jobgoblin does not read) and what to do next. |
 | 5 Your story | Confirm, edit or drop each experience, achievement, project, skill and headline | Only confirmed items can ever appear on a resume or count toward a fit score. Add anything the resume left out. |
-| 6 Form answers | Fill in work authorization, notice period, start date, salary and EEO answers | Anything missing is marked. Salary and EEO answers are never shown to Claude; the app fills them in itself. |
-| 7 Targets | Roles you want, regions, the most years of experience a job may ask for, roles to avoid, hard skips, flags | These change the next job search. |
+| 6 Form answers | Tick where you can work (countries, Remote jobs, and optionally cities), then fill in work authorization for those places, notice period, start date, salary and EEO answers | Remote is a way of working: a remote job is done from where you live, so Remote asks the questions for that country. Anything missing is marked. Salary and EEO answers are never shown to Claude; the app fills them in itself. |
+| 7 Targets | Roles you want, roles to avoid, hard skips, flags | Where you can work and the most years of experience a job may ask for (your years + 2) are shown here and come from Form answers. These change the next job search, and they also apply to jobs found earlier that you have not been shown yet. |
 | Finish | | Your main resume is built from Your story. You land on Today. |
 
 ## 2. Today: your daily home
@@ -85,8 +87,8 @@ Your data lives in two places. The database is in `%APPDATA%\Jobgoblin` and you 
   - **Question:** a run needs a fact only you know. Answer it here; only that one application waits, and the rest carry on.
   - **Ready to submit:** approved, with screening answers written.
   - **Follow-up due:** an application has had no reply by its follow-up date.
-  - **Couldn't tailor:** the limit of 3 open applications per company was reached, or the resume could not pass the truth check.
-  - **Run attention:** a run stopped (plan limit reached, signed out, interrupted). Use Retry or Dismiss.
+  - **Couldn't tailor:** the limit of 3 open applications per company was reached, or the resume could not pass the truth check. A strong match also shows here as "No resume yet" when nothing is tailoring it any more, for example after you cancelled the run. Open it and choose Tailor a resume, or press Try again on the stopped run.
+  - **Run attention:** a run stopped. Each one offers the step that helps: **Try again** after a plan limit, a crash or a run that ran out of turns; **Check settings** when Claude Code is signed out, missing or needs an update. Runs waiting behind a stopped run say what they wait for.
 - **Done today** counts jobs found, resumes tailored, approvals and applications.
 
 How jobs are sorted: fit 75 or higher is **apply**, 60–74 is **stretch** (both tailored automatically), 50–59 is **long shot**, and under 50 is skipped. Roles to avoid, jobs asking too many years, and duplicates are dropped before Claude ever sees them. Each job is shown only once.
@@ -111,10 +113,10 @@ The tailored resume can only reword your confirmed items. The app refuses change
 ## 4. Open application: you submit
 
 1. Open the posting; it opens in your normal browser.
-2. Copy each field and each screening answer with its copy button.
+2. Copy each field and each screening answer with its copy button. When there are no answers, the Answers part says why: they are still being written, Claude has a question for you first, no extra questions were found for the job, or they could not be written. Answer any question the form asks that has no answer here yourself.
 3. Attach the resume: `Your Name - Resume.pdf` in the application's folder (use Open resume file).
 4. Click Submit on the company's site. CAPTCHAs, logins and email codes are always yours.
-5. Back in Jobgoblin, click **I submitted** and choose your proof: confirmation page seen, pasted confirmation text, screenshot, or the confirmation email's subject.
+5. Back in Jobgoblin, click **I submitted** (at the top of the screen, under the introduction) and choose your proof: confirmation page seen, pasted confirmation text, screenshot, or the confirmation email's subject.
 
 The status becomes **Applied** and a follow-up date is set (7 days by default). If you change your contact details after approving, the app asks you to review again so the sent data always matches what you approved.
 
@@ -129,6 +131,8 @@ The status becomes **Applied** and a follow-up date is set (7 days by default). 
 ## 6. Profile and Settings
 
 - **Profile:** Your story, form answers, targets and banned words. A banned word fails any resume, answer or data sheet that contains it, and names the word.
+  - Form answers checks your contact details when you save. A banned word, or a value far too long for a form, isn't saved: the reason shows under its box.
+  - An email address or phone number that doesn't look like one is saved, with a note under its box, because formats differ between countries. Check it before you apply.
 - **Settings:**
   - Claude connection.
   - Your folder, and Open tracker (`Tracker.xlsx`).
@@ -153,7 +157,7 @@ Jobgoblin/
 
 1. Install and sign in to Claude Code.
 2. Start Real mode (`pnpm dev:desktop`) and do the wizard with your real resume.
-3. In Targets, set your roles and regions.
+3. In Form answers, tick where you can work. In Targets, set your roles.
 4. Click Find jobs. The app watches a starter list of about 100 companies on Greenhouse, Lever and Ashby, plus HN, YC, RemoteOK and We Work Remotely. Paste anything else you find with Add a job.
 5. Review, approve, submit, and record proof. Then repeat daily.
 

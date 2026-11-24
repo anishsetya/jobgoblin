@@ -72,6 +72,7 @@ Jobgoblin's code is meant to be read by someone learning how the system works. W
 - Data fetching lives in hooks in `src/api/` (`useToday()`, `useApproveApplication()`); components do not call `fetch`.
 - Every string comes from the English catalog in `src/i18n/en/` (one JSON file per area) through `t("…")`. Plain, calm, second person, no exclamation marks, buttons are verbs.
 - Every interactive element has an accessible name. Use semantic HTML first (`button`, `nav`, `main`, `h1`).
+- Text that comes from a posting (role, company, place, description) gets `wrap-anywhere`, so one long word breaks instead of pushing the page wider than the window. A row of columns wraps onto a new row instead of scrolling sideways.
 
 ## Dependencies
 

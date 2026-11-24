@@ -4,7 +4,9 @@ import { afterEach, describe, expect, it } from "vitest";
 import { fileSha256, getApplication, getApprovedPdf, getLiveApproval, listHistoryEvents, listRunsByStatus } from "@jobgoblin/storage";
 import { getApplicationDetail } from "./applicationDetail";
 import { approveApplication } from "./approvals";
+import { skipApplication } from "./decisions";
 import { getProfile, updateProfileSection } from "./profile";
+import { addStoryItem, confirmStoryItem, editStoryItem, listStory, rejectStoryItem } from "./story";
 import { anApplicationAwaitingApproval, closeTestContexts, createTestContext } from "./testSupport";
 import type { ServerContext } from "../context";
 
@@ -43,10 +45,13 @@ describe("approveApplication", () => {
     });
   });
 
-  it("refuses a banned word in the person's own details", async () => {
+  it("refuses a banned word in the person's own details, such as a word banned after they were saved", async () => {
     const ctx = createTestContext();
     const applicationId = await anApplicationAwaitingApproval(ctx);
-    changeContact(ctx, { portfolio: "ninja-portfolio.example.com" });
+    // Saving refuses a word that is already banned (contactChecks.ts), so the word is banned afterwards.
+    changeContact(ctx, { portfolio: "pirate-portfolio.example.com" });
+    const rules = getProfile(ctx).profile.rules;
+    updateProfileSection(ctx, "rules", { bannedTerms: [...rules.bannedTerms, "pirate"] });
 
     await expect(approve(ctx, applicationId)).rejects.toMatchObject({ code: "banned-in-data-sheet" });
   });
@@ -148,3 +153,102 @@ describe("approveApplication", () => {
     await expect(approve(ctx, applicationId)).rejects.toMatchObject({ code: "not-approvable" });
   });
 });
+
+// Each approval waits while its PDF is made. These start a second change during that wait, as a double-click
+// or a second window would: `approve(...)` returns once its checks are done and the PDF is being made.
+describe("approveApplication while another change happens during its PDF", () => {
+  it("treats two approvals of the same sheet sent together as one approval", async () => {
+    const ctx = createTestContext();
+    const applicationId = await anApplicationAwaitingApproval(ctx);
+    const dataSheetHash = getApplicationDetail(ctx, applicationId).dataSheetHash ?? "";
+
+    const [first, second] = await Promise.all([approve(ctx, applicationId, dataSheetHash), approve(ctx, applicationId, dataSheetHash)]);
+
+    expect(first.status).toBe("Approved");
+    expect(second).toEqual(first);
+    const types = listHistoryEvents(ctx.db, applicationId).map((event) => event.type);
+    expect(types.filter((type) => type === "approved")).toHaveLength(1);
+    expect(listRunsByStatus(ctx.db, ["queued"])).toHaveLength(1);
+    expect(fs.readdirSync(path.join(ctx.folder?.root ?? "", "Resumes"))).toHaveLength(1);
+  });
+
+  it("refuses with the new status when the application was skipped meanwhile", async () => {
+    const ctx = createTestContext();
+    const applicationId = await anApplicationAwaitingApproval(ctx);
+
+    const approving = approve(ctx, applicationId);
+    skipApplication(ctx, applicationId);
+
+    await expect(approving).rejects.toMatchObject({
+      code: "not-approvable",
+      message: `This application is "Skipped", so it can't be approved now.`,
+    });
+    expect(getLiveApproval(ctx.db, applicationId)).toBeNull();
+  });
+
+  it("refuses when the details changed meanwhile, so an outdated sheet is never approved", async () => {
+    const ctx = createTestContext();
+    const applicationId = await anApplicationAwaitingApproval(ctx);
+
+    const approving = approve(ctx, applicationId);
+    changeContact(ctx, { phone: "+1 555 0199" });
+
+    await expect(approving).rejects.toMatchObject({ code: "data-sheet-changed" });
+    expect(getApplication(ctx.db, applicationId)?.status).toBe("Awaiting approval");
+    expect(getLiveApproval(ctx.db, applicationId)).toBeNull();
+  });
+});
+
+describe("approveApplication when Your story changed after the draft", () => {
+  it("refuses a resume that uses an item the person dropped, and quotes the line", async () => {
+    const ctx = createTestContext();
+    const applicationId = await anApplicationAwaitingApproval(ctx);
+
+    rejectStoryItem(ctx, TRACKING_API);
+
+    await expect(approve(ctx, applicationId)).rejects.toMatchObject({
+      code: "resume-untraced",
+      message: expect.stringContaining("Built a shipment-tracking API"),
+    });
+    expect(getApplication(ctx.db, applicationId)?.status).toBe("Awaiting approval");
+    expect(getLiveApproval(ctx.db, applicationId)).toBeNull();
+  });
+
+  it("refuses a resume whose line no longer matches an item that was edited and confirmed again", async () => {
+    const ctx = createTestContext();
+    const applicationId = await anApplicationAwaitingApproval(ctx);
+    const item = listStory(ctx).find((candidate) => candidate.id === TRACKING_API);
+    if (item === undefined) throw new Error("Alex's story has no tracking API item.");
+
+    const text = "Built a shipment-tracking API in Python and PostgreSQL that serves 1M requests a day";
+    editStoryItem(ctx, TRACKING_API, { data: { ...item.data, text, numbers: ["1M"] }, keywords: item.keywords });
+    confirmStoryItem(ctx, TRACKING_API);
+
+    await expect(approve(ctx, applicationId)).rejects.toMatchObject({ code: "resume-untraced" });
+  });
+
+  it("refuses to approve again a resume that was frozen before an item it uses was dropped", async () => {
+    const ctx = createTestContext();
+    const applicationId = await anApplicationAwaitingApproval(ctx);
+    await approve(ctx, applicationId);
+    const employment = getProfile(ctx).profile.employment;
+    updateProfileSection(ctx, "employment", { ...employment, noticePeriod: "4 weeks" }); // voids the approval
+
+    rejectStoryItem(ctx, TRACKING_API);
+
+    await expect(approve(ctx, applicationId)).rejects.toMatchObject({ code: "resume-untraced" });
+    expect(getLiveApproval(ctx.db, applicationId)).toBeNull();
+  });
+
+  it("still approves when the dropped item is not on this resume", async () => {
+    const ctx = createTestContext();
+    const applicationId = await anApplicationAwaitingApproval(ctx);
+    const rust = addStoryItem(ctx, { kind: "skill", parentId: null, data: { text: "Rust", tools: [], numbers: [] }, keywords: [] });
+
+    rejectStoryItem(ctx, rust.id); // added after the draft, so the resume never used it
+
+    await expect(approve(ctx, applicationId)).resolves.toMatchObject({ status: "Approved" });
+  });
+});
+
+const TRACKING_API = "ach-northwind-tracking-api"; // on Alex's master resume, under Northwind Logistics

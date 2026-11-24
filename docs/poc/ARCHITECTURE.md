@@ -88,7 +88,7 @@ Dependency rules (`pnpm lint:deps`, dependency-cruiser):
 | Needs you | Anything waiting on the person | `NeedsYouItem` |
 | History event | One row of the change log | `HistoryEvent` (not `Event`, which the browser already defines) |
 | Person's folder | The folder the person chose, `Documents/Jobgoblin` by default | `PersonFolder` |
-| App data folder | `%APPDATA%\Jobgoblin` or `~/Library/Application Support/Jobgoblin`; tests use a temp dir | `appDataDir` |
+| App data folder | `%APPDATA%\Jobgoblin` or `~/Library/Application Support/Jobgoblin`; on the demo board (`JOBGOBLIN_FEED_FIXTURES`) `Jobgoblin-demo` beside it, unless a folder is chosen; tests use a temp dir | `appDataDir` |
 
 ## 5. Shared contracts (`packages/schemas`)
 
@@ -122,16 +122,26 @@ WorkAuthorizationSection = { regions: Record<string, { authorized, requiresSpons
 EmploymentSection = { currentEmployer, currentTitle, noticePeriod, earliestStartDate, yearsExperience }
 CompensationSection = { expectedBase }                                                                   // personal
 EeoSection = { gender, raceEthnicity, veteranStatus, disability }   // default "Decline to self-identify"; personal
-TargetsSection = { roles: string[], regions: string[], tracks: string[], maxYearsRequired: number /* 4 */, rolesToAvoid: string[], hardSkips: string[], flags: string[] }
+TargetsSection = { roles: string[], regions: string[], cities: string[], tracks: string[], maxYearsRequired: number /* 4 */, rolesToAvoid: string[], hardSkips: string[], flags: string[] }
 RulesSection = { bannedTerms: string[] }
 ProfileSectionName = contact | workAuthorization | employment | compensation | eeo | targets | rules
 PERSONAL_SECTIONS = [contact, compensation, eeo]
 Profile = all seven sections (Profile.parse({}) gives a fresh profile)
 MissingValue = { section, key, label }
-ProfileResponse = { profile: Profile, missing: MissingValue[] }
+YearsLimit = { limit: number, experience: number | null }
+ProfileWarning = { section, key, message }   // a saved value that looks wrong, shown next to its field
+ProfileResponse = { profile: Profile, missing: MissingValue[], homeRegion: Region | null, yearsLimit: YearsLimit, warnings: ProfileWarning[] }
 ```
 
 `hardSkips` defaults to `["An active security clearance is required"]`; `flags` to `["Relocation required", "Graduation-year window"]`. Targets and rules are rows of the `profile` table like every other section.
+
+Where the person can work is answered on Form answers and saved in `targets.regions` and `targets.cities`. In `regions`, `US`, `IN` and `OTHER` are countries and `REMOTE` means the person wants remote jobs: remote is a way of working, not a place. Work authorization is asked for each chosen country that has questions (`US`, `IN`), and with `REMOTE` also for `homeRegion`, the country of `contact.location` (`core.homeRegionOf`). The years limit is `employment.yearsExperience` + 2; the stored `maxYearsRequired` is used only while that answer is missing (`core.yearsLimitFor`). `homeRegion` and `yearsLimit` are in `ProfileResponse` because the dashboard may not import core.
+
+Saving the contact section is checked first (`server/services/contactChecks.ts`), so a problem is shown next to its field when it is typed, not at Approve:
+- **Refused** (400, with `field` set to `contact.<key>`): a banned word in any field (`banned-in-profile`, the words Approve uses with the field's name in front), and a value too long to use (`too-long`: full name 100 characters, email 254, phone 40, where you live 100, each link 300).
+- **Saved with a warning** in `ProfileResponse.warnings`: an email address that doesn't look like one (something@something.something, no spaces), and a phone number that doesn't (digits, spaces and `+ ( ) . / -`, an optional extension, at least 7 digits). Formats vary by country, so these never stop a save.
+
+Empty and `TODO` values are left to the missing values. The Approve check on the data sheet stays: a word banned after a value was saved is still caught there.
 
 ### 5.4 `job.ts`
 
@@ -199,13 +209,15 @@ RUN_KIND_SETTINGS: Record<RunKind, { model, maxTurns, timeoutMinutes, builtInToo
 ### 5.9 `api.ts`
 
 ```ts
-ApiError = { code, message, action }
+ApiError = { code, message, action, field? }   // field: the form field a refusal is about, as "section.key"
 NeedsYouKind = "review" | "question" | "ready-to-submit" | "long-shot" | "not-tailored" | "follow-up-due" | "run-attention"
-NeedsYouItem = { kind, id, applicationId, runId, title, detail, createdAt }
+RunNextStep = "open-settings" | "try-again"
+NeedsYouItem = { kind, id, applicationId, runId, title, detail, nextStep: RunNextStep | null /* run-attention only */, createdAt }
 TodayResponse = { needsYou: NeedsYouItem[], running: Run[], doneToday: { found, tailored, approved, applied }, setupComplete: boolean, usageNoticeSeen: boolean }
 PipelineRow = Application + { overdue: boolean, location, region }
 ApplicationActions = { canApprove, canSkip, canUndoSkip, canRequestEdit, canTailor, canWithdraw, canMarkSubmitted, canAsk }   // booleans computed by the server with core
-ApplicationDetail = { application, job, fit, resume: ResumeVersion | null, resumeHeader: ResumeHeader | null, versions: ApplicationResume[], diff: ResumeDiff | null, storyItems: StoryItem[] /* items the resume cites plus items the fit matched */, dataSheet: DataSheet | null, dataSheetHash: string | null, approval: Approval | null, answers: Answer[], submission: Submission | null, questions: Question[], history: HistoryEvent[], askResults: { question, answer, at }[], allowedStatusMoves: ApplicationStatus[], actions: ApplicationActions }
+AnswersState = "waiting-for-approval" | "being-written" | "waiting-for-answer" | "written" | "no-questions" | "not-written"   // see 8.5
+ApplicationDetail = { application, job, fit, resume: ResumeVersion | null, resumeHeader: ResumeHeader | null, versions: ApplicationResume[], diff: ResumeDiff | null, storyItems: StoryItem[] /* items the resume cites plus items the fit matched */, untracedLines: { path, text }[] /* resume lines whose item was dropped or changed since the draft */, dataSheet: DataSheet | null, dataSheetHash: string | null, approval: Approval | null, answers: Answer[], answersState: AnswersState, submission: Submission | null, questions: Question[], history: HistoryEvent[], askResults: { question, answer, at }[], allowedStatusMoves: ApplicationStatus[], actions: ApplicationActions }
 ApproveRequest = { dataSheetHash, submitMode: "manual" }
 SubmittedRequest = { proofType, proof, attachedSha256: string | null, confirmDifferentFile?: boolean }
 StatusChangeRequest = { to, followUpOn?: string | null, note?: string }
@@ -257,10 +269,10 @@ No file or network access. Rule failures the caller must show are returned as va
 | `truthTrace.ts` | `traceResume(body, storyItems)` → `ResumeCheckError[]` (section 8.2); `STRONG_VERBS`; `extractFacts(text, vocabulary)` |
 | `bannedTerms.ts` | `findBannedTerms(texts: { path, text }[], bannedTerms)` → `ResumeCheckError[]` (code `banned`, or the code passed in, so the PDF check reports `banned-in-pdf`) |
 | `versionId.ts` | `canonicalJson(value)`, `sha256Hex(stringOrBytes)`, `resumeVersionId(body, headerHash, templateVersion)`, `shortVersionId(id)`, `headerHash(header)` |
-| `dataSheet.ts` | `buildDataSheet({ applicationId, profile, region, resumeVersion })`, `hashDataSheet(sheet)`, `requiredMissing(sheet)`, `placeholderDataSheet(sheet)` (personal values replaced by `{key}`), `fillPlaceholders(text, sheet)` |
+| `dataSheet.ts` | `buildDataSheet({ applicationId, profile, region, resumeVersion })`, `hashDataSheet(sheet)`, `requiredMissing(sheet)`, `placeholderDataSheet(sheet)` (personal values replaced by `{key}`), `fillPlaceholders(text, sheet)`. Work authorization comes from the job's own country; a `REMOTE` job (no country named) uses the country the person lives in. Another country's answers are never borrowed: a country never answered stays Missing |
 | `masterResume.ts` | `buildMasterResume(storyItems)`: confirmed items only; experiences newest first with up to 4 achievements each; up to 2 projects with up to 2 achievements; the first confirmed headline; up to 12 skills; all education |
 | `resumeDiff.ts` | `diffAgainstMaster(tailored, master)` → `ResumeDiff` |
-| `jobFilters.ts` | `dedupeKey(company, title, location)`, `classifyRegion(location)`, `codeFilter(posting, targets)` → `{ passes: true } | { passes: false, reason }` (roles to avoid by title, years required above the limit, region outside targets) |
+| `jobFilters.ts` | `dedupeKey(company, title, location)`, `classifyRegion(location)`, `isRemoteLocation(location)`, `homeRegionOf(location)`, `regionName(code)`, `yearsLimitFor(profile)`, `codeFilterTargetsFor(profile)`, `codeFilter(posting, targets)` → `{ passes: true } | { passes: false, reason }` (roles to avoid by title, years required above the limit, outside the places chosen, on-site outside the cities chosen). Places: none chosen passes everything; a job in a chosen country passes, on-site or remote; a remote job also passes when `REMOTE` is chosen and it names no country, or when `REMOTE` is the only choice; an on-site job in a chosen city passes. Cities: with cities chosen, an on-site job must name one as a whole word; remote jobs always pass. Reasons name places in words ("United States"), never codes |
 | `redaction.ts` | `redactContactDetails(text)` → `{ redacted, found: Partial<ContactSection> }` (D10) |
 | `stepText.ts` | `stepForTool(toolName)` and `STEP_CHECKING_JOB_BOARDS`: plain words for run cards |
 
@@ -375,6 +387,7 @@ For every part of `ResumeBody`:
 ### 8.3 Starting tailoring
 
 - After a hunt or paste run ends, `admitInScoreOrder` picks Scored applications with band apply or stretch; admitted ones get one tailor run, refused ones get `tailor_error` with the plain cap message (Needs you kind `not-tailored`).
+- A Scored application that no active run holds and no active hunt or paste run may still admit (its tailor run was cancelled, failed or blocked) is also `not-tailored`, with "No resume yet. Open it and choose Tailor a resume." Retrying the stopped tailor run picks it up too.
 - `POST /api/apps/:id/tailor` (person) accepts Scored or Long shot, runs `checkLimits` first (ApiError `cap`), logs a `tailor-requested` event, and queues a tailor run.
 - `POST /api/apps/:id/request-edit { note }` moves Awaiting approval → Tailored (person, via request_edit) and queues a tailor run with `input.editNote`.
 - An application may sit in only one active (queued, running or waiting) run at a time.
@@ -396,12 +409,25 @@ Draft previews live in `<appData>/previews/<versionId>.pdf`, rebuilt freely and 
 
 `approveApplication(ctx, { applicationId, dataSheetHash, submitMode })`, person only:
 
-1. Rebuild the data sheet from the current profile; refuse `data-sheet-changed` if the hash differs from the one the person saw; refuse `missing-values` (naming them) if a required value is TODO or empty; run `findBannedTerms` over the data sheet values.
+1. Rebuild the data sheet from the current profile; refuse `data-sheet-changed` if the hash differs from the one the person saw; refuse `missing-values` (naming them) if a required value is TODO or empty; run `findBannedTerms` over the data sheet values; run `traceResume` again against Your story as it is now and refuse `resume-untraced` (quoting the line) when the person dropped or changed an item the resume uses after the draft was made (`services/resumeTrace.ts`). `ApplicationDetail.untracedLines` lists those lines for Review, and `canApprove` is false while there are any.
 2. Render the final PDF once, in memory; `pdfSha256 = sha256Hex(bytes)`; check one page and banned terms. If an approved file for this version already exists, reuse its bytes and fingerprint.
-3. One transaction: insert the approval; set `application_resumes.state = approved` with `pdf_sha256` and `pdf_bytes`; move Awaiting approval → Approved (or, for an Approved application with no live approval, no move and a `re-approved` event); history event.
+3. One transaction: check the status and the data sheet hash again, because step 2 waits and another request can change them meanwhile (a double-click, a second window). If a live approval of this same hash and submit mode was saved meanwhile, save nothing and return the approved application; any other change is refused (`not-approvable`, `data-sheet-changed`). Then insert the approval; set `application_resumes.state = approved` with `pdf_sha256` and `pdf_bytes`; move Awaiting approval → Approved (or, for an Approved application with no live approval, no move and a `re-approved` event); history event.
 4. After commit: write `Resumes/<shortId>.pdf`, the application folder with `First Last - Resume.pdf` and `Job description.md`; schedule the tracker and a backup; queue an answers run.
 
+`ApplicationDetail.answersState` (`server/services/answersState.ts`) says where the answers stand, so Open application and the Application page never guess from an empty list. It comes from the approval, the saved answers and the application's newest answers task (newest by when the task was added, because an answered question can join an older queued run, D8):
+
+| `answersState` | When |
+| --- | --- |
+| `waiting-for-approval` | No approval yet |
+| `written` | Answers are saved |
+| `being-written` | The newest task is pending in a run that is queued, running or waiting |
+| `waiting-for-answer` | The newest task is waiting: the run asked the person first |
+| `no-questions` | The newest task is done, nothing was saved and the job has no screening questions (the playbook's "No screening questions") |
+| `not-written` | The task failed, its run ended before it, the run marked it done while skipping the job's questions, or no answers run was queued |
+
 A profile change voids every live approval whose data sheet hash no longer matches (event `approval-voided`); the Open application screen then asks the person to review again.
+
+The dashboard sends each of these decisions once per click: Approve, Skip, Request edit and Record as applied ignore a repeat while their request is in flight (`lib/oneAtATime.ts`), because a disabled button takes effect only on the next render.
 
 ### 8.6 I submitted (`server/services/submissions.ts`)
 
@@ -465,7 +491,7 @@ type StartOptions = { appDataDir; resourcesDir; port; claudeCommand: string[] | 
 
 Launch (`launchRun.ts`), each step a named function:
 
-1. `fetchJobBoards(ctx, run)`: hunt runs first call `services/feeds.refreshFeeds(ctx)` (step "Checking job boards"), which fetches feeds through `packages/sources`, applies `core.codeFilter` and `core.dedupeKey`, and inserts new jobs. `search_jobs` only reads the database.
+1. `fetchJobBoards(ctx, run)`: hunt runs first call `services/feeds.refreshFeeds(ctx)` (step "Checking job boards"), which fetches feeds through `packages/sources`, applies `core.codeFilter` and `core.dedupeKey`, and inserts new jobs. Before that it checks every job not shown yet (`seen_at` empty) again against the current targets: a job an old target ruled out comes back, one the new targets rule out is put aside, and a job that comes back as a repeat of a role already in play is marked a duplicate. Jobs already shown keep their verdict (D3). `search_jobs` only reads the database.
 2. `whyClaudeIsBlocked(claudeCli)`: the Claude Code status; anything but connected (not installed, needs an update, signed out) → blocked.
 3. `createRunDirectory(run)`: `<appData>/runs/<runId>/` with `PLAYBOOK.md`, `.claude/agents/*.md` (hunt: the screener, listing only `mcp__jobgoblin__*` tools), `.claude/settings.json` (hunt: `WebFetch` permission rules limited to job-board domains), and `mcp.json`: `{"mcpServers":{"jobgoblin":{"type":"http","url":"http://127.0.0.1:<port>/mcp","headers":{"Authorization":"Bearer ${JOBGOBLIN_RUN_TOKEN}"}}}}`.
 4. `buildClaudeArgs(run)`: `-p`, `--output-format stream-json`, `--verbose`, `--model <tier>`, `--mcp-config mcp.json`, `--strict-mcp-config`, `--tools <list or "">`, `--allowedTools <mcp__jobgoblin__… + built-ins + domain-limited WebFetch>`, `--setting-sources project`, `--permission-mode dontAsk`, `--max-turns <n>`.
@@ -483,7 +509,7 @@ classifyRunEnd({ exitCode, result, timedOut, cancelled, tasks }): { status: RunS
 // success with every remaining task waiting → waiting; otherwise → done. Pending tasks at the end count as failed.
 ```
 
-Queue: one run at a time by default (`concurrency`, max 2). A blocked run pauses the queue until Retry or a successful sign-in check.
+Queue: one run at a time by default (`concurrency`, max 2). A blocked run pauses the queue until it is retried or dismissed, or a sign-in check finds Claude Code connected. While the queue is paused, every queued run's step says why: "Waiting for <run title>, which stopped: <outcome message> Try that run again to go on." ("Open Settings to go on." when Claude Code is not installed, needs an update or is signed out). Find jobs while a hunt is blocked retries that hunt, so no second hunt waits behind it. Run titles (`runner/runText.ts` `RUN_TITLES`) are the names the dashboard's run cards use. A stopped run's Needs you item has one `nextStep` (`nextStepFor`): `open-settings` for those three Claude Code problems, `try-again` for everything else, because Settings cannot lift a plan limit or undo a crash.
 
 Recovery (`recovery.ts`) at start: every run in `running` or `waiting` with a pid → if that process is alive and its image is the configured Claude command (checked with `tasklist` on Windows, `ps` elsewhere), kill its tree; mark the run `interrupted` ("This run was interrupted"). Queued runs stay queued.
 
@@ -491,7 +517,7 @@ Cancel: `taskkill /PID <pid> /T` (Windows) or `SIGTERM`, then after 5 s `taskkil
 
 After a run (`afterRun.ts`): hunt or paste → admit to tailoring (section 8.3); tailor → applications whose drafts never passed get one retry run on sonnet (`tailor_attempts`), then `tailor_error` = "Couldn't tailor this one: <reason>"; answers → nothing extra.
 
-Claude Code CLI (`claudeCli.ts`; finding the program is `findClaudeProgram.ts`): `detect()` checks `claudeCommand` from start options, then `claude.exe` on PATH and in `%USERPROFILE%\.local\bin` (never `claude.cmd`, which Node cannot start without a shell), then `~/.local/bin/claude`; `version()`; `authStatus()` (`claude auth status`, JSON, `authMethod` must be `claude.ai`); `install()` runs `claudeInstallCommand` (default `winget install Anthropic.ClaudeCode` or the macOS script); `signIn()` runs `claude auth login`. `MINIMUM_CLAUDE_VERSION = "2.1.0"`.
+Claude Code CLI (`claudeCli.ts`; finding the program is `findClaudeProgram.ts`): `detect()` checks `claudeCommand` from start options, then `claude.exe` on PATH and in `%USERPROFILE%\.local\bin` (never `claude.cmd`, which Node cannot start without a shell), then `~/.local/bin/claude`; `version()`; `authStatus()` (`claude auth status`, JSON, `authMethod` must be `claude.ai`); `install()` runs `claudeInstallCommand` (default `winget install Anthropic.ClaudeCode` or the macOS script), then reads the status: when Claude Code is still not installed or still too old, it refuses with `claude-install-failed` or `claude-update-failed` and says what happened (the installer couldn't start, stopped with an error code, ran past 10 minutes, or finished without effect). The status decides, not the exit code. The Connect card shows the message and opens the command so the person can run it by hand; `signIn()` runs `claude auth login`. `MINIMUM_CLAUDE_VERSION = "2.1.0"`.
 
 ## 11. HTTP API (`packages/server/src/http`)
 
@@ -520,14 +546,14 @@ Middleware: `hostCheck` (Host must be `127.0.0.1:<port>` or `localhost:<port>`) 
 | `GET /api/story`; `POST /api/story`; `PUT /api/story/:id`; `POST /api/story/:id/confirm`, `/reject` | → `StoryItem[]` / `StoryItem` |
 | `POST /api/import-resume` | multipart `file` (≤ 10 MB, PDF or Word) and `kind` (resume or linkedin) → `{ runId }` (the setup run starts after the resume upload) |
 | `POST /api/setup/finish` | → `SettingsResponse` (builds the master resume, marks setup complete) |
-| `GET /api/claude/status`; `POST /api/claude/install`, `/sign-in` | → `ClaudeStatus` |
+| `GET /api/claude/status`; `POST /api/claude/install`, `/sign-in` | → `ClaudeStatus`; install answers 409 `claude-install-failed` / `claude-update-failed` when Claude Code is still missing or too old |
 | `GET /api/settings`; `PUT /api/settings` | `Partial<Settings>` → `SettingsResponse` |
 | `POST /api/settings/folder` | `{ path }` → `ChooseFolderResponse` |
 | `GET /api/export/csv`, `/xlsx` | → file |
 | `GET /api/backups`; `POST /api/backups`; `POST /api/backups/:id/restore` | → `Backup[]` / `Backup` / `SettingsResponse` |
 | `POST /api/open` | `{ path }` (inside the person's folder only) → `{ opened: boolean, path }`; inside Electron the server asks main to open it; otherwise it returns `opened: false` and the dashboard shows the path |
 
-Server entry (`main.ts`): `startServer(options: StartOptions)` → `{ port, sessionToken, url, stop() }`. As a script it reads flags and env (`JOBGOBLIN_APP_DATA`, `JOBGOBLIN_PORT`, `JOBGOBLIN_RESOURCES_DIR`, `JOBGOBLIN_CLAUDE_COMMAND` (JSON array), `JOBGOBLIN_CLAUDE_INSTALL_COMMAND`, `JOBGOBLIN_FEED_FIXTURES`, `JOBGOBLIN_DEV_ORIGIN`). Outside Electron it prints one line `JOBGOBLIN_READY {"port":…,"url":"http://127.0.0.1:…/#token=…"}`; inside a `utilityProcess` it posts `{ type: "ready", port, sessionToken }` to `process.parentPort` and prints nothing secret. It writes `server.json` (port, pid, version, startedAt; no secrets). Messages from main: `{ type: "shutdown" }` → cancel queued runs, stop running ones, flush the tracker, close the database, remove `server.json`, exit. Messages to main: `{ type: "open-path", path, personFolder }`. `JOBGOBLIN_FEED_FIXTURES` makes sources read saved responses instead of the network and seeds companies from that folder's `companies.json`; otherwise companies are seeded from the prototype's `companies/targets.yaml` list, converted to `packages/server/src/seed/companies.json`.
+Server entry (`main.ts`): `startServer(options: StartOptions)` → `{ port, sessionToken, url, stop() }`. As a script it reads flags and env (`JOBGOBLIN_APP_DATA`, `JOBGOBLIN_PORT`, `JOBGOBLIN_RESOURCES_DIR`, `JOBGOBLIN_CLAUDE_COMMAND` (JSON array), `JOBGOBLIN_CLAUDE_INSTALL_COMMAND`, `JOBGOBLIN_FEED_FIXTURES`, `JOBGOBLIN_DEV_ORIGIN`). Outside Electron it prints one line `JOBGOBLIN_READY {"port":…,"url":"http://127.0.0.1:…/#token=…"}`; inside a `utilityProcess` it posts `{ type: "ready", port, sessionToken }` to `process.parentPort` and prints nothing secret. It writes `server.json` (port, pid, version, startedAt; no secrets). Messages from main: `{ type: "shutdown" }` → cancel queued runs, stop running ones, flush the tracker, close the database, remove `server.json`, exit. Messages to main: `{ type: "open-path", path, personFolder }`. `JOBGOBLIN_FEED_FIXTURES` makes sources read saved responses instead of the network and seeds companies from that folder's `companies.json` (read before anything is created: a missing folder or file, or one that is not a list of companies, stops the start with one plain line), and with no `JOBGOBLIN_APP_DATA` the data goes to `Jobgoblin-demo`, never to the real folder; otherwise companies are seeded from the prototype's `companies/targets.yaml` list, converted to `packages/server/src/seed/companies.json`.
 
 ## 12. Dashboard (`apps/dashboard`)
 
@@ -536,11 +562,11 @@ React 19 + Vite + Tailwind 4 + TanStack Query + TanStack Router (code-based rout
 | Route | Screen |
 | --- | --- |
 | `/setup/:step` | 1 Welcome, 2 Connect Claude (status, Install, Sign in), 3 Your folder (offers Restore when backups are found), 4 Your resume (upload, optional LinkedIn PDF, then the setup run's progress), 5 Your story (confirm, edit, drop), 6 Form answers (missing values marked; values a run suggested are shown for the person to confirm), 7 Targets, then Finish |
-| `/today` | Find jobs, Add a job (link or text; asks for company, title and text when a link needs a login), usage notice before the first run, Needs you, Running (cards with step, progress, Cancel), Done today |
+| `/today` | Find jobs, Add a job (link or text; asks for company, title and text when a link needs a login), usage notice before the first run, Needs you, Running (cards with step, progress while running, Cancel, Try again after a stop or a cancel), Done today |
 | `/review/:id` | Role, company, fit, band, reason, flags, gaps, matched items; changes vs master; HTML resume preview with reworded lines highlighted; data sheet; Approve (the only accent button), Request edit (asks for a note), Skip; keys A, E, S, J, K |
-| `/apply/:id` | Posting link (opens in the browser), a copy button for every field of the **frozen** `approval.dataSheet` and every answer, Open resume file, I submitted (proof type and proof); "Your details changed since you approved. Review it again." when the approval is void |
-| `/pipeline` | Board by status group and list view, search, filters, overdue follow-ups in amber |
-| `/apps/:id` | Job description, fit, resume versions, answers, history, status change (only `allowedStatusMoves`), Withdraw, Undo skip, Tailor, Ask about this application |
+| `/apply/:id` | Posting link (opens in the browser), I submitted (proof type and proof) right under the introduction so it is in view on arrival, Open resume file, a copy button for every field of the **frozen** `approval.dataSheet` and every answer (or a sentence for `answersState` when there are none); "Your details changed since you approved. Review it again." when the approval is void |
+| `/pipeline` | Board by status group (columns at least 15rem wide that share the width and wrap onto a new row, so none is hidden sideways) and list view, search, filters, overdue follow-ups in amber |
+| `/apps/:id` | Job description, fit, resume versions, answers (or the same `answersState` sentence as `/apply/:id`), history, status change (only `allowedStatusMoves`), Withdraw, Undo skip, Tailor, Ask about this application |
 | `/profile/:tab` | Your story, Form answers, Targets (including hard skips and flags), Banned words |
 | `/settings` | Claude connection, folder, limits, tracker status and Open tracker, backups (last backup time, Back up now, Restore), export CSV and xlsx |
 
@@ -551,6 +577,7 @@ React 19 + Vite + Tailwind 4 + TanStack Query + TanStack Router (code-based rout
 - `src/api/token.ts`: `readSessionToken()` (preload, then `sessionStorage`, then the `#token=` fragment, which it removes from the address bar).
 - `src/api/desktop.ts`: `chooseFolder()` and `openPath()` through `window.jobgoblin` when present; in a browser, a text field for the folder path.
 - Theme: CSS variables for neutral grays and one accent; amber only for flags, green only for success; dark mode follows `prefers-color-scheme`; hairline borders; no shadows.
+- Text from a posting (role, company, place, description) may break inside a word (`wrap-anywhere`), so one long word never makes a screen wider than the window. An e2e story checks it at 1280 and 640 px.
 - Every interactive element has an accessible name; Playwright runs axe on every screen.
 
 ## 13. Desktop (`apps/desktop`)
@@ -564,7 +591,7 @@ Built with `tsup` to `dist/cli.mjs`; tests set `JOBGOBLIN_CLAUDE_COMMAND=["<node
 - `--version` prints `2.1.99 (Claude Code)`; `auth status` prints `{"loggedIn":true,"authMethod":"claude.ai","subscriptionType":"pro"}` (or signed out with `FAKE_CLAUDE_MODE=signed-out`); `auth login` exits 0.
 - `-p`: reads the playbook from stdin, takes the run kind and input from lines 1 and 2 (D6), reads `--mcp-config`, expands `${JOBGOBLIN_RUN_TOKEN}`, connects with the MCP SDK client, prints `system/init` (`session_id`, `tools` = the `--allowedTools` it was given, `mcp_servers: [{ name: "jobgoblin", status: "connected" }]`), one `assistant` line per tool call, and a final `result` line (`subtype`, `is_error`, `result`, `num_turns`).
 - Scripted behaviour per kind: setup (import_resume → propose_story_items from `data/story-items.json` → save_profile_section employment); hunt (search_jobs → get_fit_context → score from `data/scores.json`, else keyword overlap → record_fit each → mark_seen); paste (get_job → get_fit_context → record_fit); tailor (loop next_task → get_tailoring_context → reorder the master resume to put bullets matching must-haves first → submit_resume_draft → on errors drop the failing parts and resubmit once → complete_task); answers (loop next_task → get_approved → save_answers using `{fullName}`-style placeholders → complete_task); ask (get_application → result text).
-- Switches through env: `FAKE_CLAUDE_MODE=signed-out | usage-limit | crash | slow | max-turns | extra-tools`; `FAKE_CLAUDE_ASK_FIRST=1` (call ask_person on the first application of a tailor run); `FAKE_CLAUDE_INVENT_BULLET=1` (submit one untraced and one inflated bullet first).
+- Switches through env: `FAKE_CLAUDE_MODE=signed-out | usage-limit | crash | slow | max-turns | extra-tools`; `FAKE_CLAUDE_ASK_FIRST=1` (call ask_person on the first application of a tailor run); `FAKE_CLAUDE_INVENT_BULLET=1` (submit one untraced and one inflated bullet first); `FAKE_CLAUDE_NO_QUESTIONS=1` (an answers run saves nothing for a job with no screening questions and completes the task as done with "No screening questions", as the playbook says; without it the fake answers one made-up question).
 
 ## 15. Tests
 

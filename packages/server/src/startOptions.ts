@@ -7,6 +7,8 @@
 //   JOBGOBLIN_CLAUDE_INSTALL_COMMAND            a JSON array
 //   JOBGOBLIN_FEED_FIXTURES, --feed-fixtures    read saved feeds from this folder instead of the network
 //   JOBGOBLIN_DEV_ORIGIN, --dev-origin          the dashboard dev server's origin, such as http://localhost:5173
+// With the demo board (JOBGOBLIN_FEED_FIXTURES) and no app data folder chosen, the data goes to Jobgoblin-demo,
+// never to the real Jobgoblin folder, so demo jobs and resumes can't mix with a real person's.
 // Spec: ARCHITECTURE.md section 11 (server entry) and decision D14.
 import os from "node:os";
 import path from "node:path";
@@ -16,13 +18,15 @@ import { DEFAULT_PORT } from "./http/listen";
 
 export function readStartOptions(env: NodeJS.ProcessEnv, args: readonly string[]): StartOptions {
   const flags = readFlags(args);
+  const feedFixturesDir = optionalPath(flags["feed-fixtures"] ?? env.JOBGOBLIN_FEED_FIXTURES);
+  const chosenAppDataDir = optionalText(flags["app-data"] ?? env.JOBGOBLIN_APP_DATA);
   return {
-    appDataDir: path.resolve(flags["app-data"] ?? env.JOBGOBLIN_APP_DATA ?? defaultAppDataDir(env)),
+    appDataDir: path.resolve(chosenAppDataDir ?? defaultAppDataDir(env, { isDemo: feedFixturesDir !== null })),
     resourcesDir: path.resolve(flags["resources-dir"] ?? env.JOBGOBLIN_RESOURCES_DIR ?? defaultResourcesDir()),
     port: readPort(flags.port ?? env.JOBGOBLIN_PORT),
     claudeCommand: readCommand("JOBGOBLIN_CLAUDE_COMMAND", env.JOBGOBLIN_CLAUDE_COMMAND),
     claudeInstallCommand: readCommand("JOBGOBLIN_CLAUDE_INSTALL_COMMAND", env.JOBGOBLIN_CLAUDE_INSTALL_COMMAND),
-    feedFixturesDir: optionalPath(flags["feed-fixtures"] ?? env.JOBGOBLIN_FEED_FIXTURES),
+    feedFixturesDir,
     devOrigin: optionalText(flags["dev-origin"] ?? env.JOBGOBLIN_DEV_ORIGIN),
   };
 }
@@ -76,10 +80,12 @@ function optionalPath(text: string | undefined): string | null {
   return value === null ? null : path.resolve(value);
 }
 
-function defaultAppDataDir(env: NodeJS.ProcessEnv): string {
-  if (process.platform === "win32") return path.join(env.APPDATA ?? path.join(os.homedir(), "AppData", "Roaming"), "Jobgoblin");
-  if (process.platform === "darwin") return path.join(os.homedir(), "Library", "Application Support", "Jobgoblin");
-  return path.join(env.XDG_DATA_HOME ?? path.join(os.homedir(), ".local", "share"), "jobgoblin");
+// The desktop app picks the same folders (apps/desktop/src/startupConfig.ts).
+function defaultAppDataDir(env: NodeJS.ProcessEnv, mode: { isDemo: boolean }): string {
+  const name = mode.isDemo ? "Jobgoblin-demo" : "Jobgoblin";
+  if (process.platform === "win32") return path.join(env.APPDATA ?? path.join(os.homedir(), "AppData", "Roaming"), name);
+  if (process.platform === "darwin") return path.join(os.homedir(), "Library", "Application Support", name);
+  return path.join(env.XDG_DATA_HOME ?? path.join(os.homedir(), ".local", "share"), name.toLowerCase());
 }
 
 // The repository root: three folders above packages/server/src (and above packages/server/dist, where the bundle lives).

@@ -7,6 +7,7 @@ import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useMarkSubmitted } from "@/api/applications";
 import { sha256HexOfFile } from "@/lib/hash";
+import { useOneAtATime } from "@/lib/oneAtATime";
 import { ErrorNotice } from "./ErrorNotice";
 import { Button } from "./ui/Button";
 import { Checkbox } from "./ui/Checkbox";
@@ -28,6 +29,7 @@ const DEFAULT_PROOF_TYPE: ProofType = "confirmation-page";
 export function SubmittedDialog({ open, onOpenChange, approval, onSubmitted }: SubmittedDialogProps) {
   const { t } = useTranslation();
   const markSubmitted = useMarkSubmitted(approval.applicationId);
+  const markSubmittedOnce = useOneAtATime(markSubmitted.mutate); // a double-click records it once
   const [proofType, setProofType] = useState<ProofType>(DEFAULT_PROOF_TYPE);
   const [proof, setProof] = useState("");
   const [attachedSha256, setAttachedSha256] = useState<string | null>(null);
@@ -58,7 +60,7 @@ export function SubmittedDialog({ open, onOpenChange, approval, onSubmitted }: S
       attachedSha256,
       confirmDifferentFile: isDifferentFile ? true : undefined,
     };
-    markSubmitted.mutate(request, { onSuccess: onSubmitted });
+    markSubmittedOnce(request, { onSuccess: onSubmitted });
   }
 
   return (

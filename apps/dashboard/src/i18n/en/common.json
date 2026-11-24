@@ -134,6 +134,15 @@
   "question": {
     "send": "Send answer"
   },
+  "answers": {
+    "state": {
+      "waiting-for-approval": "Answers are written after you approve the application.",
+      "being-written": "Your answers are being written. They will appear here by themselves.",
+      "waiting-for-answer": "Claude asked you a question first. Your answers are written after you reply.",
+      "no-questions": "No extra questions were found for this job, so there is nothing to answer here. If the company's form asks one, answer it there.",
+      "not-written": "The answers could not be written. You can still apply: answer the questions on the company's form yourself."
+    }
+  },
   "fileDrop": {
     "prompt": "Drop a file here, or",
     "choose": "choose one from your computer",

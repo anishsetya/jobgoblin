@@ -5,6 +5,9 @@
 import path from "node:path";
 
 const APP_DATA_FOLDER_NAME = "Jobgoblin";
+// With the demo board (JOBGOBLIN_FEED_FIXTURES), so demo jobs and resumes never reach a real person's data.
+// The server picks the same folder when it is started on its own (packages/server/src/startOptions.ts).
+const DEMO_APP_DATA_FOLDER_NAME = "Jobgoblin-demo";
 
 // Relative to resourcesDir. The server agent's build writes the bundle here.
 const SERVER_BUNDLE_RELATIVE_PATH = path.join("packages", "server", "dist", "server.mjs");
@@ -45,7 +48,8 @@ export function resolveStartupConfig(input: StartupConfigInput): StartupConfig {
 function resolveAppDataDir(input: StartupConfigInput): string {
   const override = readEnvironmentValue(input.env, "JOBGOBLIN_APP_DATA");
   if (override !== undefined) return path.resolve(override);
-  return path.join(input.systemAppDataDir, APP_DATA_FOLDER_NAME);
+  const isDemo = readEnvironmentValue(input.env, "JOBGOBLIN_FEED_FIXTURES") !== undefined;
+  return path.join(input.systemAppDataDir, isDemo ? DEMO_APP_DATA_FOLDER_NAME : APP_DATA_FOLDER_NAME);
 }
 
 // From source the resources (migrations, templates, playbooks, dashboard build) are the repository

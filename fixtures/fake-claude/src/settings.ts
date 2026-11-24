@@ -11,6 +11,8 @@ export const FAKE_CLAUDE_MODES = [
   "slow",
   "max-turns",
   "extra-tools",
+  "not-installed", // `--version` fails, so the runner counts the program as not installed
+  "outdated", // `--version` prints a version below the runner's minimum
 ] as const;
 
 export type FakeClaudeMode = (typeof FAKE_CLAUDE_MODES)[number];
@@ -20,6 +22,7 @@ export type FakeSettings = {
   askFirst: boolean; // FAKE_CLAUDE_ASK_FIRST=1: ask the person about the first application
   inventBullet: boolean; // FAKE_CLAUDE_INVENT_BULLET=1: first submit a resume with made-up parts
   rewordOneBullet: boolean; // FAKE_CLAUDE_REWORD=1: reword one bullet without changing a single fact
+  noQuestions: boolean; // FAKE_CLAUDE_NO_QUESTIONS=1: a job with no screening questions gets no answers, as the playbook says
 };
 
 function isFakeClaudeMode(value: string): value is FakeClaudeMode {
@@ -38,5 +41,6 @@ export function readFakeSettings(env: NodeJS.ProcessEnv): FakeSettings {
     askFirst: env.FAKE_CLAUDE_ASK_FIRST === "1",
     inventBullet: env.FAKE_CLAUDE_INVENT_BULLET === "1",
     rewordOneBullet: env.FAKE_CLAUDE_REWORD === "1",
+    noQuestions: env.FAKE_CLAUDE_NO_QUESTIONS === "1",
   };
 }

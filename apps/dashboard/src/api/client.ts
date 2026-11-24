@@ -12,13 +12,15 @@ export class ApiProblem extends Error {
   readonly code: string; // for code to branch on, such as "data-sheet-changed"; never shown
   readonly action: string;
   readonly status: number; // the HTTP status, or 0 when no answer arrived
+  readonly field: string | undefined; // the form field it is about, as "section.key" ("contact.email"), when there is one
 
-  constructor({ code, message, action }: ApiError, status: number) {
+  constructor({ code, message, action, field }: ApiError, status: number) {
     super(message);
     this.name = "ApiProblem";
     this.code = code;
     this.action = action;
     this.status = status;
+    this.field = field;
   }
 }
 

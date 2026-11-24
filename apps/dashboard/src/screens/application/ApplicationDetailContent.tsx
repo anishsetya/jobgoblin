@@ -3,9 +3,9 @@
 // Spec: PRD "Screens: Application detail", K2 and T2, ARCHITECTURE.md section 12 (/apps/:id).
 import type { ApplicationDetail } from "@jobgoblin/schemas";
 import { useTranslation } from "react-i18next";
+import { AnswersList } from "@/components/AnswersList";
 import { ApplicationHeader } from "@/components/ApplicationHeader";
 import { BandBadge } from "@/components/BandBadge";
-import { CopyButton } from "@/components/CopyButton";
 import { FitSummary } from "@/components/FitSummary";
 import { HistoryList } from "@/components/HistoryList";
 import { JobText } from "@/components/JobText";
@@ -21,7 +21,8 @@ import { StatusChangeCard } from "./StatusChangeCard";
 
 export function ApplicationDetailContent({ detail }: { detail: ApplicationDetail }) {
   const { t } = useTranslation();
-  const { application, job, fit, storyItems, answers, questions, history, askResults, allowedStatusMoves, actions } = detail;
+  const { application, job, fit, storyItems, answers, answersState, questions, history, askResults, allowedStatusMoves, actions } =
+    detail;
   usePageTitle(`${application.title} - ${application.company}`);
 
   const openQuestions = questions.filter((question) => question.answer === null);
@@ -70,19 +71,7 @@ export function ApplicationDetailContent({ detail }: { detail: ApplicationDetail
       <ResumeVersionsCard detail={detail} />
 
       <Card title={t("application:answers.title")}>
-        {answers.length === 0 ? (
-          <p className="text-sm text-muted">{t("application:answers.none")}</p>
-        ) : (
-          <ul className="space-y-5">
-            {answers.map((answer) => (
-              <li key={answer.question} className="space-y-1">
-                <h3 className="text-sm font-medium">{answer.question}</h3>
-                <p className="text-sm whitespace-pre-wrap">{answer.answer}</p>
-                <CopyButton text={answer.answer} label={answer.question} />
-              </li>
-            ))}
-          </ul>
-        )}
+        <AnswersList answers={answers} state={answersState} />
       </Card>
 
       <StatusChangeCard applicationId={application.id} allowedMoves={allowedStatusMoves} />

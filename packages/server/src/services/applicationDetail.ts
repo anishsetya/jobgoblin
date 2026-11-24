@@ -1,6 +1,6 @@
 // Everything the Review, Open application and Application screens need about one application, in one
 // response: the job, the fit, the resume and how it differs from the master, the data sheet and its hash,
-// the approval, the answers, the history, and which buttons are allowed.
+// the approval, the answers and where they stand, the history, and which buttons are allowed.
 // The data sheet is rebuilt from the profile on every request, so what the person sees is what Approve will check.
 // Spec: ARCHITECTURE.md section 5.9 (ApplicationDetail) and 8.5.
 import type { Answer, ApplicationDetail, DataSheet, ResumeBody } from "@jobgoblin/schemas";
@@ -17,10 +17,12 @@ import {
 } from "@jobgoblin/storage";
 import type { ServerContext } from "../context";
 import { computeActions } from "./applicationActions";
+import { answersStateOf } from "./answersState";
 import { listAskResults } from "./askRuns";
 import { resolveCurrentResume } from "./currentResume";
 import { buildCurrentDataSheet } from "./dataSheets";
 import { loadApplicationOrFail, loadJobOfApplication } from "./loaders";
+import { findUntracedLines } from "./resumeTrace";
 import { readMasterBody } from "./tailoringContext";
 
 export function getApplicationDetail(ctx: ServerContext, applicationId: string): ApplicationDetail {
@@ -31,6 +33,8 @@ export function getApplicationDetail(ctx: ServerContext, applicationId: string):
   const approval = getLatestApproval(ctx.db, applicationId);
   const current = resolveCurrentResume(ctx, application);
   const sheet = current === null ? null : buildCurrentDataSheet(ctx, application, job, current.versionId);
+  const answers = listAnswers(ctx.db, applicationId);
+  const untracedLines = current === null ? [] : findUntracedLines(ctx, current.stored.body);
 
   return {
     application,
@@ -41,16 +45,18 @@ export function getApplicationDetail(ctx: ServerContext, applicationId: string):
     versions: listApplicationResumes(ctx.db, applicationId),
     diff: current === null ? null : diffAgainstMaster(current.stored.body, readMasterBody(ctx)),
     storyItems: listStoryItemsByIds(ctx.db, [...citedItemIds(current?.stored.body ?? null), ...(fit?.matchedItemIds ?? [])]),
+    untracedLines,
     dataSheet: sheet?.dataSheet ?? null,
     dataSheetHash: sheet?.hash ?? null,
     approval,
-    answers: answersWithRealValues(listAnswers(ctx.db, applicationId), approval?.dataSheet ?? sheet?.dataSheet ?? null),
+    answers: answersWithRealValues(answers, approval?.dataSheet ?? sheet?.dataSheet ?? null),
+    answersState: answersStateOf(ctx, { applicationId, job, approval, answers }),
     submission: getSubmissionForApplication(ctx.db, applicationId),
     questions: listQuestionsForApplication(ctx.db, applicationId),
     history,
     askResults: listAskResults(ctx, applicationId),
     allowedStatusMoves: allowedMoves(application.status, "person", "status"),
-    actions: computeActions(ctx, application, history),
+    actions: computeActions(ctx, application, history, { resumeTraces: untracedLines.length === 0 }),
   };
 }
 

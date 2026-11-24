@@ -15,15 +15,19 @@ import { Answer, ProofType, Submission } from "./submission";
 
 // Every failed request returns this and nothing else, never a stack trace. `message` says what
 // happened and `action` says what to do next, both in plain words with no blame, shown as they are.
+// `field` names the form field a refusal is about, as "section.key" (for example "contact.email"), so the
+// screen can show the message next to that field. Most refusals are not about one field and leave it out.
 export const ApiError = z.object({
   code: z.string(), // for example "data-sheet-changed"; for code to branch on, not for the screen
   message: z.string(),
   action: z.string(),
+  field: z.string().optional(),
 });
 export type ApiError = z.infer<typeof ApiError>;
 
 // One thing waiting on the person, shown in Today's "Needs you" list.
-//   not-tailored  the application could not be tailored (for example the per-company cap), see tailorError
+//   not-tailored  the application has no resume: it could not be tailored (for example the per-company cap,
+//                 see tailorError), or it was left without one when its run was cancelled or blocked
 export const NeedsYouKind = z.enum([
   "review",
   "question",
@@ -35,6 +39,11 @@ export const NeedsYouKind = z.enum([
 ]);
 export type NeedsYouKind = z.infer<typeof NeedsYouKind>;
 
+// The one thing that helps with a run that stopped. Settings can fix Claude Code itself (missing, too old,
+// signed out). Anything else (a plan limit, a crash, a safety stop, an interruption) needs the run tried again.
+export const RunNextStep = z.enum(["open-settings", "try-again"]);
+export type RunNextStep = z.infer<typeof RunNextStep>;
+
 export const NeedsYouItem = z.object({
   kind: NeedsYouKind,
   // The id of the thing that needs the person: the question's id for "question", the run's id for
@@ -44,6 +53,7 @@ export const NeedsYouItem = z.object({
   runId: z.string().nullable(),
   title: z.string(),
   detail: z.string(),
+  nextStep: RunNextStep.nullable(), // set for "run-attention" only
   createdAt: z.iso.datetime(),
 });
 export type NeedsYouItem = z.infer<typeof NeedsYouItem>;
@@ -133,6 +143,33 @@ export const ApplicationActions = z.object({
 });
 export type ApplicationActions = z.infer<typeof ApplicationActions>;
 
+// Where the answers to the form's screening questions stand, worked out by the server from the approval,
+// the saved answers and the newest answers task, so a screen never has to guess from an empty list:
+//   waiting-for-approval  not approved yet; the answers run is queued by Approve
+//   being-written         an answers run that has not ended still holds the task
+//   waiting-for-answer    the run asked the person a question first; answering it goes on
+//   written               the answers are saved (the only state with answers to show)
+//   no-questions          the run ended the task as done without answers, and the job has no questions
+//   not-written           the task failed, its run ended before it, or no answers run was ever queued
+export const AnswersState = z.enum([
+  "waiting-for-approval",
+  "being-written",
+  "waiting-for-answer",
+  "written",
+  "no-questions",
+  "not-written",
+]);
+export type AnswersState = z.infer<typeof AnswersState>;
+
+// A line on the application's current resume that no longer traces to a confirmed item in Your story,
+// because the person dropped or changed that item after the draft was made. While there is one, the
+// resume can't be approved (PRD T1: every line comes from something the person confirmed).
+export const UntracedResumeLine = z.object({
+  path: z.string(), // where it is on the resume, such as "sections.experience[0].bullets[2]"
+  text: z.string(), // the line as the resume shows it
+});
+export type UntracedResumeLine = z.infer<typeof UntracedResumeLine>;
+
 // Everything the Review, Open application and Application screens need, in one response.
 export const ApplicationDetail = z.object({
   application: Application,
@@ -143,10 +180,12 @@ export const ApplicationDetail = z.object({
   versions: z.array(ApplicationResume), // every resume this application has used
   diff: ResumeDiff.nullable(), // the current resume against the master resume
   storyItems: z.array(StoryItem), // the items the resume cites, plus the items the fit matched
+  untracedLines: z.array(UntracedResumeLine), // empty unless Your story changed after the resume was made
   dataSheet: DataSheet.nullable(),
   dataSheetHash: Sha256Hex.nullable(), // sent back on approve, so approval covers exactly this sheet
   approval: Approval.nullable(),
   answers: z.array(Answer),
+  answersState: AnswersState, // what the screens say when there are no answers to show
   submission: Submission.nullable(),
   questions: z.array(Question),
   history: z.array(HistoryEvent),

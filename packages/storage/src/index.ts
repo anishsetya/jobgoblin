@@ -40,8 +40,10 @@ export {
   getJob,
   insertJobIfNew,
   listJobsByDedupeKey,
+  listJobsNotYetSeen,
   listUnseenJobs,
   markJobsSeen,
+  setJobFilteredReason,
 } from "./tables/jobs";
 export {
   deleteFeedCacheEntriesBefore,
@@ -96,6 +98,7 @@ export {
   addRunTask,
   countRunTasksByState,
   findActiveRunForApplication,
+  findLatestRunTaskOfKind,
   findOldestQueuedRun,
   getNextPendingRunTask,
   getRun,
@@ -106,6 +109,7 @@ export {
   listRunsByStatus,
   setRunTaskState,
   updateRun,
+  type LatestRunTask,
   type RunChanges,
   type RunTaskUpdate,
 } from "./tables/runs";

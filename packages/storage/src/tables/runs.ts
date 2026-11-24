@@ -1,7 +1,7 @@
 // Tables `runs` and `run_tasks`: background Claude Code sessions and the applications each one works through.
 // A run has one task per application; a task is pending, done, failed, or waiting on the person's answer.
 // Spec: ARCHITECTURE.md sections 5.8 and 10.
-import { Run, RunTask, RunTaskState, type RunKind, type RunStatus } from "@jobgoblin/schemas";
+import { Run, RunStatus, RunTask, RunTaskState, type RunKind } from "@jobgoblin/schemas";
 import { atomically, type Database } from "../database";
 import { buildSetClause, jsonColumn, placeholders, toJson, type Row } from "../rows";
 
@@ -204,4 +204,20 @@ export function findActiveRunForApplication(db: Database, applicationId: string)
     )
     .get(applicationId);
   return row === undefined ? null : toRun(row);
+}
+
+export type LatestRunTask = { task: RunTask; runStatus: RunStatus };
+
+// The task that most recently put this application into a run of this kind, and that run's status. Tasks are
+// compared by when they were added (rowid), not by when their run was queued: an answered question can add
+// the application to a run that was queued earlier (decision D8). Null when no run of this kind ever had it.
+export function findLatestRunTaskOfKind(db: Database, applicationId: string, kind: RunKind): LatestRunTask | null {
+  const row = db.sqlite
+    .prepare(
+      `SELECT run_tasks.*, runs.status AS run_status FROM run_tasks JOIN runs ON runs.id = run_tasks.run_id
+       WHERE run_tasks.application_id = ? AND runs.kind = ?
+       ORDER BY run_tasks.rowid DESC LIMIT 1`,
+    )
+    .get(applicationId, kind);
+  return row === undefined ? null : { task: toRunTask(row), runStatus: RunStatus.parse(row.run_status) };
 }
