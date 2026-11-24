@@ -2,9 +2,11 @@
 // exact resume file. The server rebuilds the sheet from the profile and refuses if it differs from the one
 // the person saw, renders the final PDF once and freezes its bytes, and moves the application to Approved.
 // Then it writes the files and queues an answers run for the screening questions.
+// Making the PDF takes a moment, so the checks run again inside the save. A repeat of the same approval in
+// that moment (a double-click, a second window) gets the approved application, and anything else a 409.
 // Threat stopped: an application going out with details or a resume the person did not approve.
 // Spec: ARCHITECTURE.md section 8.5.
-import type { Application, Approval, ApproveRequest, ResumeShortId, ResumeVersion } from "@jobgoblin/schemas";
+import type { Application, Approval, ApproveRequest, Job, ResumeShortId, ResumeVersion } from "@jobgoblin/schemas";
 import { findBannedTerms, headerHash, requiredMissing, sha256Hex } from "@jobgoblin/core";
 import { readPdf, TEMPLATE_VERSION } from "@jobgoblin/render";
 import {
@@ -58,7 +60,8 @@ export async function approveApplication(
   const shortId = chooseShortId(ctx.db, resume.versionId);
   const applicationFolder = application.folder ?? folder.applicationFolderPath(folder.applicationFolderName(ctx.now(), application.company, application.title));
 
-  saveApproval(ctx, { application, resume, shortId, sheet, pdf, applicationFolder, isReapproval, request });
+  const saved = saveApproval(ctx, { application, job, resume, shortId, sheet, pdf, applicationFolder, isReapproval, request });
+  if (!saved) return loadApplicationOrFail(ctx, application.id);
 
   writeApprovedFiles(ctx, {
     bytes: pdf.bytes,
@@ -83,7 +86,11 @@ export async function approveApplication(
 function refuseIfNotApprovable(ctx: ServerContext, application: Application): boolean {
   if (application.status === "Awaiting approval") return false;
   if (application.status === "Approved" && getLiveApproval(ctx.db, application.id) === null) return true;
-  throw conflict("not-approvable", `This application is "${application.status}", so it can't be approved now.`, "Open it from Pipeline.");
+  throw notApprovable(application.status);
+}
+
+function notApprovable(status: Application["status"]) {
+  return conflict("not-approvable", `This application is "${status}", so it can't be approved now.`, "Open it from Pipeline.");
 }
 
 function requirePersonFolder(ctx: ServerContext) {
@@ -163,6 +170,7 @@ async function freezeFinalPdf(ctx: ServerContext, resume: CurrentResume): Promis
 
 type SaveInput = {
   application: Application;
+  job: Pick<Job, "region">;
   resume: CurrentResume;
   shortId: ResumeShortId; // chosen once in approveApplication and used for the file name, the history and the version row
   sheet: CurrentDataSheet;
@@ -173,11 +181,13 @@ type SaveInput = {
 };
 
 // One transaction: the approval, the frozen PDF, the folder, and the move to Approved (or a "re-approved" event).
-function saveApproval(ctx: ServerContext, input: SaveInput): void {
+// Returns false, and saves nothing, when another request saved this same approval while the PDF was made.
+function saveApproval(ctx: ServerContext, input: SaveInput): boolean {
   const { application, resume, shortId, sheet, pdf } = input;
   const now = ctx.now().toISOString();
 
-  ctx.db.transaction(() => {
+  return ctx.db.transaction(() => {
+    if (!checkAgainBeforeSaving(ctx, input)) return false;
     switchToCurrentResumeVersion(ctx, application, resume, shortId);
     markResumeApproved(ctx.db, {
       applicationId: application.id,
@@ -200,7 +210,24 @@ function saveApproval(ctx: ServerContext, input: SaveInput): void {
         detail: `Resume ${shortId}, data sheet ${sheet.hash.slice(0, 8)}`,
       });
     }
+    return true;
   });
+}
+
+// The checks in approveApplication ran before the PDF was made. Another request can change the application or
+// the profile during that wait (a double-click, a second window), so the status and the sheet are checked again
+// here, where nothing else can run. A live approval of this same sheet means the repeat of one decision: the
+// other request saved it and did everything after, so this one returns false and the person sees the result.
+// The sheet holds the resume version id, so the same hash is also the same resume.
+function checkAgainBeforeSaving(ctx: ServerContext, input: SaveInput): boolean {
+  const current = loadApplicationOrFail(ctx, input.application.id);
+  const live = getLiveApproval(ctx.db, current.id);
+  if (live !== null && live.dataSheetHash === input.request.dataSheetHash && live.submitMode === input.request.submitMode) {
+    return false;
+  }
+  if (refuseIfNotApprovable(ctx, current) !== input.isReapproval) throw notApprovable(current.status);
+  refuseIfSheetChanged(buildCurrentDataSheet(ctx, current, input.job, input.resume.versionId), input.request.dataSheetHash);
+  return true;
 }
 
 function approvalRecord(ctx: ServerContext, input: SaveInput): Approval {

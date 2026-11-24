@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { fileSha256, getApplication, getApprovedPdf, getLiveApproval, listHistoryEvents, listRunsByStatus } from "@jobgoblin/storage";
 import { getApplicationDetail } from "./applicationDetail";
 import { approveApplication } from "./approvals";
+import { skipApplication } from "./decisions";
 import { getProfile, updateProfileSection } from "./profile";
 import { addStoryItem, confirmStoryItem, editStoryItem, listStory, rejectStoryItem } from "./story";
 import { anApplicationAwaitingApproval, closeTestContexts, createTestContext } from "./testSupport";
@@ -150,6 +151,51 @@ describe("approveApplication", () => {
     await approve(ctx, applicationId);
 
     await expect(approve(ctx, applicationId)).rejects.toMatchObject({ code: "not-approvable" });
+  });
+});
+
+// Each approval waits while its PDF is made. These start a second change during that wait, as a double-click
+// or a second window would: `approve(...)` returns once its checks are done and the PDF is being made.
+describe("approveApplication while another change happens during its PDF", () => {
+  it("treats two approvals of the same sheet sent together as one approval", async () => {
+    const ctx = createTestContext();
+    const applicationId = await anApplicationAwaitingApproval(ctx);
+    const dataSheetHash = getApplicationDetail(ctx, applicationId).dataSheetHash ?? "";
+
+    const [first, second] = await Promise.all([approve(ctx, applicationId, dataSheetHash), approve(ctx, applicationId, dataSheetHash)]);
+
+    expect(first.status).toBe("Approved");
+    expect(second).toEqual(first);
+    const types = listHistoryEvents(ctx.db, applicationId).map((event) => event.type);
+    expect(types.filter((type) => type === "approved")).toHaveLength(1);
+    expect(listRunsByStatus(ctx.db, ["queued"])).toHaveLength(1);
+    expect(fs.readdirSync(path.join(ctx.folder?.root ?? "", "Resumes"))).toHaveLength(1);
+  });
+
+  it("refuses with the new status when the application was skipped meanwhile", async () => {
+    const ctx = createTestContext();
+    const applicationId = await anApplicationAwaitingApproval(ctx);
+
+    const approving = approve(ctx, applicationId);
+    skipApplication(ctx, applicationId);
+
+    await expect(approving).rejects.toMatchObject({
+      code: "not-approvable",
+      message: `This application is "Skipped", so it can't be approved now.`,
+    });
+    expect(getLiveApproval(ctx.db, applicationId)).toBeNull();
+  });
+
+  it("refuses when the details changed meanwhile, so an outdated sheet is never approved", async () => {
+    const ctx = createTestContext();
+    const applicationId = await anApplicationAwaitingApproval(ctx);
+
+    const approving = approve(ctx, applicationId);
+    changeContact(ctx, { phone: "+1 555 0199" });
+
+    await expect(approving).rejects.toMatchObject({ code: "data-sheet-changed" });
+    expect(getApplication(ctx.db, applicationId)?.status).toBe("Awaiting approval");
+    expect(getLiveApproval(ctx.db, applicationId)).toBeNull();
   });
 });
 

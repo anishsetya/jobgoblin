@@ -408,10 +408,12 @@ Draft previews live in `<appData>/previews/<versionId>.pdf`, rebuilt freely and 
 
 1. Rebuild the data sheet from the current profile; refuse `data-sheet-changed` if the hash differs from the one the person saw; refuse `missing-values` (naming them) if a required value is TODO or empty; run `findBannedTerms` over the data sheet values; run `traceResume` again against Your story as it is now and refuse `resume-untraced` (quoting the line) when the person dropped or changed an item the resume uses after the draft was made (`services/resumeTrace.ts`). `ApplicationDetail.untracedLines` lists those lines for Review, and `canApprove` is false while there are any.
 2. Render the final PDF once, in memory; `pdfSha256 = sha256Hex(bytes)`; check one page and banned terms. If an approved file for this version already exists, reuse its bytes and fingerprint.
-3. One transaction: insert the approval; set `application_resumes.state = approved` with `pdf_sha256` and `pdf_bytes`; move Awaiting approval → Approved (or, for an Approved application with no live approval, no move and a `re-approved` event); history event.
+3. One transaction: check the status and the data sheet hash again, because step 2 waits and another request can change them meanwhile (a double-click, a second window). If a live approval of this same hash and submit mode was saved meanwhile, save nothing and return the approved application; any other change is refused (`not-approvable`, `data-sheet-changed`). Then insert the approval; set `application_resumes.state = approved` with `pdf_sha256` and `pdf_bytes`; move Awaiting approval → Approved (or, for an Approved application with no live approval, no move and a `re-approved` event); history event.
 4. After commit: write `Resumes/<shortId>.pdf`, the application folder with `First Last - Resume.pdf` and `Job description.md`; schedule the tracker and a backup; queue an answers run.
 
 A profile change voids every live approval whose data sheet hash no longer matches (event `approval-voided`); the Open application screen then asks the person to review again.
+
+The dashboard sends each of these decisions once per click: Approve, Skip, Request edit and Record as applied ignore a repeat while their request is in flight (`lib/oneAtATime.ts`), because a disabled button takes effect only on the next render.
 
 ### 8.6 I submitted (`server/services/submissions.ts`)
 
