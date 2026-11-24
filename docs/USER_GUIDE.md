@@ -59,6 +59,8 @@ $env:JOBGOBLIN_FEED_FIXTURES = "$PWD\fixtures\feeds\demo"; $env:JOBGOBLIN_CLAUDE
 
 Your data lives in two places. The database is in `%APPDATA%\Jobgoblin` and you never touch it. Your documents go in the folder you choose (default `Documents\Jobgoblin`).
 
+Demo mode keeps its own data, so the demo jobs and resumes never mix with yours. Its database is in `%APPDATA%\Jobgoblin-demo`. When the setup wizard asks for a folder, choose a new one for the demo, such as `Documents\Jobgoblin-demo`, not the folder you use for real. To remove the demo, close Jobgoblin and delete both folders.
+
 ## 1. Setup wizard (once, about 15 minutes)
 
 | Step | What you do | What happens |

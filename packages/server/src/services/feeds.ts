@@ -176,10 +176,35 @@ export function seedCompaniesIfEmpty(ctx: ServerContext): number {
   return added;
 }
 
-function readSeedCompanies(feedFixturesDir: string | null): Company[] {
-  const CompanyList = z.array(Company);
+const CompanyList = z.array(Company);
+const WHAT_COMPANIES_JSON_HOLDS = "a JSON list of companies, each with id, name, ats, slug and status, like fixtures/feeds/demo/companies.json";
+
+// The companies a first start adds. A demo board folder that can't give them stops the start with one plain line
+// naming the file and what it must hold, never a raw ENOENT or JSON error. startServer reads it once before it
+// creates anything, so a mistyped folder leaves no empty database behind.
+export function readSeedCompanies(feedFixturesDir: string | null): Company[] {
   if (feedFixturesDir === null) return CompanyList.parse(seedCompanies);
 
-  const text = fs.readFileSync(path.join(feedFixturesDir, "companies.json"), "utf8");
-  return CompanyList.parse(JSON.parse(text));
+  if (!fs.existsSync(feedFixturesDir)) {
+    throw new Error(
+      `The demo job board folder ${feedFixturesDir} doesn't exist. Point JOBGOBLIN_FEED_FIXTURES at fixtures/feeds/demo, or leave it unset to read the real job boards.`,
+    );
+  }
+  const file = path.join(feedFixturesDir, "companies.json");
+  if (!fs.existsSync(file)) {
+    throw new Error(`The demo job board folder ${feedFixturesDir} has no companies.json. Add one: ${WHAT_COMPANIES_JSON_HOLDS}.`);
+  }
+
+  let json: unknown;
+  try {
+    json = JSON.parse(fs.readFileSync(file, "utf8"));
+  } catch {
+    throw new Error(`${file} is not valid JSON. It must be ${WHAT_COMPANIES_JSON_HOLDS}.`);
+  }
+  const companies = CompanyList.safeParse(json);
+  if (!companies.success) {
+    const where = companies.error.issues[0]?.path.join(".") ?? "";
+    throw new Error(`${file} is not a list of companies${where === "" ? "" : ` (see ${where})`}. It must be ${WHAT_COMPANIES_JSON_HOLDS}.`);
+  }
+  return companies.data;
 }

@@ -131,7 +131,7 @@ Inside a tailor or answers run, `nextTask` hands out the next pending task whose
 | `pnpm exec vitest run packages/server` | The tests. |
 | `pnpm --filter @jobgoblin/server typecheck` | Type check. |
 
-Start options come from flags or the environment (a flag wins). `JOBGOBLIN_APP_DATA` (`--app-data`) and `JOBGOBLIN_RESOURCES_DIR` (`--resources-dir`, default: the repository root) say where the data and the resources live; `JOBGOBLIN_PORT` (`--port`; `0` picks a free one; default 47615, then the next 20); `JOBGOBLIN_CLAUDE_COMMAND` and `JOBGOBLIN_CLAUDE_INSTALL_COMMAND` (JSON arrays of absolute paths); `JOBGOBLIN_FEED_FIXTURES` (read feeds from `fixtures/feeds/demo` and never touch the network); `JOBGOBLIN_DEV_ORIGIN` (the dashboard dev server, such as `http://localhost:5173`). The dashboard must be built (`pnpm --filter @jobgoblin/dashboard build`) for `/` to show it.
+Start options come from flags or the environment (a flag wins). `JOBGOBLIN_APP_DATA` (`--app-data`) and `JOBGOBLIN_RESOURCES_DIR` (`--resources-dir`, default: the repository root) say where the data and the resources live; `JOBGOBLIN_PORT` (`--port`; `0` picks a free one; default 47615, then the next 20); `JOBGOBLIN_CLAUDE_COMMAND` and `JOBGOBLIN_CLAUDE_INSTALL_COMMAND` (JSON arrays of absolute paths); `JOBGOBLIN_FEED_FIXTURES` (read feeds from `fixtures/feeds/demo` and never touch the network; the folder must hold a `companies.json`, and without `JOBGOBLIN_APP_DATA` the data goes to `Jobgoblin-demo` instead of the real folder); `JOBGOBLIN_DEV_ORIGIN` (the dashboard dev server, such as `http://localhost:5173`). The dashboard must be built (`pnpm --filter @jobgoblin/dashboard build`) for `/` to show it.
 
 Try it without Claude Code or the network:
 
