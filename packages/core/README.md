@@ -30,7 +30,7 @@ The numbers are sections of [ARCHITECTURE.md](../../docs/poc/ARCHITECTURE.md). E
 | `dataSheet.ts` | `buildDataSheet`, `hashDataSheet`, `requiredMissing`, `placeholderDataSheet`, `fillPlaceholders` | 5.7, 8.5 |
 | `masterResume.ts` | `buildMasterResume` | D7 |
 | `resumeDiff.ts` | `diffAgainstMaster` | 5.6, D12 |
-| `jobFilters.ts` | `dedupeKey`, `classifyRegion`, `codeFilter`, `yearsRequired`, `normalizeCompanyName` | 6 |
+| `jobFilters.ts` | `dedupeKey`, `classifyRegion`, `isRemoteLocation`, `homeRegionOf`, `regionName`, `codeFilter`, `codeFilterTargetsFor`, `yearsRequired`, `yearsLimitFor`, `parseYearsExperience`, `normalizeCompanyName` | 6 |
 | `redaction.ts` | `redactContactDetails` | D10 |
 | `stepText.ts` | `stepForTool`, `STEP_CHECKING_JOB_BOARDS` | 6, 9 |
 | `textHelpers.ts` | Whole-word matching and regex escaping shared by the rules above | |

@@ -18,7 +18,7 @@ Each file starts with a comment saying what it covers. The numbers are sections 
 | --- | --- | --- |
 | `status.ts` | `ApplicationStatus`, `Actor`, `TransitionVia`, `TERMINAL_STATUSES`, `CAP_STATUSES`, `STATUS_GROUPS` | 5.1 |
 | `story.ts` | `StoryItem`, `StoryItemData`, `ProposedStoryItem`, `UploadKind` and the enums | 5.2 |
-| `profile.ts` | `TODO`, the seven profile sections, `Profile`, `ProfileResponse`, `PERSONAL_SECTIONS`, `MissingValue` | 5.3 |
+| `profile.ts` | `TODO`, the seven profile sections, `Profile`, `ProfileResponse` (with `homeRegion`, `yearsLimit` and `warnings`), `YearsLimit`, `PERSONAL_SECTIONS`, `MissingValue`, `ProfileWarning` | 5.3 |
 | `job.ts` | `Job`, `FeedPosting`, `Company`, `Region`, `JobSource`, `HttpUrl` | 5.4 |
 | `fit.ts` | `Band`, `FitInput`, `Fit` | 5.5 |
 | `resume.ts` | `ResumeBody`, `ResumeHeader`, `ResumeCheckError`, `ResumeVersion`, `ApplicationResume`, `ResumeDiff`, hash and version id formats | 5.6 |
@@ -26,7 +26,7 @@ Each file starts with a comment saying what it covers. The numbers are sections 
 | `dataSheet.ts` | `DataSheetKey`, `DataSheetField`, `DataSheet`, `Approval` | 5.7 |
 | `submission.ts` | `Submission`, `ProofType`, `Answer` | 5.7 |
 | `run.ts` | `Run`, `RunInput`, `RunTask`, `Question`, `StartRunRequest`, `RUN_KIND_SETTINGS` | 5.8, 10 |
-| `api.ts` | `ApiError`, `TodayResponse`, `PipelineRow`, `ApplicationDetail`, `ApplicationActions`, the person's requests, `Settings`, `SettingsResponse`, `HistoryEvent` | 5.9 |
+| `api.ts` | `ApiError` (with `field` for a refusal about one form field), `TodayResponse`, `PipelineRow`, `ApplicationDetail`, `ApplicationActions`, the person's requests, `Settings`, `SettingsResponse`, `HistoryEvent` | 5.9 |
 | `events.ts` | `ServerEvent` | 5.10 |
 | `mcp.ts` | Re-exports everything in `mcp/` (no logic) | 5.11, 9 |
 | `mcp/toolNames.ts`, `mcp/toolReply.ts` | `MCP_TOOL_NAMES`, `RUN_KIND_TOOLS`; `ToolError`, `ToolReply` | 5.11, 9 |

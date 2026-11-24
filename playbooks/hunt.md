@@ -19,7 +19,7 @@ person questions in this run.
 
 ## Start
 
-1. `get_profile`. Note the targets: roles, regions, tracks, `maxYearsRequired`, `rolesToAvoid`, `hardSkips`, `flags`.
+1. `get_profile`. Note the targets: roles, regions, cities, tracks, `maxYearsRequired`, `rolesToAvoid`, `hardSkips`, `flags`.
 2. `get_fit_context`, once. Read its `rubric` completely before you score anything, and score exactly by it. Keep the
    `storyItems`; do not call it again.
 
