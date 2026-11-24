@@ -9,6 +9,9 @@
 //   3. save_answers   one answer per question
 //   4. complete_task  done, failed or waiting
 // With FAKE_CLAUDE_ASK_FIRST=1 the first application gets ask_person after step 2 and is completed as waiting.
+// With FAKE_CLAUDE_NO_QUESTIONS=1 a job with no screening questions skips step 3 and is completed as done
+// with the note "No screening questions", as playbooks/answers.md tells a real run to do. Without the switch
+// such a job gets one made-up question, so the stories that copy an answer still have one.
 // Spec: ARCHITECTURE.md section 14 (answers) and section 9 (save_answers).
 import type { Answer, DataSheet, DataSheetKey, GetApprovedOutput } from "@jobgoblin/schemas";
 import type { RunScript, ScriptSession } from "../session";
@@ -28,6 +31,9 @@ async function answerOneApplication(
   isFirstTask: boolean,
 ): Promise<TaskResult> {
   const approved = await session.callForData("get_approved", { applicationId });
+  if (approved.questions.length === 0 && session.settings.noQuestions) {
+    return { outcome: "done", note: NO_QUESTIONS_NOTE };
+  }
 
   const hasAsked = await askPersonIfSwitchedOn(session, {
     applicationId,
@@ -65,6 +71,7 @@ const QUESTION_TOPICS: { mentions: RegExp; key: DataSheetKey }[] = [
 ];
 
 const FALLBACK_QUESTION = "Why are you interested in this role?";
+const NO_QUESTIONS_NOTE = "No screening questions"; // the note playbooks/answers.md asks for
 
 function draftAnswers(approved: GetApprovedOutput): Answer[] {
   const questions = approved.questions.length > 0 ? approved.questions : [FALLBACK_QUESTION];

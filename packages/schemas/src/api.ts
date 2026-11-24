@@ -143,6 +143,24 @@ export const ApplicationActions = z.object({
 });
 export type ApplicationActions = z.infer<typeof ApplicationActions>;
 
+// Where the answers to the form's screening questions stand, worked out by the server from the approval,
+// the saved answers and the newest answers task, so a screen never has to guess from an empty list:
+//   waiting-for-approval  not approved yet; the answers run is queued by Approve
+//   being-written         an answers run that has not ended still holds the task
+//   waiting-for-answer    the run asked the person a question first; answering it goes on
+//   written               the answers are saved (the only state with answers to show)
+//   no-questions          the run ended the task as done without answers, and the job has no questions
+//   not-written           the task failed, its run ended before it, or no answers run was ever queued
+export const AnswersState = z.enum([
+  "waiting-for-approval",
+  "being-written",
+  "waiting-for-answer",
+  "written",
+  "no-questions",
+  "not-written",
+]);
+export type AnswersState = z.infer<typeof AnswersState>;
+
 // A line on the application's current resume that no longer traces to a confirmed item in Your story,
 // because the person dropped or changed that item after the draft was made. While there is one, the
 // resume can't be approved (PRD T1: every line comes from something the person confirmed).
@@ -167,6 +185,7 @@ export const ApplicationDetail = z.object({
   dataSheetHash: Sha256Hex.nullable(), // sent back on approve, so approval covers exactly this sheet
   approval: Approval.nullable(),
   answers: z.array(Answer),
+  answersState: AnswersState, // what the screens say when there are no answers to show
   submission: Submission.nullable(),
   questions: z.array(Question),
   history: z.array(HistoryEvent),

@@ -42,7 +42,7 @@ The server launches the fake exactly as it would launch Claude Code. The fake co
 
 - fit scores come from `fixtures/fake-claude/data/scores.json`: Acme Cloud 86 (apply), Brightpath 68 (stretch), Copperleaf Applied AI 55 (long shot), Data Analyst 20 (skip), the pasted Gridline job 78;
 - the tailored resume is the master resume with matching bullets first; **with `FAKE_CLAUDE_REWORD=1` one bullet is also reworded** so Review has a line to highlight; an edit note drops a bullet;
-- the answers come from the data sheet, with `{placeholders}` for personal values;
+- the answers come from the data sheet, with `{placeholders}` for personal values; a job with no screening questions (Acme Cloud) gets one made-up question, **unless `FAKE_CLAUDE_NO_QUESTIONS=1`**, which saves nothing, as the playbook says;
 - the switches turn failures on: `FAKE_CLAUDE_MODE=slow | usage-limit | signed-out | not-installed | outdated`, `FAKE_CLAUDE_ASK_FIRST=1`, `FAKE_CLAUDE_INVENT_BULLET=1`.
 
 The code filter and dedupe key run in the server before any run starts, which is why the QA role, the Senior Staff role and the repeated Hacker News posting never appear.
@@ -69,6 +69,7 @@ PRD requirement ids as in the PRD (S setup, P profile, D discover, F fit, T tail
 | `accessibility.spec.ts` | axe (WCAG 2.1 A and AA) on Today, Review, Open application, Pipeline (board and list), Application, Profile (four tabs), Settings, every wizard step and every dialog, in light and dark | the PRD's accessibility target |
 | `truthful-resumes.spec.ts` | A made-up bullet and an inflated verb never reach the resume; a line dropped from Your story after the resume was made can't be approved; a banned word is left out | T1 P5 |
 | `long-names-fit-the-window.spec.ts` | A job pasted with a 151-letter company name and a very long title: at 1280x800, Today, Review, the application page and Pipeline (board and list) never scroll sideways, and all six board columns are inside the window; at 640 px the board still hides no column | issue #28 |
+| `answers-say-where-they-stand.spec.ts` | Before approval the Application page says when answers are written; a job with no extra questions says so on Open application and the Application page (never "still being written"); "I submitted" is in view at 1280x800 and a few Tab presses from the top | A4 U1 |
 | `electron-smoke.spec.ts` (project `electron`) | The desktop window shows the wizard, `window.jobgoblin` has a token, an outside link and an outside navigation do not move the window, Quit exits 0 and the server cleans up. The resume step reads a PDF and names a password-protected one. A second pass runs each feature that uses a library inside Electron's utility process: Find jobs (Typst render, pdf.js read-back), approve (final PDF), the xlsx export and Back up now | ARCHITECTURE 13; RCA 2026-11-01 |
 
 ## Notes for whoever writes the next test

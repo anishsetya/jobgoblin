@@ -37,7 +37,7 @@ Everything under `/api` needs the session token. The dashboard's own files (`app
 | --- | --- | --- |
 | Today (Needs you, run cards, done today) | `today.ts` | `GET /api/today` |
 | Pipeline list | `pipeline.ts` | `GET /api/pipeline` |
-| One application for Review, Open application, Application | `applicationDetail.ts` (+ `applicationActions.ts`, `currentResume.ts`, `dataSheets.ts`) | `GET /api/apps/:id` |
+| One application for Review, Open application, Application | `applicationDetail.ts` (+ `applicationActions.ts`, `answersState.ts`, `currentResume.ts`, `dataSheets.ts`) | `GET /api/apps/:id` |
 | Add a job (link or text), then a paste run | `jobs.ts` | `POST /api/jobs` |
 | Jobs for a hunt run: list unseen, mark seen, add from the web, read one | `jobsForRuns.ts`, `untrustedText.ts` | `search_jobs`, `mark_seen`, `add_job`, `get_job` |
 | Fetch feeds before a hunt, seed the company list | `feeds.ts`, `../feedCache.ts` | the launcher, start-up |

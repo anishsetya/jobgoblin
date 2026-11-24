@@ -36,8 +36,7 @@
     "download": "Download PDF"
   },
   "answers": {
-    "title": "Answers",
-    "none": "No answers have been written yet. They are written after you approve the application."
+    "title": "Answers"
   },
   "status": {
     "title": "Change status",

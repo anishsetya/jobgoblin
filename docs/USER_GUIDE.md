@@ -110,10 +110,10 @@ The tailored resume can only reword your confirmed items. The app refuses change
 ## 4. Open application: you submit
 
 1. Open the posting; it opens in your normal browser.
-2. Copy each field and each screening answer with its copy button.
+2. Copy each field and each screening answer with its copy button. When there are no answers, the Answers part says why: they are still being written, Claude has a question for you first, no extra questions were found for the job, or they could not be written. Answer any question the form asks that has no answer here yourself.
 3. Attach the resume: `Your Name - Resume.pdf` in the application's folder (use Open resume file).
 4. Click Submit on the company's site. CAPTCHAs, logins and email codes are always yours.
-5. Back in Jobgoblin, click **I submitted** and choose your proof: confirmation page seen, pasted confirmation text, screenshot, or the confirmation email's subject.
+5. Back in Jobgoblin, click **I submitted** (at the top of the screen, under the introduction) and choose your proof: confirmation page seen, pasted confirmation text, screenshot, or the confirmation email's subject.
 
 The status becomes **Applied** and a follow-up date is set (7 days by default). If you change your contact details after approving, the app asks you to review again so the sent data always matches what you approved.
 
