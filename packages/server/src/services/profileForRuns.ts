@@ -2,6 +2,7 @@
 // A run sees work authorization, employment, targets and banned words: never contact details, salary or EEO
 // answers (they reach a form only as {placeholders} filled in by code). A run may fill in a value that is
 // still TODO or empty, but can never overwrite something the person typed, and can never touch the banned words.
+// The targets a run sees carry the years limit the code filter uses (experience + 2), so the two agree.
 // Threats stopped: personal data reaching a model; a run switching off the person's own guard.
 // Spec: ARCHITECTURE.md section 9 (get_profile, save_profile_section).
 import {
@@ -12,6 +13,7 @@ import {
   type RunWritableSection,
   type SaveProfileSectionOutput,
 } from "@jobgoblin/schemas";
+import { yearsLimitFor } from "@jobgoblin/core";
 import { getProfile as readProfile, saveProfileSection } from "@jobgoblin/storage";
 import type { ServerContext } from "../context";
 import { announceProfileChange } from "./changes";
@@ -25,7 +27,7 @@ export function getProfileForRun(ctx: ServerContext): GetProfileOutput {
   return {
     facts: { workAuthorization: profile.workAuthorization, employment: profile.employment },
     missing: findMissingValues(profile).filter((value) => !personal.includes(value.section)),
-    targets: profile.targets,
+    targets: { ...profile.targets, maxYearsRequired: yearsLimitFor(profile).limit },
     rules: profile.rules,
   };
 }

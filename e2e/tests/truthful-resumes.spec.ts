@@ -4,7 +4,7 @@
 // FAKE_CLAUDE_INVENT_BULLET=1 first submits a made-up bullet and an inflated verb ("Led" for "Contributed to").
 // A banned word is set in Profile before the hunt.
 import { expect, test } from "../support/fixtures";
-import { ACME, findJobsAndWaitForReview, openReview } from "../support/flows";
+import { ACME, findJobsAndWaitForReview, goToToday, openReview } from "../support/flows";
 
 test.describe("As a job seeker, my resume stays truthful", () => {
   test("a made-up bullet and an inflated verb never reach the resume I review", async ({ page, startServer }) => {
@@ -23,6 +23,36 @@ test.describe("As a job seeker, my resume stays truthful", () => {
     await expect(resume).not.toContainText("Saved the company $1M"); // cites a story item that does not exist
     await expect(resume).not.toContainText("Led the on-call rotation"); // the story says "Contributed to"
     await expect(resume).toContainText("Led the migration of 12 services"); // a real "Led" is untouched
+  });
+
+  test("a line I drop from Your story after the resume was made can't be approved", async ({ page, startServer }) => {
+    const server = await startServer({ seed: "alex-rivera", seedOptions: { usageNoticeSeen: true } });
+    await page.goto(server.url);
+    await findJobsAndWaitForReview(page);
+    const droppedLine = "Built a shipment-tracking API in Python and PostgreSQL that serves 2M requests a day";
+
+    await test.step("I drop the shipment-tracking line in Profile, Your story", async () => {
+      await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Profile" }).click();
+      await page.getByRole("tab", { name: "Your story" }).click();
+      const drop = page.getByRole("button", { name: /^Drop: Built a shipment-tracking API/ });
+      await drop.click();
+      await expect(drop).toHaveCount(0);
+    });
+
+    await test.step("Review names the line and refuses to approve, by button or by key", async () => {
+      await goToToday(page);
+      await openReview(page, ACME);
+
+      const warning = page.getByRole("status").filter({ hasText: "This resume uses something that is no longer in Your story" });
+      await expect(warning).toContainText(droppedLine);
+      await expect(page.getByRole("button", { name: "Approve" })).toBeDisabled();
+      await expect(page.getByRole("button", { name: "Request edit" })).toBeEnabled();
+
+      await page.getByRole("heading", { level: 1, name: "Backend Engineer" }).click(); // focus on the page, not in a field
+      await page.keyboard.press("a");
+      await expect(page.getByRole("heading", { level: 1, name: "Backend Engineer" })).toBeVisible(); // still here
+      await expect(page.getByRole("button", { name: "Approve" })).toBeDisabled();
+    });
   });
 
   test("a word I banned is left out of the resume, even when my own story uses it", async ({ page, startServer }) => {

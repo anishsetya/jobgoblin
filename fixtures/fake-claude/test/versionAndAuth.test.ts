@@ -13,6 +13,20 @@ describe("the fake claude's version and sign-in commands", () => {
     expect(outcome.exitCode).toBe(0);
   });
 
+  it("fails --version, the way a program that is not installed would, when FAKE_CLAUDE_MODE is not-installed", async () => {
+    const outcome = await runFakeClaudeCommand(["--version"], { FAKE_CLAUDE_MODE: "not-installed" });
+
+    expect(outcome.stdout).toBe("");
+    expect(outcome.exitCode).toBe(1);
+  });
+
+  it("prints a version below the runner's minimum when FAKE_CLAUDE_MODE is outdated", async () => {
+    const outcome = await runFakeClaudeCommand(["--version"], { FAKE_CLAUDE_MODE: "outdated" });
+
+    expect(outcome.stdout.trim()).toBe("2.0.0 (Claude Code)");
+    expect(outcome.exitCode).toBe(0);
+  });
+
   it("reports a signed-in Claude plan from auth status", async () => {
     const outcome = await runFakeClaudeCommand(["auth", "status"]);
 

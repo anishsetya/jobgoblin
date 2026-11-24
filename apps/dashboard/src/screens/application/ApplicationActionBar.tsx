@@ -21,8 +21,11 @@ export function ApplicationActionBar({ detail }: { detail: ApplicationDetail }) 
   const [withdrawNote, setWithdrawNote] = useState("");
 
   const hasLiveApproval = approval !== null && approval.voidedAt === null && approval.usedAt === null;
+  // Review is where the person approves or asks for an edit, so it stays reachable while Approve is refused
+  // (a resume that uses a line dropped from Your story still needs its Request edit).
+  const hasDecisionOnReview = actions.canApprove || actions.canRequestEdit;
   const hasAnyAction =
-    actions.canApprove || actions.canTailor || actions.canUndoSkip || actions.canWithdraw || hasLiveApproval;
+    hasDecisionOnReview || actions.canTailor || actions.canUndoSkip || actions.canWithdraw || hasLiveApproval;
   if (!hasAnyAction) return null;
 
   function closeWithdraw(): void {
@@ -33,7 +36,7 @@ export function ApplicationActionBar({ detail }: { detail: ApplicationDetail }) 
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap gap-2">
-        {actions.canApprove && (
+        {hasDecisionOnReview && (
           <Button asChild variant="accent">
             <Link to="/review/$id" params={{ id: application.id }}>
               {t("application:actions.review")}
@@ -41,7 +44,7 @@ export function ApplicationActionBar({ detail }: { detail: ApplicationDetail }) 
           </Button>
         )}
         {hasLiveApproval && (
-          <Button asChild variant={actions.canApprove ? "secondary" : "accent"}>
+          <Button asChild variant={hasDecisionOnReview ? "secondary" : "accent"}>
             <Link to="/apply/$id" params={{ id: application.id }}>
               {t("application:actions.openApplication")}
             </Link>

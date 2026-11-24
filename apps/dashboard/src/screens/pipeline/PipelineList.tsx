@@ -1,4 +1,5 @@
 // The list view of the pipeline: one row per application, as a table. Overdue follow-ups are in amber.
+// The role and company cells may break a long word (wrap-anywhere), so the table fits its box.
 import type { PipelineRow } from "@jobgoblin/schemas";
 import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
@@ -36,12 +37,12 @@ export function PipelineList({ rows }: { rows: PipelineRow[] }) {
         <tbody>
           {rows.map((row) => (
             <tr key={row.id} className="border-b border-line last:border-b-0 hover:bg-surface-muted">
-              <th scope="row" className="px-3 py-2 font-medium">
+              <th scope="row" className="px-3 py-2 font-medium wrap-anywhere">
                 <Link to="/apps/$id" params={{ id: row.id }} className="text-accent-text underline-offset-2 hover:underline">
                   {row.title}
                 </Link>
               </th>
-              <td className="px-3 py-2">{row.company}</td>
+              <td className="px-3 py-2 wrap-anywhere">{row.company}</td>
               <td className="px-3 py-2">
                 <StatusBadge status={row.status} />
               </td>

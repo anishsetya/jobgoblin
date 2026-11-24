@@ -9,6 +9,7 @@ import { skipApplication } from "./decisions";
 import { listPipeline } from "./pipeline";
 import { recoverInterruptedRuns } from "./runRecovery";
 import { startHunt } from "./runLifecycle";
+import { rejectStoryItem } from "./story";
 import { aScoredApplication, anApplicationAwaitingApproval, closeTestContexts, createTestContext } from "./testSupport";
 
 afterEach(closeTestContexts);
@@ -39,6 +40,25 @@ describe("getApplicationDetail", () => {
     expect(detail.storyItems.length).toBeGreaterThan(10);
     expect(detail.actions).toMatchObject({ canApprove: true, canRequestEdit: true, canSkip: true, canMarkSubmitted: false });
     expect(detail.allowedStatusMoves).toEqual([]);
+    expect(detail.untracedLines).toEqual([]);
+  });
+
+  it("lists the resume's lines that use a dropped item, and turns Approve off but keeps Request edit", async () => {
+    const ctx = createTestContext();
+    const applicationId = await anApplicationAwaitingApproval(ctx);
+
+    rejectStoryItem(ctx, "ach-northwind-tracking-api");
+    rejectStoryItem(ctx, "exp-contoso");
+
+    const detail = ApplicationDetail.parse(getApplicationDetail(ctx, applicationId));
+    expect(detail.untracedLines).toEqual([
+      {
+        path: "sections.experience[0].bullets[0]",
+        text: "Built a shipment-tracking API in Python and PostgreSQL that serves 2M requests a day",
+      },
+      { path: "sections.experience[1]", text: "Software Engineering Intern, Contoso Health" },
+    ]);
+    expect(detail.actions).toMatchObject({ canApprove: false, canRequestEdit: true, canSkip: true });
   });
 
   it("offers only the status moves the person may make", async () => {

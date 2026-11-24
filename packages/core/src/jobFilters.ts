@@ -1,9 +1,10 @@
-// Cheap checks on a job posting, done by code before any run reads it: which region it is in, a key that
-// recognises the same job on two sites, and the code filter built from the person's targets.
+// Cheap checks on a job posting, done by code before any run reads it: which region it is in and whether it
+// is remote, a key that recognises the same job on two sites, and the code filter built from the person's
+// targets (places, cities, roles to avoid, and a years limit that follows their own experience).
 // Ported from the prototype's classify_region, classify_title and SENIOR_YEARS (tools/jobs-mcp), but driven
 // by the person's targets instead of hard-coded tracks.
 // Spec: "Job discovery" (code filter first, dedupe). ARCHITECTURE.md section 6.
-import type { Region, TargetsSection } from "@jobgoblin/schemas";
+import { TODO, type Profile, type Region, type TargetsSection, type YearsLimit } from "@jobgoblin/schemas";
 import { containsWholeWord, escapeRegExp } from "./textHelpers";
 import { sha256Hex } from "./versionId";
 
@@ -55,6 +56,35 @@ export function classifyRegion(location: string): Region {
 function mentionsUsStateCode(location: string): boolean {
   const capitalWords = location.match(/\b[A-Z]{2}\b/g) ?? [];
   return capitalWords.some((word) => US_STATE_CODES.has(word));
+}
+
+// A word that makes a location remote wherever it stands: "Remote - US", "US Remote", "Anywhere in Europe".
+const REMOTE_WORD = /(?<![a-z])(?:remote|anywhere|worldwide|distributed)(?![a-z])/;
+
+// Remote is a way of working, not a place: "Remote - US" is a remote job in the US. A location with no place
+// at all ("", "Global") counts as remote too, as classifyRegion reads it.
+export function isRemoteLocation(location: string): boolean {
+  return classifyRegion(location) === "REMOTE" || REMOTE_WORD.test(location.toLowerCase());
+}
+
+// The country of "Where you live" ("Austin, TX" is the US), or null when it is not filled in or names no
+// country. A remote job is done from there, so it decides which work authorization answers it needs.
+export function homeRegionOf(location: string): Region | null {
+  if (location === TODO || location.trim() === "") return null;
+  const region = classifyRegion(location);
+  return region === "REMOTE" ? null : region;
+}
+
+// The names the screens use for each region code, for reasons and labels a person reads.
+const REGION_NAMES: Readonly<Record<string, string>> = {
+  US: "United States",
+  IN: "India",
+  REMOTE: "Remote",
+  OTHER: "Somewhere else",
+};
+
+export function regionName(code: string): string {
+  return REGION_NAMES[code.toUpperCase()] ?? code;
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -130,17 +160,43 @@ export function yearsRequired(title: string, text: string): number | null {
   return found.length === 0 ? null : Math.max(...found);
 }
 
+// A job may ask for up to two years more than the person has and still be worth a real shot.
+export const YEARS_ALLOWED_OVER_EXPERIENCE = 2;
+
+// The whole years in a "Years of experience" answer ("2", "3 years", "5+", "1.5"), or null when the answer is
+// missing or has no number in it.
+export function parseYearsExperience(answer: string): number | null {
+  const match = /\d+(?:\.\d+)?/.exec(answer);
+  return match === null ? null : Math.floor(Number(match[0]));
+}
+
+// The most years a job may ask for: the person's years of experience + 2, or the stored maxYearsRequired
+// while that answer is missing. The feed filter, jobs a run adds, what a run is told and the Targets screen
+// all use this one number.
+export function yearsLimitFor(profile: Pick<Profile, "employment" | "targets">): YearsLimit {
+  const experience = parseYearsExperience(profile.employment.yearsExperience);
+  const limit = experience === null ? profile.targets.maxYearsRequired : experience + YEARS_ALLOWED_OVER_EXPERIENCE;
+  return { limit, experience };
+}
+
 // ---------------------------------------------------------------------------------------------
 // Code filter
 // ---------------------------------------------------------------------------------------------
 
 export type PostingToFilter = { title: string; location: string; text: string };
-export type CodeFilterTargets = Pick<TargetsSection, "rolesToAvoid" | "maxYearsRequired" | "regions">;
+export type CodeFilterTargets = Pick<TargetsSection, "rolesToAvoid" | "maxYearsRequired" | "regions" | "cities">;
 export type CodeFilterResult = { passes: true } | { passes: false; reason: string };
 
-// Drops a posting before any run reads it, for one of three reasons from the person's targets:
-// the title names a role to avoid, it asks for more years than the person's limit, or it is in a region
-// outside their targets. Every other worry (class year, relocation, a school screen) is a flag for the run.
+// What the code filter needs from the profile: the person's targets, with the years limit worked out.
+export function codeFilterTargetsFor(profile: Pick<Profile, "employment" | "targets">): CodeFilterTargets {
+  const { rolesToAvoid, regions, cities } = profile.targets;
+  return { rolesToAvoid, regions, cities, maxYearsRequired: yearsLimitFor(profile).limit };
+}
+
+// Drops a posting before any run reads it, for one of four reasons from the person's targets: the title
+// names a role to avoid, it asks for more years than the person's limit, it is not in a place they can work,
+// or it is on-site outside the cities they chose. Every other worry (class year, relocation, a school screen)
+// is a flag for the run.
 export function codeFilter(posting: PostingToFilter, targets: CodeFilterTargets): CodeFilterResult {
   const avoided = targets.rolesToAvoid.find((role) => containsWholeWord(posting.title, role, true));
   if (avoided !== undefined) {
@@ -155,19 +211,51 @@ export function codeFilter(posting: PostingToFilter, targets: CodeFilterTargets)
     };
   }
 
-  if (isOutsideTargetRegions(posting.location, targets.regions)) {
+  if (isOutsideTargetRegions(posting.location, targets)) {
+    const places = targets.regions.map(regionName).join(", ");
+    const reason = isRemoteLocation(posting.location)
+      ? `The location "${posting.location}" is a remote job outside the places you chose (${places}).`
+      : `The location "${posting.location}" is not in a place you chose (${places}).`;
+    return { passes: false, reason };
+  }
+
+  if (isOutsideTargetCities(posting.location, targets.cities)) {
     return {
       passes: false,
-      reason: `The location "${posting.location}" is outside your target regions (${targets.regions.join(", ")}).`,
+      reason: `The location "${posting.location}" is not in a city you chose (${chosenCities(targets.cities).join(", ")}).`,
     };
   }
 
   return { passes: true };
 }
 
-// No regions listed means the person has no region preference.
-function isOutsideTargetRegions(location: string, targetRegions: readonly string[]): boolean {
-  if (targetRegions.length === 0) return false;
-  const wanted = targetRegions.map((region) => region.toUpperCase());
-  return !wanted.includes(classifyRegion(location));
+// No places chosen means any place. A job in a chosen country counts, on-site or remote. A remote job also
+// counts when Remote jobs is chosen and it names no country, or names any country when Remote jobs is the only
+// place chosen (no country limits it then). An on-site job in a city the person chose counts wherever it is.
+function isOutsideTargetRegions(location: string, targets: Pick<CodeFilterTargets, "regions" | "cities">): boolean {
+  if (targets.regions.length === 0) return false;
+  const chosen = targets.regions.map((code) => code.toUpperCase());
+  const countries = chosen.filter((code) => code !== "REMOTE");
+  const region = classifyRegion(location);
+  if (countries.includes(region)) return false;
+
+  if (isRemoteLocation(location)) {
+    return !(chosen.includes("REMOTE") && (region === "REMOTE" || countries.length === 0));
+  }
+  return !namesAChosenCity(location, targets.cities);
+}
+
+// With cities chosen, an on-site job must name one of them as whole words, in any case ("Austin, TX" names
+// Austin). A remote job always counts: it is done from home.
+function isOutsideTargetCities(location: string, cities: readonly string[]): boolean {
+  if (chosenCities(cities).length === 0 || isRemoteLocation(location)) return false;
+  return !namesAChosenCity(location, cities);
+}
+
+function chosenCities(cities: readonly string[]): string[] {
+  return cities.map((city) => city.trim()).filter((city) => city !== "");
+}
+
+function namesAChosenCity(location: string, cities: readonly string[]): boolean {
+  return chosenCities(cities).some((city) => containsWholeWord(location, city));
 }

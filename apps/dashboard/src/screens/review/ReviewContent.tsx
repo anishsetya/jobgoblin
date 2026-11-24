@@ -23,12 +23,13 @@ import { ResumePreview } from "@/components/ResumePreview";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useKeyboardShortcuts } from "@/lib/keyboardShortcuts";
+import { useOneAtATime } from "@/lib/oneAtATime";
 import { usePageTitle } from "@/lib/pageTitle";
 import { useReviewQueue } from "./useReviewQueue";
 
 export function ReviewContent({ detail }: { detail: ApplicationDetail }) {
   const { t } = useTranslation();
-  const { application, job, fit, resume, resumeHeader, diff, storyItems, dataSheet, dataSheetHash, actions } = detail;
+  const { application, job, fit, resume, resumeHeader, diff, storyItems, untracedLines, dataSheet, dataSheetHash, actions } = detail;
   const applicationId = application.id;
   usePageTitle(t("review:pageTitle", { company: application.company, title: application.title }));
 
@@ -36,6 +37,10 @@ export function ReviewContent({ detail }: { detail: ApplicationDetail }) {
   const skip = useSkipApplication(applicationId);
   const requestEdit = useRequestEdit(applicationId);
   const downloadPdf = useDownloadResumePdf(applicationId);
+  // A double-click or a key pressed twice must not send a decision twice.
+  const approveOnce = useOneAtATime(approve.mutate);
+  const skipOnce = useOneAtATime(skip.mutate);
+  const requestEditOnce = useOneAtATime(requestEdit.mutate);
   const [isNoteOpen, setIsNoteOpen] = useState(false);
 
   const { queueIds, positionInQueue, goToNeighbour, goToNextOrToday } = useReviewQueue(applicationId);
@@ -44,13 +49,13 @@ export function ReviewContent({ detail }: { detail: ApplicationDetail }) {
   const canApproveNow = actions.canApprove && dataSheetHash !== null && missingRequired.length === 0;
 
   function approveApplication(): void {
-    if (!canApproveNow || dataSheetHash === null || approve.isPending) return;
-    approve.mutate(dataSheetHash, { onSuccess: goToNextOrToday });
+    if (!canApproveNow || dataSheetHash === null) return;
+    approveOnce(dataSheetHash, { onSuccess: goToNextOrToday });
   }
 
   function skipApplication(): void {
-    if (!actions.canSkip || skip.isPending) return;
-    skip.mutate(undefined, { onSuccess: goToNextOrToday });
+    if (!actions.canSkip) return;
+    skipOnce(undefined, { onSuccess: goToNextOrToday });
   }
 
   function openNoteDialog(): void {
@@ -58,7 +63,7 @@ export function ReviewContent({ detail }: { detail: ApplicationDetail }) {
   }
 
   function sendEditRequest(note: string): void {
-    requestEdit.mutate(note, {
+    requestEditOnce(note, {
       onSuccess: () => {
         setIsNoteOpen(false);
         goToNextOrToday();
@@ -105,6 +110,21 @@ export function ReviewContent({ detail }: { detail: ApplicationDetail }) {
           </Button>
         </div>
         <p className="text-xs text-muted">{t("review:shortcuts")}</p>
+
+        {untracedLines.length > 0 && (
+          <div role="status" className="space-y-2 rounded-md border border-flag-line bg-flag-soft p-3 text-sm text-flag">
+            <p className="font-medium">{t("review:untraced.title")}</p>
+            <p>{t("review:untraced.description")}</p>
+            <ul className="list-disc space-y-0.5 pl-5">
+              {untracedLines.map((line) => (
+                <li key={line.path} className="break-words">
+                  {line.text}
+                </li>
+              ))}
+            </ul>
+            <p>{t("review:untraced.action")}</p>
+          </div>
+        )}
 
         {missingRequired.length > 0 && (
           <p className="text-sm text-flag">

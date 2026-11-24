@@ -2,6 +2,7 @@
 // needs the person"). Each item says what it is and offers the one next step; a question carries its own answer box.
 // A run that stopped offers what the server says helps (nextStep): Try again, or Check settings when only Settings
 // can fix it (Claude Code missing, too old or signed out). PRD R2.
+// Titles name a role and a company from a posting, so a word longer than the line is broken (wrap-anywhere).
 import type { NeedsYouItem } from "@jobgoblin/schemas";
 import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
@@ -76,8 +77,8 @@ function NeedsYouEntry({ item }: { item: NeedsYouItem }) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 space-y-1">
           <Badge>{t(`today:needsYou.kind.${item.kind}`)}</Badge>
-          <h3 className="text-sm font-semibold">{item.title}</h3>
-          {item.kind !== "question" && <p className="text-sm text-muted">{item.detail}</p>}
+          <h3 className="text-sm font-semibold wrap-anywhere">{item.title}</h3>
+          {item.kind !== "question" && <p className="text-sm text-muted wrap-anywhere">{item.detail}</p>}
         </div>
         <ItemAction
           item={item}
