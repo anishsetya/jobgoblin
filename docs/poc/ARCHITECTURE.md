@@ -211,7 +211,8 @@ RUN_KIND_SETTINGS: Record<RunKind, { model, maxTurns, timeoutMinutes, builtInToo
 ```ts
 ApiError = { code, message, action, field? }   // field: the form field a refusal is about, as "section.key"
 NeedsYouKind = "review" | "question" | "ready-to-submit" | "long-shot" | "not-tailored" | "follow-up-due" | "run-attention"
-NeedsYouItem = { kind, id, applicationId, runId, title, detail, createdAt }
+RunNextStep = "open-settings" | "try-again"
+NeedsYouItem = { kind, id, applicationId, runId, title, detail, nextStep: RunNextStep | null /* run-attention only */, createdAt }
 TodayResponse = { needsYou: NeedsYouItem[], running: Run[], doneToday: { found, tailored, approved, applied }, setupComplete: boolean, usageNoticeSeen: boolean }
 PipelineRow = Application + { overdue: boolean, location, region }
 ApplicationActions = { canApprove, canSkip, canUndoSkip, canRequestEdit, canTailor, canWithdraw, canMarkSubmitted, canAsk }   // booleans computed by the server with core
@@ -385,6 +386,7 @@ For every part of `ResumeBody`:
 ### 8.3 Starting tailoring
 
 - After a hunt or paste run ends, `admitInScoreOrder` picks Scored applications with band apply or stretch; admitted ones get one tailor run, refused ones get `tailor_error` with the plain cap message (Needs you kind `not-tailored`).
+- A Scored application that no active run holds and no active hunt or paste run may still admit (its tailor run was cancelled, failed or blocked) is also `not-tailored`, with "No resume yet. Open it and choose Tailor a resume." Retrying the stopped tailor run picks it up too.
 - `POST /api/apps/:id/tailor` (person) accepts Scored or Long shot, runs `checkLimits` first (ApiError `cap`), logs a `tailor-requested` event, and queues a tailor run.
 - `POST /api/apps/:id/request-edit { note }` moves Awaiting approval → Tailored (person, via request_edit) and queues a tailor run with `input.editNote`.
 - An application may sit in only one active (queued, running or waiting) run at a time.
@@ -495,7 +497,7 @@ classifyRunEnd({ exitCode, result, timedOut, cancelled, tasks }): { status: RunS
 // success with every remaining task waiting → waiting; otherwise → done. Pending tasks at the end count as failed.
 ```
 
-Queue: one run at a time by default (`concurrency`, max 2). A blocked run pauses the queue until Retry or a successful sign-in check.
+Queue: one run at a time by default (`concurrency`, max 2). A blocked run pauses the queue until it is retried or dismissed, or a sign-in check finds Claude Code connected. While the queue is paused, every queued run's step says why: "Waiting for <run title>, which stopped: <outcome message> Try that run again to go on." ("Open Settings to go on." when Claude Code is not installed, needs an update or is signed out). Find jobs while a hunt is blocked retries that hunt, so no second hunt waits behind it. Run titles (`runner/runText.ts` `RUN_TITLES`) are the names the dashboard's run cards use. A stopped run's Needs you item has one `nextStep` (`nextStepFor`): `open-settings` for those three Claude Code problems, `try-again` for everything else, because Settings cannot lift a plan limit or undo a crash.
 
 Recovery (`recovery.ts`) at start: every run in `running` or `waiting` with a pid → if that process is alive and its image is the configured Claude command (checked with `tasklist` on Windows, `ps` elsewhere), kill its tree; mark the run `interrupted` ("This run was interrupted"). Queued runs stay queued.
 
@@ -548,7 +550,7 @@ React 19 + Vite + Tailwind 4 + TanStack Query + TanStack Router (code-based rout
 | Route | Screen |
 | --- | --- |
 | `/setup/:step` | 1 Welcome, 2 Connect Claude (status, Install, Sign in), 3 Your folder (offers Restore when backups are found), 4 Your resume (upload, optional LinkedIn PDF, then the setup run's progress), 5 Your story (confirm, edit, drop), 6 Form answers (missing values marked; values a run suggested are shown for the person to confirm), 7 Targets, then Finish |
-| `/today` | Find jobs, Add a job (link or text; asks for company, title and text when a link needs a login), usage notice before the first run, Needs you, Running (cards with step, progress, Cancel), Done today |
+| `/today` | Find jobs, Add a job (link or text; asks for company, title and text when a link needs a login), usage notice before the first run, Needs you, Running (cards with step, progress while running, Cancel, Try again after a stop or a cancel), Done today |
 | `/review/:id` | Role, company, fit, band, reason, flags, gaps, matched items; changes vs master; HTML resume preview with reworded lines highlighted; data sheet; Approve (the only accent button), Request edit (asks for a note), Skip; keys A, E, S, J, K |
 | `/apply/:id` | Posting link (opens in the browser), a copy button for every field of the **frozen** `approval.dataSheet` and every answer, Open resume file, I submitted (proof type and proof); "Your details changed since you approved. Review it again." when the approval is void |
 | `/pipeline` | Board by status group (columns at least 15rem wide that share the width and wrap onto a new row, so none is hidden sideways) and list view, search, filters, overdue follow-ups in amber |
