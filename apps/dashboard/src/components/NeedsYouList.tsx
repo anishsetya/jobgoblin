@@ -1,5 +1,6 @@
 // The Needs you list: everything waiting on the person, in one place (PRD "One place for anything that
 // needs the person"). Each item says what it is and offers the one next step; a question carries its own answer box.
+// Titles name a role and a company from a posting, so a word longer than the line is broken (wrap-anywhere).
 import type { NeedsYouItem } from "@jobgoblin/schemas";
 import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
@@ -59,8 +60,8 @@ export function NeedsYouList({ items }: { items: NeedsYouItem[] }) {
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0 space-y-1">
               <Badge>{t(`today:needsYou.kind.${item.kind}`)}</Badge>
-              <h3 className="text-sm font-semibold">{item.title}</h3>
-              {item.kind !== "question" && <p className="text-sm text-muted">{item.detail}</p>}
+              <h3 className="text-sm font-semibold wrap-anywhere">{item.title}</h3>
+              {item.kind !== "question" && <p className="text-sm text-muted wrap-anywhere">{item.detail}</p>}
             </div>
             <ItemAction item={item} />
           </div>

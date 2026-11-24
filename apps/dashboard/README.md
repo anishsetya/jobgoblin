@@ -13,7 +13,7 @@ Read first: `src/router.tsx` (the map of every screen), `src/api/client.ts` (how
 | `/today` | Today: Find jobs, Add a job, Needs you, Running, Done today | `screens/TodayScreen.tsx` |
 | `/review/:id` | Review one application (keys A, E, S, J, K) | `screens/ReviewScreen.tsx`, `screens/review/` |
 | `/apply/:id` | Open application: frozen data sheet, answers, "I submitted" | `screens/ApplyScreen.tsx`, `screens/apply/` |
-| `/pipeline` | Board or list, search and filters (kept in the address) | `screens/PipelineScreen.tsx`, `screens/pipeline/` |
+| `/pipeline` | Board (its columns wrap onto a new row to fit the window) or list, search and filters (kept in the address) | `screens/PipelineScreen.tsx`, `screens/pipeline/` |
 | `/apps/:id` | Application: description, fit, versions, answers, history, status, Ask | `screens/ApplicationDetailScreen.tsx`, `screens/application/` |
 | `/profile/:tab` | Your story, Form answers, Targets, Banned words | `screens/ProfileScreen.tsx`, `screens/profile/` |
 | `/settings` | Claude, folder, limits, tracker, backups, exports | `screens/SettingsScreen.tsx`, `screens/settings/` |
