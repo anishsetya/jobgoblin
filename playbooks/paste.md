@@ -17,7 +17,7 @@ You have no web access: the job's text was already fetched or pasted.
 ## Steps
 
 1. `get_job` with the `jobId` from the run input.
-2. `get_profile`. Note the targets: roles, regions, tracks, `maxYearsRequired`, `rolesToAvoid`, `hardSkips`, `flags`.
+2. `get_profile`. Note the targets: roles, regions, cities, tracks, `maxYearsRequired`, `rolesToAvoid`, `hardSkips`, `flags`.
 3. `get_fit_context`. Read its `rubric` completely and score exactly by it. The `storyItems` are everything the person has
    confirmed about themselves.
 4. `record_fit` with `jobId`, `score`, `track`, `mustHaves`, `gaps`, `flags`, `matchedItemIds`, `reason` (one line) and

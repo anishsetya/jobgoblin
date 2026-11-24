@@ -109,4 +109,14 @@ describe("startServer", () => {
     expect(getRun(server.ctx.db, "going")).toMatchObject({ status: "interrupted", outcomeMessage: "This run was interrupted", pid: null });
     expect(getRun(server.ctx.db, "waiting")?.status).toBe("waiting");
   });
+
+  it("refuses a demo job board folder without companies.json in one plain line, before it creates anything", async () => {
+    const emptyBoard = appDataDirectory();
+    const appDataDir = path.join(appDataDirectory(), "not-created-yet");
+
+    await expect(startServer({ ...optionsFor(appDataDir), feedFixturesDir: emptyBoard })).rejects.toThrow(
+      `The demo job board folder ${emptyBoard} has no companies.json.`,
+    );
+    expect(fs.existsSync(appDataDir)).toBe(false);
+  });
 });

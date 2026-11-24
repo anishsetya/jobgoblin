@@ -97,32 +97,41 @@ test.describe("As a first-time user, I set Jobgoblin up", () => {
       await snap(page, "06-setup-6-form-answers-missing-pay");
     });
 
+    await test.step("6. Form answers: I say where I can work, and only the questions for it are asked", async () => {
+      const places = page.getByRole("group", { name: "Tick every place that fits" });
+      await expect(places.getByRole("checkbox", { name: "United States" })).toBeChecked(); // where I live, from my resume
+      await expect(places.getByRole("checkbox", { name: "India" })).not.toBeChecked(); // nothing is assumed
+      await places.getByRole("checkbox", { name: "Remote jobs" }).check();
+
+      // A remote job is done from where I live, so Remote asks nothing new, and no other country is asked about.
+      await expect(page.getByRole("group", { name: "United States (where you live)" })).toBeVisible();
+      await expect(page.getByRole("group", { name: "India" })).toHaveCount(0);
+    });
+
     await test.step("6. Form answers: I answer what I can and leave the pay empty", async () => {
       await page.getByLabel("Notice period").fill("2 weeks");
       await page.getByLabel("Earliest start date").fill("2026-12-01");
 
-      const unitedStates = page.getByRole("group", { name: "United States" });
-      await unitedStates.getByLabel("Allowed to work here").selectOption("yes");
-      await unitedStates.getByLabel("Needs sponsorship").selectOption("no");
+      const unitedStates = page.getByRole("group", { name: "United States (where you live)" });
+      await unitedStates.getByLabel("Authorized to work").selectOption("yes");
+      await unitedStates.getByLabel("Needs visa sponsorship").selectOption("no");
       await unitedStates.getByLabel("Willing to relocate").selectOption("yes");
-      const india = page.getByRole("group", { name: "India" });
-      await india.getByLabel("Allowed to work here").selectOption("no");
-      await india.getByLabel("Needs sponsorship").selectOption("yes");
-      await india.getByLabel("Willing to relocate").selectOption("no");
 
-      // Exactly one answer is still marked "Needs your answer", and it sits next to the pay.
+      // Exactly one answer is still marked "Needs your answer", and it sits next to the pay, with the name the
+      // summary and the data sheet use for it.
       const stillNeeded = page.getByText("Needs your answer");
       await expect(stillNeeded).toHaveCount(1);
-      await expect(stillNeeded.locator("xpath=preceding-sibling::label")).toHaveText("Expected yearly pay");
+      await expect(stillNeeded.locator("xpath=preceding-sibling::label")).toHaveText("Expected base salary");
       await page.getByRole("button", { name: "Save and continue" }).click();
     });
 
-    await test.step("7. Targets: I say what I am looking for", async () => {
+    await test.step("7. Targets: I say what I am looking for; where and how senior come from my answers", async () => {
       await expect(page.getByRole("heading", { level: 1, name: "Your targets" })).toBeVisible();
+      await expect(page.getByText("United States, Remote jobs", { exact: true })).toBeVisible();
+      await expect(page.getByText("4: your 2 years + 2", { exact: true })).toBeVisible(); // 2 years from my resume
+      await expect(page.getByRole("checkbox")).toHaveCount(0); // nothing here asks it a second time
+
       await page.getByLabel("Job titles you want").fill("Backend Engineer\nPlatform Engineer\nSoftware Engineer");
-      await page.getByRole("checkbox", { name: "United States" }).check();
-      await page.getByRole("checkbox", { name: "Remote" }).check();
-      await page.getByLabel("Most years of experience a job may ask for").fill("4");
       await page.getByLabel("Roles to avoid").fill("QA\nSDET\nTest Engineer\nQuality Engineer");
       await page.getByRole("button", { name: "Save and continue" }).click();
     });
@@ -249,11 +258,10 @@ test.describe("As a first-time user, I set Jobgoblin up", () => {
       await expect(page.getByLabel("Roles to avoid")).toHaveValue(/QA\nSDET/);
     });
 
-    await test.step("a number that makes no sense is explained in plain words, and nothing is saved", async () => {
-      await page.getByLabel("Most years of experience a job may ask for").fill("-1");
-      await page.getByRole("button", { name: "Save", exact: true }).click();
-      await expect(page.getByText("Enter a whole number, zero or more.")).toBeVisible();
-      await expect(page.getByText("Saved", { exact: true })).toHaveCount(0);
+    await test.step("Targets shows where I look and the years limit, and says they follow my Form answers", async () => {
+      await expect(page.getByText("United States, Remote jobs", { exact: true })).toBeVisible();
+      await expect(page.getByText("4: your 2 years + 2", { exact: true })).toBeVisible();
+      await expect(page.getByText(/^These follow your Form answers/)).toBeVisible();
     });
   });
 });

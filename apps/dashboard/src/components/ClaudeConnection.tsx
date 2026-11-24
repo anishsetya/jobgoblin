@@ -1,6 +1,7 @@
 // Shows whether Claude Code is ready and offers the one button that fixes what is missing: Install
 // (or Update), then Sign in. Used in the setup wizard and in Settings. Spec: PRD S2 and S3.
 // Jobgoblin never sees the sign-in: Anthropic's own page opens, and this card notices when it is done.
+// A failed install says what happened and opens the command, so the person can run it by hand.
 import { useTranslation } from "react-i18next";
 import { useClaudeStatus, useInstallClaude, useSignInToClaude } from "@/api/claude";
 import { ErrorNotice } from "./ErrorNotice";
@@ -63,15 +64,16 @@ export function ClaudeConnection({ recheckUntilConnected = false }: ClaudeConnec
         </p>
       )}
 
+      <ErrorNotice error={installClaude.error ?? signInToClaude.error} />
+
       {!claude.state.startsWith("connected") && command !== "" && (
-        <details className="text-sm">
+        // Open after a failed install: the message says to run this command by hand.
+        <details className="text-sm" open={needsInstall && installClaude.isError}>
           <summary className="cursor-pointer text-muted">{t("common:claude.showCommand")}</summary>
           <p className="mt-2 text-muted">{t("common:claude.commandNote")}</p>
           <code className="mt-1 block rounded-md bg-surface-muted p-2 font-mono text-xs break-all">{command}</code>
         </details>
       )}
-
-      <ErrorNotice error={installClaude.error ?? signInToClaude.error} />
     </div>
   );
 }

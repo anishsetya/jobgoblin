@@ -16,13 +16,15 @@ export class ServiceError extends Error {
   readonly kind: ServiceErrorKind;
   readonly code: string; // for code to branch on, such as "data-sheet-changed"
   readonly action: string; // what to do next, in plain words
+  readonly field: string | undefined; // the form field it is about, as "section.key", when there is one
 
-  constructor(kind: ServiceErrorKind, code: string, message: string, action: string) {
+  constructor(kind: ServiceErrorKind, code: string, message: string, action: string, field?: string) {
     super(message);
     this.name = "ServiceError";
     this.kind = kind;
     this.code = code;
     this.action = action;
+    this.field = field;
   }
 }
 
@@ -34,8 +36,9 @@ export function conflict(code: string, message: string, action: string): Service
   return new ServiceError("conflict", code, message, action);
 }
 
-export function invalid(code: string, message: string, action: string): ServiceError {
-  return new ServiceError("invalid", code, message, action);
+// `field` ("contact.email", say) lets a form show the refusal next to the field it is about.
+export function invalid(code: string, message: string, action: string, field?: string): ServiceError {
+  return new ServiceError("invalid", code, message, action, field);
 }
 
 export function unavailable(code: string, message: string, action: string): ServiceError {

@@ -72,6 +72,22 @@ export function countUnseenJobs(db: Database): number {
   return Number(row?.total ?? 0);
 }
 
+// Every job nobody has been shown yet, the ones the code filter dropped included, oldest first. Before each
+// hunt they are checked again against the person's current targets (services/feeds.ts).
+export function listJobsNotYetSeen(db: Database): Job[] {
+  const rows = db.sqlite.prepare("SELECT * FROM jobs WHERE seen_at IS NULL ORDER BY found_at, job_id").all();
+  return rows.map(toJob);
+}
+
+// Records why the code filter drops a job, or null when it may be shown. Only a job nobody has seen can
+// change: a job already shown keeps its verdict (PRD D3). Returns true when the job changed.
+export function setJobFilteredReason(db: Database, jobId: string, filteredReason: string | null): boolean {
+  const result = db.sqlite
+    .prepare("UPDATE jobs SET filtered_reason = ? WHERE job_id = ? AND seen_at IS NULL AND filtered_reason IS NOT ?")
+    .run(filteredReason, jobId, filteredReason);
+  return Number(result.changes) === 1;
+}
+
 // Marks jobs as shown, once. A job that was already seen keeps its first seen time.
 // Returns how many jobs were newly marked; unknown ids are ignored.
 export function markJobsSeen(db: Database, jobIds: readonly string[], seenAt: string): number {

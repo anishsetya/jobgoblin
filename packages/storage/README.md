@@ -24,7 +24,7 @@ Each file in `src/tables/` is plain exported functions that take `db` first and 
 | `masterResume.ts` | `master_resume` | The default one-page resume built when setup finishes (one row) |
 | `uploads.ts` | `uploads` | The redacted text of the uploaded resume and LinkedIn PDF |
 | `companies.ts` | `companies` | Watched companies and their status |
-| `jobs.ts` | `jobs` | Every job seen; unseen and unfiltered jobs for a hunt; mark seen; same role by dedupe key |
+| `jobs.ts` | `jobs` | Every job seen; unseen and unfiltered jobs for a hunt; mark seen; same role by dedupe key; every job not shown yet, and its filter reason, so a change of targets can check them again |
 | `feedCache.ts` | `feed_cache` | The last response of each feed URL (ETag, Last-Modified) |
 | `applications.ts` | `applications` | Applications, field updates, limit-check input, counts, and `updateApplicationStatus` |
 | `applicationQueries.ts` | (joins) | Pipeline list with filters and search, follow-ups due, rows for the tracker |

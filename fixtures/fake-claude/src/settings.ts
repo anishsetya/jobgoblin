@@ -11,6 +11,8 @@ export const FAKE_CLAUDE_MODES = [
   "slow",
   "max-turns",
   "extra-tools",
+  "not-installed", // `--version` fails, so the runner counts the program as not installed
+  "outdated", // `--version` prints a version below the runner's minimum
 ] as const;
 
 export type FakeClaudeMode = (typeof FAKE_CLAUDE_MODES)[number];
