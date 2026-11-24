@@ -22,6 +22,7 @@ import { listAskResults } from "./askRuns";
 import { resolveCurrentResume } from "./currentResume";
 import { buildCurrentDataSheet } from "./dataSheets";
 import { loadApplicationOrFail, loadJobOfApplication } from "./loaders";
+import { findUntracedLines } from "./resumeTrace";
 import { readMasterBody } from "./tailoringContext";
 
 export function getApplicationDetail(ctx: ServerContext, applicationId: string): ApplicationDetail {
@@ -33,6 +34,7 @@ export function getApplicationDetail(ctx: ServerContext, applicationId: string):
   const current = resolveCurrentResume(ctx, application);
   const sheet = current === null ? null : buildCurrentDataSheet(ctx, application, job, current.versionId);
   const answers = listAnswers(ctx.db, applicationId);
+  const untracedLines = current === null ? [] : findUntracedLines(ctx, current.stored.body);
 
   return {
     application,
@@ -43,6 +45,7 @@ export function getApplicationDetail(ctx: ServerContext, applicationId: string):
     versions: listApplicationResumes(ctx.db, applicationId),
     diff: current === null ? null : diffAgainstMaster(current.stored.body, readMasterBody(ctx)),
     storyItems: listStoryItemsByIds(ctx.db, [...citedItemIds(current?.stored.body ?? null), ...(fit?.matchedItemIds ?? [])]),
+    untracedLines,
     dataSheet: sheet?.dataSheet ?? null,
     dataSheetHash: sheet?.hash ?? null,
     approval,
@@ -53,7 +56,7 @@ export function getApplicationDetail(ctx: ServerContext, applicationId: string):
     history,
     askResults: listAskResults(ctx, applicationId),
     allowedStatusMoves: allowedMoves(application.status, "person", "status"),
-    actions: computeActions(ctx, application, history),
+    actions: computeActions(ctx, application, history, { resumeTraces: untracedLines.length === 0 }),
   };
 }
 

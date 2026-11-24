@@ -84,12 +84,14 @@ Details worth knowing:
 | `FAKE_CLAUDE_MODE=slow` | Waits 2 seconds before every tool call, so a cancel test has time to cancel |
 | `FAKE_CLAUDE_MODE=max-turns` | Stops after 2 tool calls with `error_max_turns` |
 | `FAKE_CLAUDE_MODE=extra-tools` | `init` lists `Bash` in `tools`; the runner must stop the run |
+| `FAKE_CLAUDE_MODE=not-installed` | `--version` prints nothing and exits 1, so the Connect screen shows "Not installed" and offers Install |
+| `FAKE_CLAUDE_MODE=outdated` | `--version` prints `2.0.0 (Claude Code)`, below the minimum, so the Connect screen offers Update |
 | `FAKE_CLAUDE_ASK_FIRST=1` | In a tailor or answers run, calls `ask_person` for the first application, completes it as `waiting`, and carries on with the rest. It does not ask again once the question has an answer, so the re-queued application is processed |
 | `FAKE_CLAUDE_REWORD=1` | In a tailor run, rewords one bullet with every fact kept (the first "... that ..." becomes "..., which ..."), so Review has a reworded line to highlight. The truth trace accepts it |
 | `FAKE_CLAUDE_INVENT_BULLET=1` | In a tailor run, the first draft has a bullet that cites a story item that does not exist and a "Led" in place of "Contributed to". The fake expects `ok: false`, drops those parts and submits again. If the server accepts the first draft, the run fails: the truth trace is broken |
 | `FAKE_CLAUDE_NO_QUESTIONS=1` | In an answers run, a job with no screening questions gets no `save_answers` call: the task is completed as `done` with the note "No screening questions", as `playbooks/answers.md` says. A job that has questions is answered as usual |
 
-An unknown `FAKE_CLAUDE_MODE` stops the fake with exit code 2, so a typo cannot pass as a normal run. If the server cannot be reached (wrong token, no `JOBGOBLIN_RUN_TOKEN`), `init` shows the `jobgoblin` server as `failed` and the run ends with `error_during_execution`.
+An unknown `FAKE_CLAUDE_MODE` stops the fake with exit code 2 (`--version` included), so a typo cannot pass as a normal run. If the server cannot be reached (wrong token, no `JOBGOBLIN_RUN_TOKEN`), `init` shows the `jobgoblin` server as `failed` and the run ends with `error_during_execution`.
 
 ## Data
 

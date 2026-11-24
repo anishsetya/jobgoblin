@@ -14,7 +14,7 @@ async function main(args: string[], env: NodeJS.ProcessEnv): Promise<number> {
 
   switch (command.kind) {
     case "version":
-      return printVersion();
+      return printVersion(readFakeSettings(env));
     case "auth":
       return runAuthCommand(command.action, readFakeSettings(env));
     case "print":

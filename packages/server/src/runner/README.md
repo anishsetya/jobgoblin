@@ -73,7 +73,8 @@ The run token is never on the command line or in a file. `mcp.json` holds `Beare
 | [outcome.ts](outcome.ts) | How a run ended, and `OUTCOME_MESSAGES`: every sentence a run card shows |
 | [processes.ts](processes.ts) | The only file that imports `node:child_process` |
 | [recovery.ts](recovery.ts) | Leftover runs after a crash or restart |
-| [launcher.ts](launcher.ts) | The queue: which run goes when, how many at once, pausing after `blocked`, cancel |
+| [runText.ts](runText.ts) | The words about a run outside its card: `RUN_TITLES` (the dashboard's card names), `nextStepFor` (Try again or Settings), `waitingStep` (why a queued run waits) |
+| [launcher.ts](launcher.ts) | The queue: which run goes when, how many at once, pausing after `blocked` (and saying so on the waiting runs), cancel |
 | [launchRun.ts](launchRun.ts) | One run from claim to final status, step by step as above |
 | [finishRun.ts](finishRun.ts) | Saving how a run ended (tasks never reached, status, message, token revoked) |
 | [afterRun.ts](afterRun.ts) | Admit to tailoring after a hunt or paste; the one tailor retry on sonnet |
@@ -101,7 +102,7 @@ The run token is never on the command line or in a file. `mcp.json` holds `Beare
 11. **`spawnRun` takes a line callback, not a stream.** The listener exists before any output can arrive, so no line is ever lost.
 12. **Playbook line endings are normalised to `\n`** so line 1 and 2 are the same on every system.
 13. **There is no `index.ts`.** `launcher.ts` and the services import the module they need.
-14. **`playbooks/rubric.md` starts with `<!-- rubric-version: 1 -->`.** The server can read that for `Fit.rubricVersion`.
+14. **`playbooks/rubric.md` starts with `<!-- rubric-version: 2 -->`.** The server can read that for `Fit.rubricVersion`.
 15. **Run directory clean-up (transcripts kept 14 days) is `runFolderCleanup.ts`,** called once when the launcher is created.
 16. **A cancel wins over the safety check.** Cancel takes the run's token away first, so a run cancelled before its `init` line can show the tool server as `failed`; that is recorded as `cancelled`, not as a safety stop.
 17. **A safety stop kills at once** (no polite attempt), and revokes the run's token so the process cannot make more tool calls while it dies.

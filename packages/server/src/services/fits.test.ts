@@ -102,8 +102,8 @@ describe("the rubric version", () => {
 
     expect(rubricVersionOf("<!-- rubric-version: 7 -->\n# Fit rubric")).toBe("7");
     expect(rubricVersionOf("# A rubric with no version line")).toBe(UNVERSIONED_RUBRIC);
-    expect(readRubric(ctx).version).toBe("1");
-    expect(getFit(ctx.db, recordedApplication(ctx, job.jobId).id)?.rubricVersion).toBe("1");
+    expect(readRubric(ctx).version).toBe("2");
+    expect(getFit(ctx.db, recordedApplication(ctx, job.jobId).id)?.rubricVersion).toBe("2");
   });
 });
 

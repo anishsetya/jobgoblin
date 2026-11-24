@@ -10,10 +10,10 @@ Read first: `src/router.tsx` (the map of every screen), `src/api/client.ts` (how
 | --- | --- | --- |
 | `/` | sends the person to `/setup/1` or `/today` | `router.tsx` |
 | `/setup/:step` | Setup wizard, 8 steps (7 tasks plus Finish) | `screens/setup/` (loaded on demand) |
-| `/today` | Today: Find jobs, Add a job, Needs you, Running, Done today | `screens/TodayScreen.tsx` |
+| `/today` | Today: Find jobs, Add a job, Needs you (each item offers the one step the server chose, such as Try again or Check settings), Running, Done today | `screens/TodayScreen.tsx` |
 | `/review/:id` | Review one application (keys A, E, S, J, K) | `screens/ReviewScreen.tsx`, `screens/review/` |
 | `/apply/:id` | Open application: "I submitted" first, then the resume file, the frozen data sheet and the answers (`components/AnswersList.tsx`, shared with `/apps/:id`) | `screens/ApplyScreen.tsx`, `screens/apply/` |
-| `/pipeline` | Board or list, search and filters (kept in the address) | `screens/PipelineScreen.tsx`, `screens/pipeline/` |
+| `/pipeline` | Board (its columns wrap onto a new row to fit the window) or list, search and filters (kept in the address) | `screens/PipelineScreen.tsx`, `screens/pipeline/` |
 | `/apps/:id` | Application: description, fit, versions, answers, history, status, Ask | `screens/ApplicationDetailScreen.tsx`, `screens/application/` |
 | `/profile/:tab` | Your story, Form answers, Targets, Banned words | `screens/ProfileScreen.tsx`, `screens/profile/` |
 | `/settings` | Claude, folder, limits, tracker, backups, exports | `screens/SettingsScreen.tsx`, `screens/settings/` |
@@ -26,7 +26,7 @@ src/
   components/   parts shared by screens; ui/ holds the small shadcn-style primitives
   screens/      one file per screen (plus a folder for its parts)
   i18n/         index.ts and en/<area>.json
-  lib/          small helpers: class names, dates, downloads, shortcuts, page title, focus
+  lib/          small helpers: class names, dates, downloads, shortcuts, page title, focus, one request at a time
   router.tsx  queryClient.ts  App.tsx  main.tsx  styles.css
 ```
 
@@ -105,12 +105,13 @@ Checks: `pnpm --filter @jobgoblin/dashboard typecheck` and `pnpm --filter @jobgo
 8. **The usage notice is a dialog shown before the first run** (Find jobs, Add a job, or reading the resume in setup), then remembered in settings (`useUsageNotice`).
 9. **After Approve, Skip or Request edit, Review moves to the next application waiting for review**, or back to Today when none is left.
 10. **"I submitted" can check the attached file.** The person may pick the file they uploaded; its SHA-256 is computed in the browser and compared with the approved file. A mismatch needs an explicit "Record it anyway". The file never leaves the computer.
-11. **Targets shows roles, regions, seniority, roles to avoid, hard skips and flags** (PRD P4). The `tracks` list is kept as it is and not shown, because the PRD does not name it.
+11. **Targets shows roles, roles to avoid, hard skips and flags** (PRD P4). The `tracks` list is kept as it is and not shown, because the PRD does not name it. Where the person can work and the years limit are answered once, on Form answers ("Where you can work" sits above the work-authorization questions it decides), and Targets shows them read-only. Targets saves only its own fields on top of the saved targets, so it never undoes what Form answers saved. Which countries are asked about follows the server's rule (`askedCountries` in `lib/answersDraft.ts`), with `homeRegion` from `ProfileResponse`.
 12. **Lists of text are typed one per line** (`LineListField`), which works for people and screen readers without chips.
 13. **Colors are variables that follow the system theme.** One accent (teal-blue), amber only for flags and risks (and the one overdue follow-up), green only for success. The contrast of every text and background pair is noted next to its definition in `styles.css`.
 14. **Dialogs, tabs and the focus trap come from Radix**; everything else is native HTML (`select`, radio and checkbox inputs, `details`) because the browser already makes those accessible.
 15. **Moving between screens moves keyboard focus to the main area**, and each screen sets the page title, so a screen reader announces where the person is. Switching Profile tabs keeps focus on the tab.
 16. **Plain text only.** Job postings, resumes, answers and Ask results are rendered as text by React. Nothing uses `dangerouslySetInnerHTML`; `JobText` and `ResumePreview` say why in a comment.
+17. **A decision is sent once per click.** Approve, Skip, Request edit and Record as applied go through `useOneAtATime` (`lib/oneAtATime.ts`), which ignores a repeat while the request is in flight. A disabled button takes effect only on the next render, and TanStack Query runs only the latest call's callbacks, so before this a double-click lost the first success and showed the second call's refusal.
 
 ## Gaps in the shared schemas
 

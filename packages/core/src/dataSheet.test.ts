@@ -133,14 +133,30 @@ describe("work authorization by region", () => {
     expect(sheet.region).toBe("IN");
   });
 
-  it("falls back to the US answers for a region with none", () => {
-    const sheet = alexsSheet("REMOTE");
+  it("answers a remote job that names no country with the answers for where the person lives", () => {
+    const sheet = alexsSheet("REMOTE"); // Alex lives in Austin, TX
 
     expect(fieldNamed(sheet, "workAuthorized").value).toBe("Yes");
+    expect(fieldNamed(sheet, "requiresSponsorship").value).toBe("No");
     expect(sheet.region).toBe("REMOTE");
   });
 
-  it("shows TODO when the person has no answers for the region or the US", () => {
+  it("never borrows another country's answers: an India job stays missing when the person gave none for India", () => {
+    const sheet = alexsSheet("IN"); // Alex has answers for the US only
+
+    expect(fieldNamed(sheet, "workAuthorized")).toMatchObject({ value: "TODO", missing: true });
+    expect(fieldNamed(sheet, "requiresSponsorship")).toMatchObject({ value: "TODO", missing: true });
+    expect(fieldNamed(sheet, "willingToRelocate")).toMatchObject({ value: "TODO", missing: true });
+  });
+
+  it("leaves a job somewhere else missing, and a remote job too while where the person lives is unknown", () => {
+    const unknownHome = Profile.parse({ ...alexRiveraProfile(), contact: { ...alexRiveraProfile().contact, location: "TODO" } });
+
+    expect(fieldNamed(alexsSheet("OTHER"), "workAuthorized")).toMatchObject({ value: "TODO", missing: true });
+    expect(fieldNamed(alexsSheet("REMOTE", unknownHome), "workAuthorized")).toMatchObject({ value: "TODO", missing: true });
+  });
+
+  it("shows TODO when the person has no answers at all", () => {
     const sheet = alexsSheet("US", Profile.parse({}));
 
     expect(fieldNamed(sheet, "workAuthorized")).toMatchObject({ value: "TODO", missing: true });

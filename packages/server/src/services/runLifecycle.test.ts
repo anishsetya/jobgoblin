@@ -8,11 +8,14 @@ import { aScoredApplication, closeTestContexts, createTestContext } from "./test
 
 afterEach(closeTestContexts);
 
-// A launcher that only remembers which runs it was asked to cancel.
-function cancelRecordingLauncher(): Launcher & { cancelled: string[] } {
+// A launcher that only remembers which runs it was asked to cancel, and how often it was woken.
+function cancelRecordingLauncher(): Launcher & { cancelled: string[]; wakes: number } {
   const launcher = {
     cancelled: [] as string[],
-    wake() {},
+    wakes: 0,
+    wake() {
+      launcher.wakes += 1;
+    },
     async cancel(runId: string) {
       launcher.cancelled.push(runId);
     },
@@ -26,6 +29,26 @@ describe("startHunt", () => {
     const ctx = createTestContext({ withAlexRivera: false });
 
     expect(() => startHunt(ctx)).toThrowError(expect.objectContaining({ code: "setup-incomplete" }));
+  });
+
+  it("tries a blocked hunt again instead of queueing a second hunt that would wait behind it", () => {
+    const ctx = createTestContext();
+    const blocked = startHunt(ctx);
+    updateRun(ctx.db, blocked.id, { status: "blocked", endedAt: ctx.now().toISOString(), outcomeMessage: "Your Claude plan limit is reached" });
+
+    const next = startHunt(ctx);
+
+    expect(next).toMatchObject({ kind: "hunt", status: "queued", retryOf: blocked.id });
+    expect(getRun(ctx.db, blocked.id)?.dismissedAt).not.toBeNull();
+  });
+
+  it("starts a new hunt when the blocked one was dismissed", () => {
+    const ctx = createTestContext();
+    const blocked = startHunt(ctx);
+    updateRun(ctx.db, blocked.id, { status: "blocked", endedAt: ctx.now().toISOString() });
+    dismissRun(ctx, blocked.id);
+
+    expect(startHunt(ctx).retryOf).toBeNull();
   });
 });
 describe("cancel, retry and dismiss", () => {
@@ -90,5 +113,18 @@ describe("cancel, retry and dismiss", () => {
     expect(() => dismissRun(ctx, run.id)).toThrowError(expect.objectContaining({ code: "run-active" }));
     updateRun(ctx.db, run.id, { status: "failed" });
     expect(dismissRun(ctx, run.id).dismissedAt).not.toBeNull();
+  });
+
+  it("wakes the queue when a blocked run is dismissed, because that run held the queue", () => {
+    const ctx = createTestContext();
+    const launcher = cancelRecordingLauncher();
+    ctx.launcher = launcher;
+    const blocked = startHunt(ctx);
+    updateRun(ctx.db, blocked.id, { status: "blocked" });
+    const wakesBefore = launcher.wakes;
+
+    dismissRun(ctx, blocked.id);
+
+    expect(launcher.wakes).toBe(wakesBefore + 1);
   });
 });

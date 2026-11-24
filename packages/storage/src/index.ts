@@ -40,8 +40,10 @@ export {
   getJob,
   insertJobIfNew,
   listJobsByDedupeKey,
+  listJobsNotYetSeen,
   listUnseenJobs,
   markJobsSeen,
+  setJobFilteredReason,
 } from "./tables/jobs";
 export {
   deleteFeedCacheEntriesBefore,

@@ -20,7 +20,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import type { StartOptions } from "../context";
 import { addPastedJob } from "../services/jobs";
 import { answerQuestion } from "../services/questions";
-import { cancelRun, retryRun, startHunt } from "../services/runLifecycle";
+import { cancelRun, dismissRun, retryRun, startHunt } from "../services/runLifecycle";
 import { queueRun } from "../services/runs";
 import { chooseFolder } from "../services/settings";
 import { openServerDatabase } from "../services/serverDatabase";
@@ -235,13 +235,31 @@ describe("a run that does not go well", () => {
 
     expect(getRun(server.ctx.db, blocked.id)).toMatchObject({ outcomeMessage: "Sign in with Claude again", sessionId: null });
     await new Promise((resolve) => setTimeout(resolve, 500));
-    expect(getRun(server.ctx.db, waitingBehind.id)?.status).toBe("queued");
+    // Its card says why it waits, and what lets the queue go on.
+    expect(getRun(server.ctx.db, waitingBehind.id)).toMatchObject({
+      status: "queued",
+      step: "Waiting for Reading a job you added, which stopped: Sign in with Claude again. Open Settings to go on.",
+    });
     await cancelRun(server.ctx, waitingBehind.id); // otherwise it would be the first run the retry lets through
 
     const retried = retryRun(server.ctx, blocked.id);
     await waitUntil(() => getRun(server.ctx.db, retried.id)?.status === "blocked", "the retry to be tried");
 
     expect(getRun(server.ctx.db, retried.id)?.retryOf).toBe(blocked.id);
+  }, RUN_TIMEOUT_MS);
+
+  it("lets the runs behind a blocked run go when that run is dismissed, so none waits for a card that is gone", async () => {
+    const server = await startedServer({ FAKE_CLAUDE_MODE: "signed-out" });
+    const blocked = await pasteRun(server);
+    await waitUntil(() => getRun(server.ctx.db, blocked.id)?.status === "blocked", "the run to be blocked");
+    const behind = queueRun(server.ctx, { kind: "ask", applicationIds: [], input: { applicationId: "nothing", question: "q" } });
+    expect(getRun(server.ctx.db, behind.id)?.step).toContain("Waiting for Reading a job you added");
+
+    dismissRun(server.ctx, blocked.id);
+
+    // Still signed out, so the run behind it is tried and blocked in turn, and says so itself.
+    await waitUntil(() => getRun(server.ctx.db, behind.id)?.status === "blocked", "the run behind it to be tried");
+    expect(getRun(server.ctx.db, behind.id)).toMatchObject({ outcomeMessage: "Sign in with Claude again", step: null });
   }, RUN_TIMEOUT_MS);
 
   it("can be cancelled while it works, and its process is gone when the cancel returns", async () => {
