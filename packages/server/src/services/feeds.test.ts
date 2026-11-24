@@ -1,10 +1,31 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { getJob, listCompanies, listUnseenJobs, getFeedCacheEntry } from "@jobgoblin/storage";
+import {
+  getFeedCacheEntry,
+  getJob,
+  getProfileSection,
+  listCompanies,
+  listUnseenJobs,
+  markJobsSeen,
+  saveProfileSection,
+} from "@jobgoblin/storage";
+import type { ServerContext } from "../context";
 import { createFeedCache } from "../feedCache";
 import { refreshFeeds, seedCompaniesIfEmpty } from "./feeds";
 import { closeTestContexts, createTestContext } from "./testSupport";
 
 afterEach(closeTestContexts);
+
+const ACME_BACKEND = "greenhouse:acmecloud:4012345"; // Remote - US
+const ACME_ON_HN = "hn:hn:40000007"; // the same role, posted again on Hacker News
+const BRIGHTPATH_PLATFORM = "lever:brightpath:7c1d0e02-3f4a-4b5c-8d6e-0000000b0002"; // New York, NY
+
+function chooseWhereToWork(ctx: ServerContext, regions: string[]): void {
+  saveProfileSection(ctx.db, "targets", { ...getProfileSection(ctx.db, "targets"), regions }, ctx.now().toISOString());
+}
+
+function shownTitles(ctx: ServerContext): string[] {
+  return listUnseenJobs(ctx.db, 50).map((job) => job.title).sort();
+}
 
 describe("refreshFeeds with the demo job board", () => {
   it("seeds the three demo companies on the first start", () => {
@@ -68,7 +89,63 @@ describe("refreshFeeds with the demo job board", () => {
 
     const second = await refreshFeeds(ctx);
 
-    expect(second).toMatchObject({ added: 0, filtered: 0, duplicates: 0 });
+    expect(second).toMatchObject({ added: 0, filtered: 0, duplicates: 0, restored: 0, setAside: 0 });
+  });
+});
+
+describe("refreshFeeds and where the person can work", () => {
+  it("with only Remote jobs chosen, keeps the remote job and leaves out the on-site ones", async () => {
+    const ctx = createTestContext();
+    chooseWhereToWork(ctx, ["REMOTE"]);
+
+    const report = await refreshFeeds(ctx);
+
+    expect(report).toMatchObject({ added: 1, filtered: 5, duplicates: 1 });
+    expect(shownTitles(ctx)).toEqual(["Backend Engineer"]);
+    expect(getJob(ctx.db, BRIGHTPATH_PLATFORM)?.filteredReason).toBe('The location "New York, NY" is not in a place you chose (Remote).');
+  });
+
+  it("brings back, at the next refresh, the jobs an old choice ruled out, and the repeat posting stays a duplicate", async () => {
+    const ctx = createTestContext();
+    chooseWhereToWork(ctx, ["IN"]);
+    const first = await refreshFeeds(ctx);
+    expect(first.added).toBe(0);
+    expect(shownTitles(ctx)).toEqual([]);
+
+    chooseWhereToWork(ctx, ["IN", "US"]);
+    const second = await refreshFeeds(ctx);
+
+    expect(second).toMatchObject({ added: 0, restored: 4, setAside: 0 });
+    expect(shownTitles(ctx)).toEqual(["Backend Engineer", "Data Analyst", "Platform Engineer", "Software Engineer, Applied AI"]);
+    expect(getJob(ctx.db, ACME_ON_HN)?.filteredReason).toContain("same role");
+  });
+
+  it("puts aside the jobs a new choice rules out, but never one that was already shown", async () => {
+    const ctx = createTestContext();
+    await refreshFeeds(ctx);
+    markJobsSeen(ctx.db, [ACME_BACKEND], ctx.now().toISOString());
+
+    chooseWhereToWork(ctx, ["IN"]);
+    const report = await refreshFeeds(ctx);
+
+    expect(report).toMatchObject({ restored: 0, setAside: 3 });
+    expect(shownTitles(ctx)).toEqual([]);
+    expect(getJob(ctx.db, ACME_BACKEND)?.filteredReason).toBeNull();
+  });
+
+  it("marks a job that comes back as a repeat of a role already shown as a duplicate, so it never shows twice", async () => {
+    const ctx = createTestContext();
+    await refreshFeeds(ctx);
+    markJobsSeen(ctx.db, [ACME_BACKEND], ctx.now().toISOString());
+    chooseWhereToWork(ctx, ["IN"]);
+    await refreshFeeds(ctx);
+    expect(getJob(ctx.db, ACME_ON_HN)?.filteredReason).toBe('The location "Remote (US)" is a remote job outside the places you chose (India).');
+
+    chooseWhereToWork(ctx, ["US", "REMOTE"]);
+    await refreshFeeds(ctx);
+
+    expect(getJob(ctx.db, ACME_ON_HN)?.filteredReason).toContain("same role");
+    expect(shownTitles(ctx)).not.toContain("Backend Engineer");
   });
 });
 

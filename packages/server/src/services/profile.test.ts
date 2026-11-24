@@ -1,9 +1,23 @@
 import { afterEach, describe, expect, it } from "vitest";
+import type { Profile } from "@jobgoblin/schemas";
+import type { ServerContext } from "../context";
 import { getProfile, updateProfileSection } from "./profile";
 import { getProfileForRun, saveProfileSectionFromRun } from "./profileForRuns";
 import { closeTestContexts, createTestContext } from "./testSupport";
 
 afterEach(closeTestContexts);
+
+function chooseWhereToWork(ctx: ServerContext, regions: string[]): void {
+  updateProfileSection(ctx, "targets", { ...getProfile(ctx).profile.targets, regions });
+}
+
+function moveTo(ctx: ServerContext, location: string): void {
+  updateProfileSection(ctx, "contact", { ...getProfile(ctx).profile.contact, location });
+}
+
+function labelsOfMissing(ctx: ServerContext): string[] {
+  return getProfile(ctx).missing.map((value) => value.label);
+}
 
 describe("getProfile", () => {
   it("lists the values Alex still has to fill in", () => {
@@ -12,20 +26,68 @@ describe("getProfile", () => {
     expect(getProfile(ctx).missing).toEqual([{ section: "compensation", key: "expectedBase", label: "Expected base salary" }]);
   });
 
-  it("lists everything for a fresh profile, including the US work authorization answers", () => {
+  it("lists everything for a fresh profile, and asks where the person can work before any work authorization question", () => {
     const ctx = createTestContext({ withAlexRivera: false });
 
     const keys = getProfile(ctx).missing.map((value) => `${value.section}.${value.key}`);
 
     expect(keys).toEqual(
-      expect.arrayContaining([
-        "contact.fullName",
-        "contact.phone",
-        "workAuthorization.regions.US.authorized",
-        "employment.noticePeriod",
-        "compensation.expectedBase",
-      ]),
+      expect.arrayContaining(["contact.fullName", "contact.phone", "targets.regions", "employment.noticePeriod", "compensation.expectedBase"]),
     );
+    expect(keys.filter((key) => key.startsWith("workAuthorization."))).toEqual([]);
+  });
+
+  it("names the boxes the way the Form answers screen does", () => {
+    const ctx = createTestContext({ withAlexRivera: false });
+
+    expect(labelsOfMissing(ctx)).toEqual(expect.arrayContaining(["Where you live", "Where you can work", "Expected base salary"]));
+    expect(labelsOfMissing(ctx)).not.toContain("Location");
+  });
+
+  it("asks about work authorization only for the countries chosen, named in plain words", () => {
+    const ctx = createTestContext();
+    chooseWhereToWork(ctx, ["IN"]);
+
+    expect(labelsOfMissing(ctx)).toEqual([
+      "Authorized to work (India)",
+      "Needs visa sponsorship (India)",
+      "Willing to relocate (India)",
+      "Expected base salary",
+    ]);
+  });
+
+  it("with Remote jobs chosen, asks about the country where the person lives, and nothing about Remote itself", () => {
+    const ctx = createTestContext();
+    chooseWhereToWork(ctx, ["REMOTE"]);
+    expect(labelsOfMissing(ctx)).toEqual(["Expected base salary"]); // Alex lives in Austin and answered for the US
+
+    moveTo(ctx, "Pune, India");
+
+    expect(labelsOfMissing(ctx)).toEqual([
+      "Authorized to work (India)",
+      "Needs visa sponsorship (India)",
+      "Willing to relocate (India)",
+      "Expected base salary",
+    ]);
+  });
+
+  it("asks nothing for Somewhere else, which has no questions of its own", () => {
+    const ctx = createTestContext();
+    chooseWhereToWork(ctx, ["OTHER"]);
+
+    expect(labelsOfMissing(ctx)).toEqual(["Expected base salary"]);
+  });
+
+  it("says which country Alex lives in, and the years limit that follows her experience", () => {
+    const ctx = createTestContext();
+
+    expect(getProfile(ctx)).toMatchObject({ homeRegion: "US", yearsLimit: { limit: 4, experience: 2 } });
+  });
+
+  it("has no home country and the stored years limit while those answers are missing", () => {
+    const ctx = createTestContext({ withAlexRivera: false });
+
+    expect(getProfile(ctx)).toMatchObject({ homeRegion: null, yearsLimit: { limit: 4, experience: null } });
   });
 });
 
@@ -58,6 +120,15 @@ describe("getProfileForRun", () => {
     for (const secret of ["alex.rivera@example.com", "555 0100", "Alex Rivera", "Decline to self-identify"]) {
       expect(everything).not.toContain(secret);
     }
+  });
+
+  it("tells a run the years limit the code filter uses: the person's experience + 2", () => {
+    const ctx = createTestContext();
+    const employment: Profile["employment"] = { ...getProfile(ctx).profile.employment, yearsExperience: "5" };
+    updateProfileSection(ctx, "employment", employment);
+
+    expect(getProfileForRun(ctx).targets.maxYearsRequired).toBe(7);
+    expect(getProfile(ctx).profile.targets.maxYearsRequired).toBe(4); // the stored fallback is left as it was
   });
 });
 
