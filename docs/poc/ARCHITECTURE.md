@@ -215,7 +215,7 @@ NeedsYouItem = { kind, id, applicationId, runId, title, detail, createdAt }
 TodayResponse = { needsYou: NeedsYouItem[], running: Run[], doneToday: { found, tailored, approved, applied }, setupComplete: boolean, usageNoticeSeen: boolean }
 PipelineRow = Application + { overdue: boolean, location, region }
 ApplicationActions = { canApprove, canSkip, canUndoSkip, canRequestEdit, canTailor, canWithdraw, canMarkSubmitted, canAsk }   // booleans computed by the server with core
-ApplicationDetail = { application, job, fit, resume: ResumeVersion | null, resumeHeader: ResumeHeader | null, versions: ApplicationResume[], diff: ResumeDiff | null, storyItems: StoryItem[] /* items the resume cites plus items the fit matched */, dataSheet: DataSheet | null, dataSheetHash: string | null, approval: Approval | null, answers: Answer[], submission: Submission | null, questions: Question[], history: HistoryEvent[], askResults: { question, answer, at }[], allowedStatusMoves: ApplicationStatus[], actions: ApplicationActions }
+ApplicationDetail = { application, job, fit, resume: ResumeVersion | null, resumeHeader: ResumeHeader | null, versions: ApplicationResume[], diff: ResumeDiff | null, storyItems: StoryItem[] /* items the resume cites plus items the fit matched */, untracedLines: { path, text }[] /* resume lines whose item was dropped or changed since the draft */, dataSheet: DataSheet | null, dataSheetHash: string | null, approval: Approval | null, answers: Answer[], submission: Submission | null, questions: Question[], history: HistoryEvent[], askResults: { question, answer, at }[], allowedStatusMoves: ApplicationStatus[], actions: ApplicationActions }
 ApproveRequest = { dataSheetHash, submitMode: "manual" }
 SubmittedRequest = { proofType, proof, attachedSha256: string | null, confirmDifferentFile?: boolean }
 StatusChangeRequest = { to, followUpOn?: string | null, note?: string }
@@ -406,7 +406,7 @@ Draft previews live in `<appData>/previews/<versionId>.pdf`, rebuilt freely and 
 
 `approveApplication(ctx, { applicationId, dataSheetHash, submitMode })`, person only:
 
-1. Rebuild the data sheet from the current profile; refuse `data-sheet-changed` if the hash differs from the one the person saw; refuse `missing-values` (naming them) if a required value is TODO or empty; run `findBannedTerms` over the data sheet values.
+1. Rebuild the data sheet from the current profile; refuse `data-sheet-changed` if the hash differs from the one the person saw; refuse `missing-values` (naming them) if a required value is TODO or empty; run `findBannedTerms` over the data sheet values; run `traceResume` again against Your story as it is now and refuse `resume-untraced` (quoting the line) when the person dropped or changed an item the resume uses after the draft was made (`services/resumeTrace.ts`). `ApplicationDetail.untracedLines` lists those lines for Review, and `canApprove` is false while there are any.
 2. Render the final PDF once, in memory; `pdfSha256 = sha256Hex(bytes)`; check one page and banned terms. If an approved file for this version already exists, reuse its bytes and fingerprint.
 3. One transaction: insert the approval; set `application_resumes.state = approved` with `pdf_sha256` and `pdf_bytes`; move Awaiting approval → Approved (or, for an Approved application with no live approval, no move and a `re-approved` event); history event.
 4. After commit: write `Resumes/<shortId>.pdf`, the application folder with `First Last - Resume.pdf` and `Job description.md`; schedule the tracker and a backup; queue an answers run.
