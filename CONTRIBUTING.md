@@ -7,6 +7,80 @@ Thanks for wanting to help. Jobgoblin is a free, open-source job-application cop
 - **Bug or idea?** Open an issue using one of the templates. For anything bigger than a small fix, talk about it in an issue first, so nobody builds the same thing twice.
 - **Security problem?** Do not open a public issue. See [SECURITY.md](SECURITY.md).
 - **New to the code?** Read the [reading order in the README](README.md#start-here-reading-order). It is the fastest way in. The rules are in [docs/poc/ARCHITECTURE.md](docs/poc/ARCHITECTURE.md) and [docs/poc/CODE_STYLE.md](docs/poc/CODE_STYLE.md).
+- **Looking for something to pick up?** Start with [`good-first-issue`](https://github.com/anishsetya/jobgoblin/issues?q=is%3Aopen+label%3Agood-first-issue). Say in the issue that you are taking it, so two people don't work on the same thing.
+
+## How we track work
+
+All work is tracked in GitHub Issues. Labels tell you what an issue is, how urgent it is, and which part of the code it touches.
+
+### Type: what kind of work it is
+
+Every issue has exactly one type. The issue form you pick sets it for you.
+
+| Label | Means | Example |
+| --- | --- | --- |
+| `type:bug` | Something is broken: the app does the wrong thing, or a test fails on `main` | "Double-clicking Approve shows an error after it worked" |
+| `type:enhancement` | A small change to something that already works | "Long names should wrap instead of scrolling the page" |
+| `type:feature` | A new capability the app does not have yet | "Show live progress in the Running cards" |
+| `type:chore` | Work a user never sees: refactors, tooling, tests, docs, CI | "Run unit and e2e tests in GitHub Actions" |
+| `type:epic` | A larger goal made of other issues (its sub-issues) | "Ready for five outside testers" |
+
+**Bug or enhancement?** If the app does what it was designed to do, but that could be better, it is an enhancement. If it does something it was never meant to do, it is a bug.
+
+**Enhancement or feature?** Changing a screen or a flow that exists is an enhancement. Adding one that doesn't exist yet is a feature.
+
+### Priority: how urgent it is
+
+Maintainers set the priority during triage.
+
+| Label | Means |
+| --- | --- |
+| `priority:p0` | Data loss, or an application that could go out with something the person did not approve. Fixed first. |
+| `priority:p1` | The main flow is broken: setup, finding jobs, review, approve, or recording that you applied. |
+| `priority:p2` | Everything else. |
+
+### Area: which part of the code it touches
+
+These follow the folders in the repository. An issue can have more than one.
+
+| Label | Where |
+| --- | --- |
+| `area:dashboard` | `apps/dashboard`, the screens |
+| `area:server` | `packages/server`, the local server and its services |
+| `area:core` | `packages/core`, the pure rules (filters, data sheets, the truth trace) |
+| `area:storage` | `packages/storage`, the database |
+| `area:resume` | Resume rendering |
+| `area:runner` | How Claude Code runs are started, queued and stopped |
+| `area:mcp` | The tools a Claude run can call |
+| `area:e2e` | `e2e/`, the Playwright tests |
+| `area:docs` | The README, the user guide and the other docs |
+
+### Workflow
+
+| Label | Means |
+| --- | --- |
+| `needs-triage` | New. A maintainer has not yet checked it or set its priority. The issue forms add it. |
+| `blocked` | Waiting on something else. The issue says what. |
+| `good-first-issue` | Small, well described, and a good way to learn the code |
+
+### Epics and the board
+
+A big goal is an epic, and the issues that make it up are its sub-issues. On GitHub, an epic shows how many of its sub-issues are done, and each sub-issue links back to its epic. We keep this to two levels: an epic, then its issues.
+
+Maintainers plan the work on a GitHub Project board with these columns: Backlog, Ready, In progress, In review and Done. An issue moves to In review when a PR for it is opened, and to Done when the PR is merged.
+
+### Searches worth bookmarking
+
+Paste these into the search box on the Issues tab:
+
+| To find | Search |
+| --- | --- |
+| Open bugs | `is:open label:type:bug` |
+| Anything urgent | `is:open label:priority:p0,priority:p1` |
+| Small improvements | `is:open label:type:enhancement` |
+| One part of the code | `is:open label:area:dashboard` |
+| Good first issues | `is:open label:good-first-issue` |
+| Not yet triaged | `is:open label:needs-triage` |
 
 ## Set up
 
